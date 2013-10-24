@@ -734,11 +734,11 @@ you can use the generic selector below, but it's slower:
 .clearfix {
   *zoom: 1; }
 
-/* line 204, ../scss/_flat-ui.scss */
-.clearfix:before,
+/* line 203, ../scss/_flat-ui.scss */
 .clearfix:after {
-  display: table;
-  content: ""; }
+  display: block;
+  content: "";
+  clear: both; }
 
 /* line 208, ../scss/_flat-ui.scss */
 .clearfix:after {
@@ -4252,20 +4252,19 @@ body.vjs-full-window {
 
 /* line 3195, ../scss/_flat-ui.scss */
 .login-screen {
-  min-height: 473px;
   padding: 123px 199px 33px 306px; }
 
-/* line 3199, ../scss/_flat-ui.scss */
+/* line 3198, ../scss/_flat-ui.scss */
 .login-icon {
   width: 96px; }
 
-/* line 3202, ../scss/_flat-ui.scss */
+/* line 3201, ../scss/_flat-ui.scss */
 .login-icon > img {
   display: block;
   margin-bottom: 6px;
   width: 100%; }
 
-/* line 3207, ../scss/_flat-ui.scss */
+/* line 3206, ../scss/_flat-ui.scss */
 .login-icon > h4 {
   font-size: 17px;
   font-weight: 200;
@@ -4273,21 +4272,21 @@ body.vjs-full-window {
   opacity: 0.95;
   filter: alpha(opacity=95); }
 
-/* line 3214, ../scss/_flat-ui.scss */
+/* line 3213, ../scss/_flat-ui.scss */
 .login-icon > h4 small {
   color: inherit;
   display: block;
   font-size: inherit;
   font-weight: 700; }
 
-/* line 3220, ../scss/_flat-ui.scss */
+/* line 3219, ../scss/_flat-ui.scss */
 .login-form {
   background-color: #edeff1;
   padding: 24px 23px 20px;
   position: relative;
   border-radius: 6px; }
 
-/* line 3226, ../scss/_flat-ui.scss */
+/* line 3225, ../scss/_flat-ui.scss */
 .login-form:before {
   content: '';
   border-style: solid;
@@ -4300,32 +4299,32 @@ body.vjs-full-window {
   width: 0;
   -webkit-transform: rotate(360deg); }
 
-/* line 3238, ../scss/_flat-ui.scss */
+/* line 3237, ../scss/_flat-ui.scss */
 .login-form .control-group {
   margin-bottom: 6px;
   position: relative; }
 
-/* line 3242, ../scss/_flat-ui.scss */
+/* line 3241, ../scss/_flat-ui.scss */
 .login-form .form-group {
   width: 50%;
   float: left; }
 
-/* line 3246, ../scss/_flat-ui.scss */
+/* line 3245, ../scss/_flat-ui.scss */
 .login-form .login-field {
   border-color: transparent;
   width: 90%;
   font-size: 17px;
   text-indent: 3px; }
 
-/* line 3252, ../scss/_flat-ui.scss */
+/* line 3251, ../scss/_flat-ui.scss */
 .login-form .login-field:focus {
   border-color: #3498db; }
 
-/* line 3255, ../scss/_flat-ui.scss */
+/* line 3254, ../scss/_flat-ui.scss */
 .login-form .login-field:focus + .login-field-icon {
   color: #3498db; }
 
-/* line 3258, ../scss/_flat-ui.scss */
+/* line 3257, ../scss/_flat-ui.scss */
 .login-form .login-field-icon {
   color: #bfc9ca;
   font-size: 16px;
@@ -4338,7 +4337,7 @@ body.vjs-full-window {
   transition: 0.25s;
   -webkit-backface-visibility: hidden; }
 
-/* line 3270, ../scss/_flat-ui.scss */
+/* line 3269, ../scss/_flat-ui.scss */
 .login-link {
   color: #bfc9ca;
   display: block;
@@ -4347,44 +4346,44 @@ body.vjs-full-window {
   text-align: center; }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (-moz-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 3 / 2), only screen and (-o-min-device-pixel-ratio: 2 / 1), only screen and (-moz-min-device-pixel-ratio: 1.5), only screen and (min-device-pixel-ratio: 1.5), only screen and (min-device-pixel-ratio: 2) {
-  /* line 3278, ../scss/_flat-ui.scss */
+  /* line 3277, ../scss/_flat-ui.scss */
   .login {
     background-image: url(../images/login/imac-2x.png); } }
-/* line 3282, ../scss/_flat-ui.scss */
+/* line 3281, ../scss/_flat-ui.scss */
 footer {
   background-color: #edeff1;
   color: #bac1c8;
   font-size: 15px;
   padding: 0; }
 
-/* line 3288, ../scss/_flat-ui.scss */
+/* line 3287, ../scss/_flat-ui.scss */
 footer a {
   color: #9aa4af;
   font-weight: 700; }
 
-/* line 3292, ../scss/_flat-ui.scss */
+/* line 3291, ../scss/_flat-ui.scss */
 footer p {
   font-size: 15px;
   line-height: 20px; }
 
-/* line 3296, ../scss/_flat-ui.scss */
+/* line 3295, ../scss/_flat-ui.scss */
 .footer-title {
   margin: 0 0 22px;
   padding-top: 21px;
   font-size: 24px;
   line-height: 40px; }
 
-/* line 3302, ../scss/_flat-ui.scss */
+/* line 3301, ../scss/_flat-ui.scss */
 .footer-brand {
   display: block;
   margin-bottom: 26px;
   width: 220px; }
 
-/* line 3307, ../scss/_flat-ui.scss */
+/* line 3306, ../scss/_flat-ui.scss */
 .footer-brand img {
   width: 216px; }
 
-/* line 3310, ../scss/_flat-ui.scss */
+/* line 3309, ../scss/_flat-ui.scss */
 .footer-banner {
   background-color: #3498db;
   color: #d1f2eb;
@@ -4392,275 +4391,275 @@ footer p {
   min-height: 316px;
   padding: 0 30px 30px; }
 
-/* line 3317, ../scss/_flat-ui.scss */
+/* line 3316, ../scss/_flat-ui.scss */
 .footer-banner .footer-title {
   color: #ffffff; }
 
-/* line 3320, ../scss/_flat-ui.scss */
+/* line 3319, ../scss/_flat-ui.scss */
 .footer-banner a {
   color: #b7f5e9;
   text-decoration: underline; }
 
-/* line 3324, ../scss/_flat-ui.scss */
+/* line 3323, ../scss/_flat-ui.scss */
 .footer-banner a:hover {
   text-decoration: none; }
 
-/* line 3327, ../scss/_flat-ui.scss */
+/* line 3326, ../scss/_flat-ui.scss */
 .footer-banner ul {
   list-style-type: none;
   margin: 0 0 26px;
   padding: 0; }
 
-/* line 3332, ../scss/_flat-ui.scss */
+/* line 3331, ../scss/_flat-ui.scss */
 .footer-banner ul li {
   border-top: 1px solid #1bc5a3;
   line-height: 19px;
   padding: 6px 0; }
 
-/* line 3337, ../scss/_flat-ui.scss */
+/* line 3336, ../scss/_flat-ui.scss */
 .footer-banner ul li:first-child {
   border-top: none;
   padding-top: 1px; }
 
-/* line 3341, ../scss/_flat-ui.scss */
+/* line 3340, ../scss/_flat-ui.scss */
 .last-col {
   overflow: hidden; }
 
-/* line 3346, ../scss/_flat-ui.scss */
+/* line 3345, ../scss/_flat-ui.scss */
 .ptn,
 .pvn,
 .pan {
   padding-top: 0; }
 
-/* line 3351, ../scss/_flat-ui.scss */
+/* line 3350, ../scss/_flat-ui.scss */
 .ptx,
 .pvx,
 .pax {
   padding-top: 3px; }
 
-/* line 3356, ../scss/_flat-ui.scss */
+/* line 3355, ../scss/_flat-ui.scss */
 .pts,
 .pvs,
 .pas {
   padding-top: 5px; }
 
-/* line 3361, ../scss/_flat-ui.scss */
+/* line 3360, ../scss/_flat-ui.scss */
 .ptm,
 .pvm,
 .pam {
   padding-top: 10px; }
 
-/* line 3366, ../scss/_flat-ui.scss */
+/* line 3365, ../scss/_flat-ui.scss */
 .ptl,
 .pvl,
 .pal {
   padding-top: 20px; }
 
-/* line 3371, ../scss/_flat-ui.scss */
+/* line 3370, ../scss/_flat-ui.scss */
 .prn,
 .phn,
 .pan {
   padding-right: 0; }
 
-/* line 3376, ../scss/_flat-ui.scss */
+/* line 3375, ../scss/_flat-ui.scss */
 .prx,
 .phx,
 .pax {
   padding-right: 3px; }
 
-/* line 3381, ../scss/_flat-ui.scss */
+/* line 3380, ../scss/_flat-ui.scss */
 .prs,
 .phs,
 .pas {
   padding-right: 5px; }
 
-/* line 3386, ../scss/_flat-ui.scss */
+/* line 3385, ../scss/_flat-ui.scss */
 .prm,
 .phm,
 .pam {
   padding-right: 10px; }
 
-/* line 3391, ../scss/_flat-ui.scss */
+/* line 3390, ../scss/_flat-ui.scss */
 .prl,
 .phl,
 .pal {
   padding-right: 20px; }
 
-/* line 3396, ../scss/_flat-ui.scss */
+/* line 3395, ../scss/_flat-ui.scss */
 .pbn,
 .pvn,
 .pan {
   padding-bottom: 0; }
 
-/* line 3401, ../scss/_flat-ui.scss */
+/* line 3400, ../scss/_flat-ui.scss */
 .pbx,
 .pvx,
 .pax {
   padding-bottom: 3px; }
 
-/* line 3406, ../scss/_flat-ui.scss */
+/* line 3405, ../scss/_flat-ui.scss */
 .pbs,
 .pvs,
 .pas {
   padding-bottom: 5px; }
 
-/* line 3411, ../scss/_flat-ui.scss */
+/* line 3410, ../scss/_flat-ui.scss */
 .pbm,
 .pvm,
 .pam {
   padding-bottom: 10px; }
 
-/* line 3416, ../scss/_flat-ui.scss */
+/* line 3415, ../scss/_flat-ui.scss */
 .pbl,
 .pvl,
 .pal {
   padding-bottom: 20px; }
 
-/* line 3421, ../scss/_flat-ui.scss */
+/* line 3420, ../scss/_flat-ui.scss */
 .pln,
 .phn,
 .pan {
   padding-left: 0; }
 
-/* line 3426, ../scss/_flat-ui.scss */
+/* line 3425, ../scss/_flat-ui.scss */
 .plx,
 .phx,
 .pax {
   padding-left: 3px; }
 
-/* line 3431, ../scss/_flat-ui.scss */
+/* line 3430, ../scss/_flat-ui.scss */
 .pls,
 .phs,
 .pas {
   padding-left: 5px; }
 
-/* line 3436, ../scss/_flat-ui.scss */
+/* line 3435, ../scss/_flat-ui.scss */
 .plm,
 .phm,
 .pam {
   padding-left: 10px; }
 
-/* line 3441, ../scss/_flat-ui.scss */
+/* line 3440, ../scss/_flat-ui.scss */
 .pll,
 .phl,
 .pal {
   padding-left: 20px; }
 
-/* line 3446, ../scss/_flat-ui.scss */
+/* line 3445, ../scss/_flat-ui.scss */
 .mtn,
 .mvn,
 .man {
   margin-top: 0px; }
 
-/* line 3451, ../scss/_flat-ui.scss */
+/* line 3450, ../scss/_flat-ui.scss */
 .mtx,
 .mvx,
 .max {
   margin-top: 3px; }
 
-/* line 3456, ../scss/_flat-ui.scss */
+/* line 3455, ../scss/_flat-ui.scss */
 .mts,
 .mvs,
 .mas {
   margin-top: 5px; }
 
-/* line 3461, ../scss/_flat-ui.scss */
+/* line 3460, ../scss/_flat-ui.scss */
 .mtm,
 .mvm,
 .mam {
   margin-top: 10px; }
 
-/* line 3466, ../scss/_flat-ui.scss */
+/* line 3465, ../scss/_flat-ui.scss */
 .mtl,
 .mvl,
 .mal {
   margin-top: 20px; }
 
-/* line 3471, ../scss/_flat-ui.scss */
+/* line 3470, ../scss/_flat-ui.scss */
 .mrn,
 .mhn,
 .man {
   margin-right: 0px; }
 
-/* line 3476, ../scss/_flat-ui.scss */
+/* line 3475, ../scss/_flat-ui.scss */
 .mrx,
 .mhx,
 .max {
   margin-right: 3px; }
 
-/* line 3481, ../scss/_flat-ui.scss */
+/* line 3480, ../scss/_flat-ui.scss */
 .mrs,
 .mhs,
 .mas {
   margin-right: 5px; }
 
-/* line 3486, ../scss/_flat-ui.scss */
+/* line 3485, ../scss/_flat-ui.scss */
 .mrm,
 .mhm,
 .mam {
   margin-right: 10px; }
 
-/* line 3491, ../scss/_flat-ui.scss */
+/* line 3490, ../scss/_flat-ui.scss */
 .mrl,
 .mhl,
 .mal {
   margin-right: 20px; }
 
-/* line 3496, ../scss/_flat-ui.scss */
+/* line 3495, ../scss/_flat-ui.scss */
 .mbn,
 .mvn,
 .man {
   margin-bottom: 0px; }
 
-/* line 3501, ../scss/_flat-ui.scss */
+/* line 3500, ../scss/_flat-ui.scss */
 .mbx,
 .mvx,
 .max {
   margin-bottom: 3px; }
 
-/* line 3506, ../scss/_flat-ui.scss */
+/* line 3505, ../scss/_flat-ui.scss */
 .mbs,
 .mvs,
 .mas {
   margin-bottom: 5px; }
 
-/* line 3511, ../scss/_flat-ui.scss */
+/* line 3510, ../scss/_flat-ui.scss */
 .mbm,
 .mvm,
 .mam {
   margin-bottom: 10px; }
 
-/* line 3516, ../scss/_flat-ui.scss */
+/* line 3515, ../scss/_flat-ui.scss */
 .mbl,
 .mvl,
 .mal {
   margin-bottom: 20px; }
 
-/* line 3521, ../scss/_flat-ui.scss */
+/* line 3520, ../scss/_flat-ui.scss */
 .mln,
 .mhn,
 .man {
   margin-left: 0px; }
 
-/* line 3526, ../scss/_flat-ui.scss */
+/* line 3525, ../scss/_flat-ui.scss */
 .mlx,
 .mhx,
 .max {
   margin-left: 3px; }
 
-/* line 3531, ../scss/_flat-ui.scss */
+/* line 3530, ../scss/_flat-ui.scss */
 .mls,
 .mhs,
 .mas {
   margin-left: 5px; }
 
-/* line 3536, ../scss/_flat-ui.scss */
+/* line 3535, ../scss/_flat-ui.scss */
 .mlm,
 .mhm,
 .mam {
   margin-left: 10px; }
 
-/* line 3541, ../scss/_flat-ui.scss */
+/* line 3540, ../scss/_flat-ui.scss */
 .mll,
 .mhl,
 .mal {
@@ -4774,17 +4773,17 @@ body {
   box-sizing: border-box;
   padding: 100px 0;
   min-height: 0; }
-  /* line 114, ../scss/main.scss */
-  .login-screen .clearfix {
-    height: 125px; }
 
-/* line 124, ../scss/main.scss */
+/* line 121, ../scss/main.scss */
 .login-icon {
   float: left; }
 
-/* line 128, ../scss/main.scss */
+/* line 125, ../scss/main.scss */
 .login-form {
   margin-left: 126px; }
+  /* line 127, ../scss/main.scss */
+  .login-form .form-fieldset {
+    overflow: hidden; }
   /* line 130, ../scss/main.scss */
   .login-form .hostname {
     width: 60%;
@@ -4797,70 +4796,79 @@ body {
       right: 0px; }
   /* line 140, ../scss/main.scss */
   .login-form .username {
-    width: 60%; }
+    width: 60%;
+    margin-right: 5%; }
+  /* line 144, ../scss/main.scss */
+  .login-form .login-button-container {
+    width: 30%;
+    margin-bottom: 0; }
+    /* line 147, ../scss/main.scss */
+    .login-form .login-button-container .login-button {
+      width: 90%;
+      padding: 12px 15px 13px; }
 
-/* line 145, ../scss/main.scss */
+/* line 154, ../scss/main.scss */
 .default-server {
   margin-top: 5px;
   width: 100%;
   text-align: center;
   color: #2c3e50; }
-  /* line 150, ../scss/main.scss */
+  /* line 159, ../scss/main.scss */
   .default-server label {
     margin-left: 4px; }
 
-/* line 155, ../scss/main.scss */
+/* line 164, ../scss/main.scss */
 .login-button {
   width: 60%; }
 
 @media screen and (max-width: 768px) {
-  /* line 160, ../scss/main.scss */
+  /* line 169, ../scss/main.scss */
   .login-button {
     width: auto; }
 
-  /* line 163, ../scss/main.scss */
+  /* line 172, ../scss/main.scss */
   .login-screen {
     height: auto;
     width: 400px; }
-    /* line 164, ../scss/main.scss */
+    /* line 173, ../scss/main.scss */
     .login-screen .clearfix {
       height: auto; }
-    /* line 169, ../scss/main.scss */
+    /* line 178, ../scss/main.scss */
     .login-screen .form-group {
       width: 100%; }
-    /* line 173, ../scss/main.scss */
+    /* line 182, ../scss/main.scss */
     .login-screen .port .login-field-icon {
       right: 13px; } }
 @media screen and (max-width: 480px) {
-  /* line 181, ../scss/main.scss */
+  /* line 190, ../scss/main.scss */
   .login-screen {
     padding: 25px 0;
     width: 90%; }
 
-  /* line 185, ../scss/main.scss */
+  /* line 194, ../scss/main.scss */
   .login-icon {
     width: 100%;
     float: none; }
-    /* line 188, ../scss/main.scss */
+    /* line 197, ../scss/main.scss */
     .login-icon img {
       width: 85px;
       float: left;
       margin-right: 20px; }
 
-  /* line 194, ../scss/main.scss */
+  /* line 203, ../scss/main.scss */
   .login-form {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     width: 100%;
     margin: 35px 0; }
-    /* line 198, ../scss/main.scss */
+    /* line 207, ../scss/main.scss */
     .login-form:before {
       display: none; }
-    /* line 201, ../scss/main.scss */
+    /* line 210, ../scss/main.scss */
     .login-form .form-group {
       width: 100%; } }
-/* line 215, ../scss/main.scss */
+/* line 224, ../scss/main.scss */
 .login-button {
   display: block;
   text-align: center;

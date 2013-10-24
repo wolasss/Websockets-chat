@@ -111,9 +111,6 @@ body {
 }
 
 .login-screen {
-    .clearfix {
-        height:125px;
-    }
     width:600px;
     margin:0 auto;
     @include box-sizing(border-box);
@@ -127,6 +124,9 @@ body {
 
 .login-form {
     margin-left: 126px;
+    .form-fieldset {
+        overflow:hidden;
+    }
     .hostname {
         width:60%;
         margin-right:5%;
@@ -139,6 +139,15 @@ body {
     }
     .username {
         width:60%;
+        margin-right:5%;
+    }
+    .login-button-container {
+        width:30%;
+        margin-bottom:0;
+        .login-button {
+            width:90%;
+            padding: 12px 15px 13px;
+        }
     }
 }
 
