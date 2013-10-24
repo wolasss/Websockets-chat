@@ -4844,31 +4844,34 @@ body {
   .login-screen {
     padding: 25px 0;
     width: 90%; }
+    /* line 194, ../scss/main.scss */
+    .login-screen .login-form-button-container .login-button {
+      width: auto; }
 
-  /* line 194, ../scss/main.scss */
+  /* line 199, ../scss/main.scss */
   .login-icon {
     width: 100%;
     float: none; }
-    /* line 197, ../scss/main.scss */
+    /* line 202, ../scss/main.scss */
     .login-icon img {
       width: 85px;
       float: left;
       margin-right: 20px; }
 
-  /* line 203, ../scss/main.scss */
+  /* line 208, ../scss/main.scss */
   .login-form {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     width: 100%;
     margin: 35px 0; }
-    /* line 207, ../scss/main.scss */
+    /* line 212, ../scss/main.scss */
     .login-form:before {
       display: none; }
-    /* line 210, ../scss/main.scss */
+    /* line 215, ../scss/main.scss */
     .login-form .form-group {
       width: 100%; } }
-/* line 224, ../scss/main.scss */
+/* line 229, ../scss/main.scss */
 .login-button {
   display: block;
   text-align: center;

@@ -190,6 +190,11 @@ body {
     .login-screen {
         padding:25px 0;
         width:90%;
+        .login-form-button-container {
+            .login-button {
+                width:auto;
+            }
+        }
     }
     .login-icon {
         width:100%;
