@@ -1,4 +1,4 @@
-/* normalize.css v1.1.3 | MIT License | git.io/normalize */
+/*! normalize.css v1.1.3 | MIT License | git.io/normalize */
 /* ==========================================================================
    HTML5 display definitions
    ========================================================================== */
@@ -4665,10 +4665,109 @@ footer p {
 .mal {
   margin-left: 20px; }
 
+/* Make clicks pass-through */
+/* line 2, ../scss/_nprogress.scss */
+#nprogress {
+  pointer-events: none;
+  -webkit-pointer-events: none; }
+
+/* line 7, ../scss/_nprogress.scss */
+#nprogress .bar {
+  background: #2980b9;
+  position: absolute;
+  z-index: 100;
+  top: 0px;
+  left: 0;
+  width: 0%;
+  height: 3px; }
+
+/* Fancy blur effect */
+/* line 20, ../scss/_nprogress.scss */
+#nprogress .peg {
+  display: none; }
+
+/* Remove these to get rid of the spinner */
+/* line 25, ../scss/_nprogress.scss */
+#nprogress .spinner {
+  display: block;
+  position: absolute;
+  z-index: 100;
+  top: 85%;
+  right: 15px; }
+
+/* line 33, ../scss/_nprogress.scss */
+#nprogress .spinner-icon {
+  width: 14px;
+  height: 14px;
+  border: solid 2px transparent;
+  border-top-color: #29d;
+  border-left-color: #29d;
+  border-radius: 10px;
+  -webkit-animation: nprogress-spinner 400ms linear infinite;
+  -moz-animation: nprogress-spinner 400ms linear infinite;
+  -ms-animation: nprogress-spinner 400ms linear infinite;
+  -o-animation: nprogress-spinner 400ms linear infinite;
+  animation: nprogress-spinner 400ms linear infinite; }
+
+@-webkit-keyframes nprogress-spinner {
+  /* line 50, ../scss/_nprogress.scss */
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg); }
+
+  /* line 51, ../scss/_nprogress.scss */
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg); } }
+
+@-moz-keyframes nprogress-spinner {
+  /* line 54, ../scss/_nprogress.scss */
+  0% {
+    -moz-transform: rotate(0deg);
+    transform: rotate(0deg); }
+
+  /* line 55, ../scss/_nprogress.scss */
+  100% {
+    -moz-transform: rotate(360deg);
+    transform: rotate(360deg); } }
+
+@-o-keyframes nprogress-spinner {
+  /* line 58, ../scss/_nprogress.scss */
+  0% {
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg); }
+
+  /* line 59, ../scss/_nprogress.scss */
+  100% {
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg); } }
+
+@-ms-keyframes nprogress-spinner {
+  /* line 62, ../scss/_nprogress.scss */
+  0% {
+    -ms-transform: rotate(0deg);
+    transform: rotate(0deg); }
+
+  /* line 63, ../scss/_nprogress.scss */
+  100% {
+    -ms-transform: rotate(360deg);
+    transform: rotate(360deg); } }
+
+@keyframes nprogress-spinner {
+  /* line 66, ../scss/_nprogress.scss */
+  0% {
+    transform: rotate(0deg);
+    transform: rotate(0deg); }
+
+  /* line 67, ../scss/_nprogress.scss */
+  100% {
+    transform: rotate(360deg);
+    transform: rotate(360deg); } }
+
 /* ==========================================================================
    Base styles: opinionated defaults
    ========================================================================== */
-/* line 13, ../scss/main.scss */
+/* line 14, ../scss/main.scss */
 html,
 button,
 input,
@@ -4676,7 +4775,7 @@ select,
 textarea {
   color: #222; }
 
-/* line 17, ../scss/main.scss */
+/* line 18, ../scss/main.scss */
 html {
   font-size: 1em;
   line-height: 1.4; }
@@ -4686,12 +4785,12 @@ html {
  * These selection rule sets have to be separate.
  * Customize the background color to match your design.
  */
-/* line 28, ../scss/main.scss */
+/* line 29, ../scss/main.scss */
 ::-moz-selection {
   background: #b3d4fc;
   text-shadow: none; }
 
-/* line 33, ../scss/main.scss */
+/* line 34, ../scss/main.scss */
 ::selection {
   background: #b3d4fc;
   text-shadow: none; }
@@ -4699,7 +4798,7 @@ html {
 /*
  * A better looking default horizontal rule
  */
-/* line 42, ../scss/main.scss */
+/* line 43, ../scss/main.scss */
 hr {
   display: block;
   height: 1px;
@@ -4712,7 +4811,7 @@ hr {
  * Remove the gap between images, videos, audio and canvas and the bottom of
  * their containers: h5bp.com/i/440
  */
-/* line 59, ../scss/main.scss */
+/* line 60, ../scss/main.scss */
 audio,
 canvas,
 img,
@@ -4722,7 +4821,7 @@ video {
 /*
  * Remove default fieldset styles.
  */
-/* line 67, ../scss/main.scss */
+/* line 68, ../scss/main.scss */
 fieldset {
   border: 0;
   margin: 0;
@@ -4731,14 +4830,14 @@ fieldset {
 /*
  * Allow only vertical resizing of textareas.
  */
-/* line 77, ../scss/main.scss */
+/* line 78, ../scss/main.scss */
 textarea {
   resize: vertical; }
 
 /* ==========================================================================
    Browse Happy prompt
    ========================================================================== */
-/* line 85, ../scss/main.scss */
+/* line 86, ../scss/main.scss */
 .browsehappy {
   margin: 0.2em 0;
   background: #ccc;
@@ -4748,23 +4847,23 @@ textarea {
 /* ==========================================================================
    Author's custom styles
    ========================================================================== */
-/* line 97, ../scss/main.scss */
+/* line 98, ../scss/main.scss */
 html {
   background: #34495e; }
 
-/* line 101, ../scss/main.scss */
+/* line 102, ../scss/main.scss */
 body {
   width: 90%;
   margin: 0 auto;
   min-height: 600px; }
 
-/* line 107, ../scss/main.scss */
+/* line 108, ../scss/main.scss */
 .login {
   padding: 0;
   margin: 0;
   width: 100%; }
 
-/* line 113, ../scss/main.scss */
+/* line 114, ../scss/main.scss */
 .login-screen {
   width: 600px;
   margin: 0 auto;
@@ -4774,104 +4873,106 @@ body {
   padding: 100px 0;
   min-height: 0; }
 
-/* line 121, ../scss/main.scss */
+/* line 122, ../scss/main.scss */
 .login-icon {
   float: left; }
 
-/* line 125, ../scss/main.scss */
+/* line 126, ../scss/main.scss */
 .login-form {
-  margin-left: 126px; }
-  /* line 127, ../scss/main.scss */
+  margin-left: 126px;
+  position: relative;
+  overflow: hidden; }
+  /* line 130, ../scss/main.scss */
   .login-form .form-fieldset {
     overflow: hidden; }
-  /* line 130, ../scss/main.scss */
+  /* line 133, ../scss/main.scss */
   .login-form .hostname {
     width: 60%;
     margin-right: 5%; }
-  /* line 134, ../scss/main.scss */
+  /* line 137, ../scss/main.scss */
   .login-form .port {
     width: 30%; }
-    /* line 136, ../scss/main.scss */
+    /* line 139, ../scss/main.scss */
     .login-form .port .login-field-icon {
       right: 0px; }
-  /* line 140, ../scss/main.scss */
+  /* line 143, ../scss/main.scss */
   .login-form .username {
     width: 60%;
     margin-right: 5%; }
-  /* line 144, ../scss/main.scss */
+  /* line 147, ../scss/main.scss */
   .login-form .login-button-container {
     width: 30%;
     margin-bottom: 0; }
-    /* line 147, ../scss/main.scss */
+    /* line 150, ../scss/main.scss */
     .login-form .login-button-container .login-button {
       width: 90%;
       padding: 12px 15px 13px; }
 
-/* line 154, ../scss/main.scss */
+/* line 157, ../scss/main.scss */
 .default-server {
   margin-top: 5px;
   width: 100%;
   text-align: center;
   color: #2c3e50; }
-  /* line 159, ../scss/main.scss */
+  /* line 162, ../scss/main.scss */
   .default-server label {
     margin-left: 4px; }
 
-/* line 164, ../scss/main.scss */
+/* line 167, ../scss/main.scss */
 .login-button {
   width: 60%; }
 
 @media screen and (max-width: 768px) {
-  /* line 169, ../scss/main.scss */
+  /* line 172, ../scss/main.scss */
   .login-button {
     width: auto; }
 
-  /* line 172, ../scss/main.scss */
+  /* line 175, ../scss/main.scss */
   .login-screen {
     height: auto;
     width: 400px; }
-    /* line 173, ../scss/main.scss */
+    /* line 176, ../scss/main.scss */
     .login-screen .clearfix {
       height: auto; }
-    /* line 178, ../scss/main.scss */
+    /* line 181, ../scss/main.scss */
     .login-screen .form-group {
       width: 100%; }
-    /* line 182, ../scss/main.scss */
+    /* line 185, ../scss/main.scss */
     .login-screen .port .login-field-icon {
       right: 13px; } }
 @media screen and (max-width: 480px) {
-  /* line 190, ../scss/main.scss */
+  /* line 193, ../scss/main.scss */
   .login-screen {
     padding: 25px 0;
     width: 90%; }
-    /* line 194, ../scss/main.scss */
+    /* line 197, ../scss/main.scss */
     .login-screen .login-form-button-container .login-button {
       width: auto; }
 
-  /* line 199, ../scss/main.scss */
+  /* line 202, ../scss/main.scss */
   .login-icon {
     width: 100%;
     float: none; }
-    /* line 202, ../scss/main.scss */
+    /* line 205, ../scss/main.scss */
     .login-icon img {
       width: 85px;
       float: left;
       margin-right: 20px; }
 
-  /* line 208, ../scss/main.scss */
+  /* line 211, ../scss/main.scss */
   .login-form {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     width: 100%;
     margin: 35px 0; }
-    /* line 212, ../scss/main.scss */
+    /* line 215, ../scss/main.scss */
     .login-form:before {
       display: none; }
-    /* line 215, ../scss/main.scss */
+    /* line 218, ../scss/main.scss */
     .login-form .form-group {
       width: 100%; } }
-/* line 229, ../scss/main.scss */
+/* line 232, ../scss/main.scss */
 .login-button {
   display: block;
   text-align: center;

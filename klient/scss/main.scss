@@ -1,5 +1,6 @@
 @import "normalize";
 @import "flat-ui";
+@import "nprogress";
 @import "compass";
 
 /* ==========================================================================
@@ -124,6 +125,8 @@ body {
 
 .login-form {
     margin-left: 126px;
+    position:relative;
+    overflow:hidden;
     .form-fieldset {
         overflow:hidden;
     }

@@ -9,3 +9,11 @@ $(function(){
 		}
 	})
 });
+
+$(function(){
+    $('.login-button').on('click', function() {
+        NProgress.start();
+        
+        NProgress.done();
+    });
+});
