@@ -1,4 +1,4 @@
-var loginForm = function(sb){
+var MODloginForm = function(sb){
 
 	var data = {
 		username: '',
@@ -17,30 +17,54 @@ var loginForm = function(sb){
 	hostnameContainer, 
 	errorContainer,
 	defaultServerField, 
-	defaultServer = 0;
+	defaultServer = 0,
+	parsePort,
+	connectionError,
+	connectionSucess,
+	reactor,
+	showError,
+	logIn,
+	defaultServerChange;
 
-	var parsePort = function (port) {
+	parsePort = function (port) {
 		var p = -1, m=(""+port).match(/^\d{1,5}$/gi);
 		if(m && m.length!==0) {
 			p = parseInt(m[0], 10);
 		}
 		return p;
-	}; 
+	};
+
+	connectionError = function(msg) {
+		sb.clear(errorContainer);
+		showError('Error. Server is not responding: '+msg);
+		NProgress.done(function(){
+	    	sb.show(errorContainer);
+		});
+	};
+	connectionSuccess = function(msg) {
+		NProgress.set(0.9);
+		NProgress.configure({speed:50});
+		NProgress.done(function(){
+			setTimeout(sb.toggleModule, 200);
+			sb.emit('loggedIn');
+		});
+		
+	};
 
 	//message handler
-	var reactor = function( data, topic ){
+	reactor = function( data, topic ){
 	  	switch( topic ){
-		    case "somethingHappend":
-		    	sb.emit( "myEventTopic", processData(data) );
+		    case "connectionError":
+		    	connectionError(data);
 		    	break;
-		    case "aNiceTopic":
-		    	justProcess( data );
+		    case "connectionSuccess":
+		    	connectionSuccess(data);
 		      	break;
 		  	}
-	},
+	};
 	showError = function(Msg) {
 		console.log(sb.append(errorContainer, '<p>'+Msg+'</p>'));
-	},
+	};
 	logIn = function (e) {
 		sb.hide(errorContainer);
 		sb.clear(errorContainer);
@@ -60,6 +84,9 @@ var loginForm = function(sb){
 				showError('Empty hostname field');
 				errors = 1;
 			}
+		} else {
+			data.hostname = 'adamwolski.com';
+			data.port = '12345';
 		} 
 
 		if(usernameField.value.length!==0) {
@@ -68,20 +95,23 @@ var loginForm = function(sb){
 			showError('Empty username field');
 			errors = 1;
 		}
-		
+		console.log(errors);
 		if(errors) {
 			NProgress.done(function() {
 				sb.show(errorContainer);
 			});
 		} else {
-			NProgress.done(function(){
+			data.port = port;
+			data.username = username;
+			data.hostname = hostname;
+			sb.emit('loginRequest', data);
+			/*NProgress.done(function(){
 	        	$('.chat').addClass('expanded');
 	        	$('.chat-container').html('');
-        	}); 
+        	}); */
 		}
-	},
+	};
 	defaultServerChange = function(e) {
-		console.log('change');
 		var checked = defaultServerField.checked;
 		if(checked) {
 			defaultServer = 1;
@@ -109,6 +139,8 @@ var loginForm = function(sb){
 	    	sb.addEvent(loginButton, 'click', logIn);
 	    	sb.addEvent(defaultServerField, 'change', defaultServerChange);
 
+	    	sb.on(['connectionError', 'connectionSuccess'], reactor);
+
 	    },
 	    destroy: function() { 
 	    	sb.toggleModule();
@@ -121,7 +153,11 @@ var loginForm = function(sb){
 	    	hostnameContainer = null; 
 	    	defaultServerField = null;  
 
-
+	    	sb.removeEvent(loginButton, 'click', logIn);
+	    	sb.removeEvent(defaultServerField, 'change', defaultServerChange);
 	    }
 	};
 };
+
+CHAT.register("loginForm", MODloginForm);
+CHAT.start('loginForm');

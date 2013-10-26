@@ -18,7 +18,7 @@
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
         <div class="login">
-            <div class="chat">
+            <div class="chat expanded">
                     <div class="login-icon">
                         <img src="images/login/icon.png" alt="Welcome to websocket chat" />
                         <h4 class="logo-message">Welcome to <small>Websocket Chat!</small></h4>
@@ -58,7 +58,21 @@
                                 <a class="login-link" href="#">What the heck is this?</a>
                             </div>
                         </div>
+                        <div id="board">
+                            <ul class="messages">
+                                <li class="msgContainer">
+                                    <div class="avatar"></div>
+                                    <div class="message">trololo</div>
+                                    <div class="info">Yesterday @ 24:30 PM</div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div id="shouter">
+                            <input type="text" class="form-control shout-field message-field" value="" placeholder="What's on your mind?" />
+                            <label class="login-field-icon fui-plus" for="message-field"></label>
+                        </div>
                     </div>
+
             </div>
         </div>       
 
@@ -69,7 +83,10 @@
 
         <script src="js/plugins.js"></script>
         <script src="js/main.js"></script>
-        <script src="js/modules.js"></script>
+        <script src="js/modules/loginForm.js"></script>
+        <script src="js/modules/board.js"></script>
+        <script src="js/modules/shouter.js"></script>
+        <script src="js/modules/websocket.js"></script>
         <script src="js/core.js"></script>
     </body>
 </html>

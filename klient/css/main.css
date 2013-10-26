@@ -4936,61 +4936,7 @@ body {
 .login-button {
   width: 60%; }
 
-@media screen and (max-width: 768px) {
-  /* line 183, ../scss/main.scss */
-  #loginForm .error {
-    margin-top: 10px; }
-
-  /* line 187, ../scss/main.scss */
-  .login-button {
-    width: auto; }
-
-  /* line 190, ../scss/main.scss */
-  .chat {
-    height: auto;
-    width: 400px; }
-    /* line 191, ../scss/main.scss */
-    .chat .clearfix {
-      height: auto; }
-    /* line 196, ../scss/main.scss */
-    .chat .form-group {
-      width: 100%; }
-    /* line 200, ../scss/main.scss */
-    .chat .port .login-field-icon {
-      right: 13px; } }
-@media screen and (max-width: 480px) {
-  /* line 208, ../scss/main.scss */
-  .chat {
-    padding: 25px 0;
-    width: 90%; }
-    /* line 212, ../scss/main.scss */
-    .chat .chat-container-button-container .login-button {
-      width: auto; }
-
-  /* line 217, ../scss/main.scss */
-  .login-icon {
-    width: 100%;
-    float: none; }
-    /* line 220, ../scss/main.scss */
-    .login-icon img {
-      width: 85px;
-      float: left;
-      margin-right: 20px; }
-
-  /* line 226, ../scss/main.scss */
-  .chat-container {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    width: 100%;
-    margin: 35px 0; }
-    /* line 230, ../scss/main.scss */
-    .chat-container:before {
-      display: none; }
-    /* line 233, ../scss/main.scss */
-    .chat-container .form-group {
-      width: 100%; } }
-/* line 247, ../scss/main.scss */
+/* line 191, ../scss/main.scss */
 .login-button {
   display: block;
   text-align: center;
@@ -4999,18 +4945,117 @@ body {
 /* ==========================================================================
    Modules
    ========================================================================== */
-/* line 257, ../scss/main.scss */
-#loginForm {
-  display: none; }
-  /* line 259, ../scss/main.scss */
+/* line 203, ../scss/main.scss */
+#loginForm .error {
+  display: none;
+  background: #c0392b;
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px; }
+  /* line 209, ../scss/main.scss */
+  #loginForm .error p {
+    padding: 0;
+    margin: 0;
+    font-size: 14px; }
+
+/* line 217, ../scss/main.scss */
+#board {
+  color: #34495e; }
+  /* line 220, ../scss/main.scss */
+  #board .messages {
+    margin: 0;
+    padding: 0; }
+  /* line 224, ../scss/main.scss */
+  #board .messages li {
+    list-style: none; }
+  /* line 227, ../scss/main.scss */
+  #board .msgContainer {
+    overflow: hidden; }
+    /* line 229, ../scss/main.scss */
+    #board .msgContainer .avatar {
+      width: 70px;
+      height: 71px;
+      background: url("../images/icons/png/person.png");
+      float: left; }
+    /* line 235, ../scss/main.scss */
+    #board .msgContainer .message {
+      margin-left: 15px;
+      display: -moz-inline-stack;
+      display: inline-block;
+      vertical-align: middle;
+      *vertical-align: auto;
+      zoom: 1;
+      *display: inline;
+      background: #34495e;
+      padding: 10px;
+      border-radius: 5px;
+      color: #fff; }
+
+/* line 246, ../scss/main.scss */
+#shouter {
+  position: absolute;
+  left: 15px;
+  right: 15px;
+  bottom: 15px; }
+  /* line 252, ../scss/main.scss */
+  #shouter .message-field {
+    width: 95%; }
+
+@media screen and (max-width: 768px) {
+  /* line 262, ../scss/main.scss */
   #loginForm .error {
-    display: none;
-    background: #c0392b;
-    color: #fff;
-    border-radius: 5px;
-    padding: 10px; }
-    /* line 265, ../scss/main.scss */
-    #loginForm .error p {
-      padding: 0;
-      margin: 0;
-      font-size: 14px; }
+    margin-top: 10px; }
+
+  /* line 266, ../scss/main.scss */
+  .login-button {
+    width: auto; }
+
+  /* line 269, ../scss/main.scss */
+  .chat {
+    height: auto;
+    width: 400px; }
+    /* line 270, ../scss/main.scss */
+    .chat .clearfix {
+      height: auto; }
+    /* line 275, ../scss/main.scss */
+    .chat .form-group {
+      width: 100%; }
+    /* line 279, ../scss/main.scss */
+    .chat .port .login-field-icon {
+      right: 13px; }
+
+  /* line 285, ../scss/main.scss */
+  #shouter .message-field {
+    width: 90%; } }
+@media screen and (max-width: 480px) {
+  /* line 292, ../scss/main.scss */
+  .chat {
+    padding: 25px 0;
+    width: 90%; }
+    /* line 296, ../scss/main.scss */
+    .chat .chat-container-button-container .login-button {
+      width: auto; }
+
+  /* line 301, ../scss/main.scss */
+  .login-icon {
+    width: 100%;
+    float: none; }
+    /* line 304, ../scss/main.scss */
+    .login-icon img {
+      width: 85px;
+      float: left;
+      margin-right: 20px; }
+
+  /* line 310, ../scss/main.scss */
+  .chat-container {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 35px 0; }
+    /* line 314, ../scss/main.scss */
+    .chat-container:before {
+      display: none; }
+    /* line 317, ../scss/main.scss */
+    .chat-container .form-group {
+      width: 100%; } }

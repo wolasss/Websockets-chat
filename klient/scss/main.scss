@@ -178,6 +178,85 @@ body {
     width:60%;
 }
 
+
+
+
+.form-group.username {
+}
+
+.form-group.username input {
+
+}
+
+.login-button {
+    display:block;
+   text-align: center;
+    margin: 0 auto;
+}
+
+/* ==========================================================================
+   Modules
+   ========================================================================== */
+
+#loginForm {
+    //display: none;
+    .error {
+        display:none;
+        background: #c0392b;
+        color: #fff;
+        border-radius:5px;
+        padding: 10px;
+        p {
+            padding:0;
+            margin: 0;
+            font-size: 14px;
+        }
+    }
+}
+
+#board {
+    //display:none;
+    color: #34495e;
+    .messages {
+        margin:0;
+        padding:0;
+    }
+    .messages li {
+        list-style: none;
+    }
+    .msgContainer {
+        overflow:hidden;
+        .avatar {
+            width:70px;
+            height:71px;
+            background: url('../images/icons/png/person.png');
+            float: left;
+        }
+        .message {
+            margin-left: 15px;
+            @include inline-block;
+            background: #34495e;
+            padding:10px;
+            border-radius: 5px;
+            color: #fff;
+        }
+    }
+}
+
+#shouter {
+    //display:none;
+    position: absolute;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    .message-field {
+        width:95%;
+    }
+}
+
+
+
+
 @media screen and (max-width: 768px) {
     #loginForm {
         .error {
@@ -200,6 +279,11 @@ body {
             .login-field-icon {
                 right:13px;
             }
+        }
+    }
+    #shouter {
+        .message-field {
+            width:90%;
         }
     }
 }
@@ -235,38 +319,3 @@ body {
         }
     }
 }
-
-
-.form-group.username {
-}
-
-.form-group.username input {
-
-}
-
-.login-button {
-    display:block;
-   text-align: center;
-    margin: 0 auto;
-}
-
-/* ==========================================================================
-   Modules
-   ========================================================================== */
-
-#loginForm {
-    display: none;
-    .error {
-        display:none;
-        background: #c0392b;
-        color: #fff;
-        border-radius:5px;
-        padding: 10px;
-        p {
-            padding:0;
-            margin: 0;
-            font-size: 14px;
-        }
-    }
-}
-

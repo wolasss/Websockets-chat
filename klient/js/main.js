@@ -13,6 +13,8 @@ var sandbox = function(core, instanceId, options, moduleId) {
   this.CSShostnameField = '.host-field';
   this.CSSdefaultServerField = '.default-server-check';
   this.CSSerror = '.error';
+  this.CSSchat = '.chat';
+  this.CSSmessageField = '.message-field';
 
 
 
@@ -20,6 +22,9 @@ var sandbox = function(core, instanceId, options, moduleId) {
   //functions
   this.append = function(selector, what) {
     return $(selector).append(what);
+  };
+  this.addClass = function(selector, cl) {
+    return $(selector).addClass(cl);
   };
   this.clear = function(selector) {
     return $(selector).html('');
@@ -47,6 +52,9 @@ var sandbox = function(core, instanceId, options, moduleId) {
   };
   this.addEvent = function(elem, event, callback) {
     return $(elem).on(event, callback);
+  };
+  this.removeEvent = function(elem, event, callback) {
+    return $(elem).off(event, callback);
   };
   this.toggleModule = function() {
     return $(DOMid).toggle();
