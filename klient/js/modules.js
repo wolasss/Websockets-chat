@@ -5,6 +5,10 @@ var loginForm = function(sb){
 		port: '',
 		hostname: ''
 	},
+	username,
+	port,
+	errors = 0,
+	hostname,
 	loginButton, 
 	usernameField, 
 	portField, 
@@ -34,14 +38,47 @@ var loginForm = function(sb){
 		      	break;
 		  	}
 	},
+	showError = function(Msg) {
+		console.log(sb.append(errorContainer, '<p>'+Msg+'</p>'));
+	},
 	logIn = function (e) {
+		sb.hide(errorContainer);
+		sb.clear(errorContainer);
+		errors=0;
 
 		NProgress.start();
 
-        NProgress.done(function(){
-        	$('.chat').addClass('expanded');
-        	$('.chat-container').html('');
-        }); 
+		if(!defaultServer) {
+			port = parsePort(portField.value);
+			if(port===-1) {
+				showError('Wrong port number');
+				errors = 1;
+			}
+			if(hostnameField.value.length!==0) {
+				hostname = hostnameField.value;
+			} else {
+				showError('Empty hostname field');
+				errors = 1;
+			}
+		} 
+
+		if(usernameField.value.length!==0) {
+			username = usernameField.value;
+		} else {
+			showError('Empty username field');
+			errors = 1;
+		}
+		
+		if(errors) {
+			NProgress.done(function() {
+				sb.show(errorContainer);
+			});
+		} else {
+			NProgress.done(function(){
+	        	$('.chat').addClass('expanded');
+	        	$('.chat-container').html('');
+        	}); 
+		}
 	},
 	defaultServerChange = function(e) {
 		console.log('change');
@@ -67,6 +104,7 @@ var loginForm = function(sb){
 	    	hostnameField = sb.find(sb.CSShostnameField)[0];
 	    	hostnameContainer = sb.parent(hostnameField);
 	    	defaultServerField = sb.find(sb.CSSdefaultServerField)[0];
+	    	errorContainer = sb.find(sb.CSSerror)[0];
 
 	    	sb.addEvent(loginButton, 'click', logIn);
 	    	sb.addEvent(defaultServerField, 'change', defaultServerChange);

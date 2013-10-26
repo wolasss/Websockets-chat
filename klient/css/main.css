@@ -4937,56 +4937,60 @@ body {
   width: 60%; }
 
 @media screen and (max-width: 768px) {
-  /* line 182, ../scss/main.scss */
+  /* line 183, ../scss/main.scss */
+  #loginForm .error {
+    margin-top: 10px; }
+
+  /* line 187, ../scss/main.scss */
   .login-button {
     width: auto; }
 
-  /* line 185, ../scss/main.scss */
+  /* line 190, ../scss/main.scss */
   .chat {
     height: auto;
     width: 400px; }
-    /* line 186, ../scss/main.scss */
+    /* line 191, ../scss/main.scss */
     .chat .clearfix {
       height: auto; }
-    /* line 191, ../scss/main.scss */
+    /* line 196, ../scss/main.scss */
     .chat .form-group {
       width: 100%; }
-    /* line 195, ../scss/main.scss */
+    /* line 200, ../scss/main.scss */
     .chat .port .login-field-icon {
       right: 13px; } }
 @media screen and (max-width: 480px) {
-  /* line 203, ../scss/main.scss */
+  /* line 208, ../scss/main.scss */
   .chat {
     padding: 25px 0;
     width: 90%; }
-    /* line 207, ../scss/main.scss */
+    /* line 212, ../scss/main.scss */
     .chat .chat-container-button-container .login-button {
       width: auto; }
 
-  /* line 212, ../scss/main.scss */
+  /* line 217, ../scss/main.scss */
   .login-icon {
     width: 100%;
     float: none; }
-    /* line 215, ../scss/main.scss */
+    /* line 220, ../scss/main.scss */
     .login-icon img {
       width: 85px;
       float: left;
       margin-right: 20px; }
 
-  /* line 221, ../scss/main.scss */
+  /* line 226, ../scss/main.scss */
   .chat-container {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     width: 100%;
     margin: 35px 0; }
-    /* line 225, ../scss/main.scss */
+    /* line 230, ../scss/main.scss */
     .chat-container:before {
       display: none; }
-    /* line 228, ../scss/main.scss */
+    /* line 233, ../scss/main.scss */
     .chat-container .form-group {
       width: 100%; } }
-/* line 242, ../scss/main.scss */
+/* line 247, ../scss/main.scss */
 .login-button {
   display: block;
   text-align: center;
@@ -4995,6 +4999,18 @@ body {
 /* ==========================================================================
    Modules
    ========================================================================== */
-/* line 252, ../scss/main.scss */
+/* line 257, ../scss/main.scss */
 #loginForm {
   display: none; }
+  /* line 259, ../scss/main.scss */
+  #loginForm .error {
+    display: none;
+    background: #c0392b;
+    color: #fff;
+    border-radius: 5px;
+    padding: 10px; }
+    /* line 265, ../scss/main.scss */
+    #loginForm .error p {
+      padding: 0;
+      margin: 0;
+      font-size: 14px; }

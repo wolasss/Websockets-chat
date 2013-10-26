@@ -18,6 +18,21 @@ var sandbox = function(core, instanceId, options, moduleId) {
 
 
   //functions
+  this.append = function(selector, what) {
+    return $(selector).append(what);
+  };
+  this.clear = function(selector) {
+    return $(selector).html('');
+  }
+  this.hide = function(selector) {
+    return $(selector).hide();
+  };
+  this.show = function(selector) {
+    return $(selector).show();
+  }
+  this.toggle = function(selector) {
+    return $(selector).toggle();
+  };
   this.parent = function (selector) {
     return $(selector).parent();
   };

@@ -179,6 +179,11 @@ body {
 }
 
 @media screen and (max-width: 768px) {
+    #loginForm {
+        .error {
+            margin-top:10px;
+        }
+    } 
     .login-button {
         width:auto;
     }
@@ -251,5 +256,17 @@ body {
 
 #loginForm {
     display: none;
+    .error {
+        display:none;
+        background: #c0392b;
+        color: #fff;
+        border-radius:5px;
+        padding: 10px;
+        p {
+            padding:0;
+            margin: 0;
+            font-size: 14px;
+        }
+    }
 }
 
