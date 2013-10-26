@@ -18,47 +18,55 @@
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
         <div class="login">
-            <div class="login-screen">
-                <div class="login-icon">
-                    <img src="images/login/icon.png" alt="Welcome to websocket chat" />
-                    <h4>Welcome to <small>Websocket Chat!</small></h4>
-                </div>
+            <div class="chat">
+                    <div class="login-icon">
+                        <img src="images/login/icon.png" alt="Welcome to websocket chat" />
+                        <h4 class="logo-message">Welcome to <small>Websocket Chat!</small></h4>
+                    </div>
 
-                <div class="login-form">
-                    <div class="form-fieldset">
-                        <div class="form-group hostname">
-                            <input type="text" class="form-control login-field" value="" placeholder="Host" />
-                            <label class="login-field-icon fui-location" for="login-host"></label>
-                        </div>
+                    <div class="chat-container">
+                        <div id="loginForm">
+                            <div class="form-fieldset">
+                                <div class="form-group hostname">
+                                    <input type="text" class="form-control login-field host-field" value="" placeholder="Host" />
+                                    <label class="login-field-icon fui-location" for="host-field"></label>
+                                </div>
 
-                        <div class="form-group port">
-                            <input type="text" class="form-control login-field" value="" placeholder="Port" />
-                            <label class="login-field-icon fui-gear" for="login-port"></label>
-                        </div>
+                                <div class="form-group port">
+                                    <input type="text" class="form-control login-field port-field" value="" placeholder="Port" />
+                                    <label class="login-field-icon fui-gear" for="-port-field"></label>
+                                </div>
 
-                        <div class="form-group username">
-                            <input type="text" class="form-control login-field" value="" placeholder="Nick" />
-                            <label class="login-field-icon fui-user" for="login-nick"></label>
-                        </div>
-                        <div class="form-group login-button-container">
-                            <a class="btn btn-primary btn-lg btn-block login-button" href="#">Go! </a>
+                                <div class="form-group username">
+                                    <input type="text" class="form-control login-field nick-field" value="" placeholder="Nick" required />
+                                    <label class="login-field-icon fui-user" for="nick-field"></label>
+                                </div>
+                                <div class="form-group login-button-container">
+                                    <a class="btn btn-primary btn-lg btn-block login-button" href="#">Go! </a>
+                                </div>
+                            </div>
+                            <div class="buttons">
+                                <div class="default-server">
+                                    <label class="checkbox" for="checkbox1">
+                                    <input type="checkbox" class="default-server-check" value="" data-toggle="checkbox">
+                                    Use demonstration server
+                                    </label>
+                                </div>
+                                <a class="login-link" href="#">What the heck is this?</a>
+                            </div>
                         </div>
                     </div>
-                    <div class="buttons">
-                        <div class="default-server">
-                            <input type="checkbox" class="default-server-check">
-                            <label for="default-server-radio">use demonstration server</label>
-                        </div>
-                        <a class="login-link" href="#">What the heck is this?</a>
-                    </div>
-                </div>
             </div>
         </div>       
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
         <script src="js/vendor/nprogress.js"></script>
+        <script src="js/vendor/scaleApp.js"></script>
+
         <script src="js/plugins.js"></script>
         <script src="js/main.js"></script>
+        <script src="js/modules.js"></script>
+        <script src="js/core.js"></script>
     </body>
 </html>

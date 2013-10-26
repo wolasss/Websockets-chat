@@ -51,7 +51,7 @@
    *     NProgress.set(1.0);
    */
 
-  NProgress.set = function(n) {
+  NProgress.set = function(n, callback) {
     var started = NProgress.isStarted();
 
     n = clamp(n, Settings.minimum, 1);
@@ -83,6 +83,9 @@
             next();
           }, speed);
         }, speed);
+        if(typeof(callback)==='function') {
+          callback();
+        }
       } else {
         setTimeout(next, speed);
       }
@@ -130,10 +133,9 @@
    *     NProgress.done(true);
    */
 
-  NProgress.done = function(force) {
-    if (!force && !NProgress.status) return this;
+  NProgress.done = function(callback) {
 
-    return NProgress.inc(0.3 + 0.5 * Math.random()).set(1);
+    return NProgress.inc(0.3 + 0.5 * Math.random()).set(1, callback);
   };
 
   /**
@@ -181,7 +183,7 @@
     if (!Settings.showSpinner)
       $el.find('[role="spinner"]').remove();
 
-    $el.appendTo('.login-form');
+    $el.appendTo('.chat-container');
 
     return $el;
   };

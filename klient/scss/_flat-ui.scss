@@ -1525,7 +1525,6 @@ fieldset[disabled] .form-control + .input-icon,
   position: absolute;
   left: 0;
   top: 0;
-  background-color: #ffffff;
   opacity: 1;
   filter: alpha(opacity=100);
 }
@@ -3192,7 +3191,7 @@ body.vjs-full-window {
   padding: 38px 38px 267px;
   position: relative;
 }
-.login-screen {
+.chat {
   padding: 123px 199px 33px 306px;
 }
 .login-icon {
@@ -3216,13 +3215,13 @@ body.vjs-full-window {
   font-size: inherit;
   font-weight: 700;
 }
-.login-form {
+.chat-container {
   background-color: #edeff1;
   padding: 24px 23px 20px;
   position: relative;
   border-radius: 6px;
 }
-.login-form:before {
+.chat-container:before {
   content: '';
   border-style: solid;
   border-width: 12px 12px 12px 0;
@@ -3234,27 +3233,27 @@ body.vjs-full-window {
   width: 0;
   -webkit-transform: rotate(360deg);
 }
-.login-form .control-group {
+.chat-container .control-group {
   margin-bottom: 6px;
   position: relative;
 }
-.login-form .form-group {
+.chat-container .form-group {
   width:50%;
   float:left;
 }
-.login-form .login-field {
+.chat-container .login-field {
   border-color: transparent;
   width:90%;
   font-size: 17px;
   text-indent: 3px;
 }
-.login-form .login-field:focus {
+.chat-container .login-field:focus {
   border-color: #3498db;
 }
-.login-form .login-field:focus + .login-field-icon {
+.chat-container .login-field:focus + .login-field-icon {
   color: #3498db;
 }
-.login-form .login-field-icon {
+.chat-container .login-field-icon {
   color: #bfc9ca;
   font-size: 16px;
   position: absolute;

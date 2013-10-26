@@ -111,22 +111,32 @@ body {
     width:100%;
 }
 
-.login-screen {
+.chat {
     width:600px;
     margin:0 auto;
     @include box-sizing(border-box);
     padding:100px 0;
-    min-height:0;
+    min-height:0;   
+    @include transition(all 0.4s ease-in);
 }
 
 .login-icon {
     float:left;
 }
 
-.login-form {
+.expanded {
+    width:800px;
+    .chat-container {
+        height:500px;
+    }
+}
+
+.chat-container {
     margin-left: 126px;
     position:relative;
     overflow:hidden;
+    @include transition(all 0.4s ease-in);
+
     .form-fieldset {
         overflow:hidden;
     }
@@ -172,7 +182,7 @@ body {
     .login-button {
         width:auto;
     }
-    .login-screen {
+    .chat {
         .clearfix {
             height:auto;
         }
@@ -190,10 +200,10 @@ body {
 }
 
 @media screen and (max-width: 480px) {
-    .login-screen {
+    .chat {
         padding:25px 0;
         width:90%;
-        .login-form-button-container {
+        .chat-container-button-container {
             .login-button {
                 width:auto;
             }
@@ -208,7 +218,7 @@ body {
             margin-right:20px;
         }
     }
-    .login-form {
+    .chat-container {
         @include box-sizing(border-box);
         width:100%;
         margin:35px 0;
@@ -235,5 +245,11 @@ body {
     margin: 0 auto;
 }
 
+/* ==========================================================================
+   Modules
+   ========================================================================== */
 
+#loginForm {
+    display: none;
+}
 
