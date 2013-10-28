@@ -199,7 +199,7 @@ body {
    ========================================================================== */
 
 #loginForm {
-    //display: none;
+    display: none;
     .error {
         display:none;
         background: #c0392b;
@@ -218,7 +218,7 @@ body {
 
 }
 #board {
-    //display:none;
+    display:none;
     color: #34495e;
     width:428px;
     overflow:hidden;
@@ -271,6 +271,7 @@ body {
                 overflow:visible;
                 margin-left: 0px;
                 margin-right: 10px;
+                text-align:left;
                 @include inline-block;
             }
             .bubble:before {
@@ -321,7 +322,7 @@ body {
 }
 
 #shouter {
-    //display:none;
+    display:none;
     position: absolute;
     left: 15px;
     right: 15px;
@@ -329,8 +330,21 @@ body {
     .message-field {
         width:95%;
     }
+    label {
+        cursor:pointer;
+        &:hover {
+            color: #3498dc;
+        }
+    }
 }
 
+
+#loading {
+  text-align:center;
+}
+#loading .spinner {
+  @include inline-block;
+}
 
 
 
@@ -384,7 +398,7 @@ body {
         }
         .msgContainer {
             .message {
-                width:75%;
+                width:65%;
             }
         }
     }

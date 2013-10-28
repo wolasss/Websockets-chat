@@ -1,20 +1,21 @@
 var MODwebsocket = function(sb){
-	var _sock = null;
+	var _sock = null, timeout = 2000, connected = false;
 	var connectionError = function(error) {
 		console.log(error);
 		sb.emit('connectionError', error);
 	},
 	connectionSuccess = function(msg) {
 		if(_sock.readyState === WebSocket.OPEN) {
+			connected = true;
 			sb.emit('connectionSuccess', msg);
 		}
 		//now login to chat
 	},
 	processMessage = function() {
-
+		
 	},
 	closeConnection = function() {
-
+		connected = false;
 	},
 	connect = function(hostname, port) {
 		try {

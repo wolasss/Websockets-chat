@@ -18,13 +18,18 @@
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
         <div class="login">
-            <div class="chat expanded">
+            <div class="chat">
                     <div class="login-icon">
                         <img src="images/login/icon.png" alt="Welcome to websocket chat" />
                         <h4 class="logo-message">Welcome to <small>Websocket Chat!</small></h4>
                     </div>
 
                     <div class="chat-container">
+                        <div id="loading">
+                            <div class="spinner" role="spinner">
+                                <div class="spinner-icon"></div>
+                            </div>
+                        </div>
                         <div id="loginForm">
                             <div class="form-fieldset">
                                 <div class="form-group hostname">
@@ -140,8 +145,9 @@
                     </div>
 
             </div>
+            
         </div>       
-
+        <a href="https://github.com/you"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
         <script src="js/vendor/nprogress.js"></script>
