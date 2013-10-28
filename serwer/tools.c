@@ -20,6 +20,14 @@
 #define MAX_ERROR_MSG 0x1000
 #define MASK_SIZE 4
 
+
+char* timestamp()
+{
+    time_t ltime; /* calendar time */
+    ltime=time(NULL); /* get current cal time */
+    return asctime( localtime(&ltime) );
+}
+
 unsigned char* base64_encode(const unsigned char *data, size_t data_len, char *out, size_t out_len)
 {
     FILE *fp;

@@ -1,7 +1,5 @@
 /*
 
-zapytac sie czy trzeba blokowac semaforami dostep do socketu
-
 a argument
 s   string (łańcuch znaków)
 sz  string (łańcuch znaków zakończony bajtem zerowym - null'em)
@@ -52,24 +50,12 @@ aout - argument tylko do zapisania
   (byte & 0x01 ? 1 : 0) 
 
 #define DEBUG 1
-#define FRAME_BUFFER_SIZE 1024
-#define MAX_ERROR_MSG 0x1000
-#define MASK_SIZE 4
-
-
-
-char* timestamp()
-{
-    time_t ltime; /* calendar time */
-    ltime=time(NULL); /* get current cal time */
-    return asctime( localtime(&ltime) );
-}
 
 void killChildProcess(int a_sig) {
     wait(NULL);
 }
 
-void logevent(char* a_event) {
+void logEvent(char* a_event) {
 	if(fork()==0) {
 		char sz_buf[512];
 		snprintf(sz_buf, sizeof sz_buf, "%s - %s", timestamp(), a_event);
@@ -79,39 +65,31 @@ void logevent(char* a_event) {
 		close(fd_logfile);
 		printf("%s\n", sz_buf);
 		//v(semid,3);
-		exit(1);
+		exit(0);
 	}
 }
 
-
-
 void handleClient( int * a_soc ) {
-
     unsigned char *frame, *message;
-    unsigned long messageSize = 0, frameLength = 0;
+    unsigned long messageLength = 0, frameLength = 0;
     while(1) {
-        bzero(message, messageSize);
+        bzero(message, messageLength);
 
         frame = SOCreceiveMessage(a_soc, frame, &frameLength);
         if(frameLength!=-1) {
             message = WEBSOCdecodeFrame(frame, &frameLength);
-            messageSize = strlen((char*)message);
+            messageLength = strlen((char*)message);
 
-            printf("Msg: %s\n", message);
-            // and now handle the message man...
+            printf("%s\n", message);
+
             WEBSOCsendMessage(a_soc, (unsigned char*)"Odebralem wiadomosc. hehehheszki. taaaak");
         } else {
             //klient przerwal polaczenie
-            printf("Polaczenie przerwane... \n");
+            perror("Connection terminated by client. ");
             exit(1);
         }
-        
-    }
-
+    } //end while
 }
-
-
-
 
 int main( int argc, char *argv[] ) {
     signal(SIGCHLD, killChildProcess);
