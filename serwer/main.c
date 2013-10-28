@@ -31,12 +31,10 @@ aout - argument tylko do zapisania
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <openssl/sha.h>
 #include <time.h>
 #include <netdb.h>
 #include <unistd.h>
 #include <signal.h>
-#include <regex.h>
 #include <fcntl.h>
 #include "sockets.h"
 #include "websocket.h"
@@ -120,8 +118,7 @@ int main( int argc, char *argv[] ) {
     
     socklen_t clilen;
 
-    int b,r,
-        socketfd = socket(PF_INET, SOCK_STREAM, 0), //SCKDGRAM - UDP, STREAM - TCP
+    int socketfd = socket(PF_INET, SOCK_STREAM, 0), //SCKDGRAM - UDP, STREAM - TCP
         clisoc,
         port = atoi(argv[1]);
 
@@ -130,25 +127,25 @@ int main( int argc, char *argv[] ) {
         exit(0);
     } else {
         if(port<=0) {
-            printf("Nieprawidlowy port\n");
+            perror("Wrong port number.");
             exit(0);
         }   
     }
  		
-	if(socketfd) {
+	if(socketfd>0) {
 
 		struct sockaddr_in my_addr, client_addr; 
 		my_addr.sin_family = PF_INET;
 		my_addr.sin_addr.s_addr = INADDR_ANY;
 		my_addr.sin_port = htons(port);
 
-		if((b=bind(socketfd, (struct sockaddr*)&my_addr, sizeof(my_addr)))>=0) {
+		if(bind(socketfd, (struct sockaddr*)&my_addr, sizeof(my_addr))>=0) {
 			printf("Running on %d\n\n", port);
 			clilen = sizeof(client_addr);
 			listen(socketfd, 10);
 			while(1) {
 				clisoc = accept(socketfd, (struct sockaddr*)&client_addr, &clilen);
-				if(clisoc) {
+				if(clisoc>=0) {
 					printf("Connected: %s \n", inet_ntoa(client_addr.sin_addr));
 					//char buf[512];
 					//snprintf(buf, sizeof buf, "Connected: %s \n", inet_ntoa(client_addr.sin_addr));
@@ -156,26 +153,25 @@ int main( int argc, char *argv[] ) {
 					fflush(stdout);
 					if(fork()==0) {
                         close(socketfd);
-						/*if((r=WEBSOChandshake(&clisoc))>0) {
-                            printf("handle");
+						if((WEBSOChandshake(&clisoc))>0) {
                             handleClient(&clisoc);
-                        }*/
+                        }
 						close(clisoc);
 						exit(0);
 					} else {
 						close(clisoc);
 					}
 				} else {
-					printf("Blad przyjecia. %d \n", clisoc);
+					perror("Accepting error: ");
 					exit(0);
 				} //end if(clisoc)
 			} // end while(1)
 		} else {
-			printf("Blad bindowania. %d \n", b);
+			perror("Binding error: ");
 			exit(0);
 		}
 	} else {
-		printf("Blad wszystkiego.\n");
+		perror("Error creating a socket: ");
 		exit(0);
 	}
 	close(socketfd);
