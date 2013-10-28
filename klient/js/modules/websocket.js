@@ -1,5 +1,5 @@
 var MODwebsocket = function(sb){
-	var _sock = null, timeout = 2000, connected = false;
+	var _sock = null, timeout = 4000, connected = false;
 	var connectionError = function(error) {
 		console.log(error);
 		sb.emit('connectionError', error);
@@ -12,14 +12,20 @@ var MODwebsocket = function(sb){
 		//now login to chat
 	},
 	processMessage = function() {
-		
+
 	},
 	closeConnection = function() {
 		connected = false;
 	},
+	checkConnection = function() {
+		if(!connected) {
+			sb.emit('connectionError', 'timeout');
+		}
+	},
 	connect = function(hostname, port) {
 		try {
 			_sock = new WebSocket('ws://'+hostname+':'+port, ['chat']);
+			setTimeout(checkConnection, timeout);
 			_sock.onerror = connectionError;
 			_sock.onopen = connectionSuccess;
 			_sock.onmessage = processMessage;
