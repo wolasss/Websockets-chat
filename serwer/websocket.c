@@ -24,6 +24,7 @@
 
 
 unsigned char* WEBSOC_createFrame(unsigned char* a_message, unsigned long * aout_size) {
+
     unsigned long l_msgLen = strlen((char*)a_message), 
          l_frameSize = 0;
 
@@ -31,8 +32,8 @@ unsigned char* WEBSOC_createFrame(unsigned char* a_message, unsigned long * aout
 
     unsigned char* s_startFrame = malloc(10); //max length + 2 bytes
     static unsigned char* frame;
-    
-    s_startFrame[0] = 129;
+
+    s_startFrame[0] = 129; //type of message text - message
 
     if(l_msgLen<=125) {
         s_startFrame[1]=l_msgLen;
@@ -60,9 +61,7 @@ unsigned char* WEBSOC_createFrame(unsigned char* a_message, unsigned long * aout
     if(frame != NULL) {
         strncpy((char*)frame+2+i_addBytes, (char*)a_message, l_msgLen);
     } else {
-        if(DEBUG) {
-            printf("Error realloc frame\n");
-        }
+        perror("Error allocating memory: ");
     } 
     return frame;
 }

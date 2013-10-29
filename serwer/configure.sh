@@ -6,8 +6,7 @@
 #	@Czw 15:10
 #-------------------------
 
-echo "Jaka nazwa projektu?"
-read projectname
+projectname="serwer"
 
 mains_number=`find . -name 'main*.c' | wc -w`
 

@@ -1,5 +1,4 @@
 /*
-
 a argument
 s   string (łańcuch znaków)
 sz  string (łańcuch znaków zakończony bajtem zerowym - null'em)
@@ -19,7 +18,6 @@ h   handle (uchwyt)
 p   pointer (wskaźnik)
 fd - deskryptor pliku (int)
 aout - argument tylko do zapisania
-
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,7 +27,6 @@ aout - argument tylko do zapisania
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <time.h>
 #include <netdb.h>
 #include <unistd.h>
 #include <signal.h>
@@ -37,6 +34,7 @@ aout - argument tylko do zapisania
 #include "sockets.h"
 #include "websocket.h"
 #include "tools.h"
+#include "ipc_shared.h"
 
 #define BYTETOBINARYPATTERN "%d%d%d%d%d%d%d%d"
 #define BYTETOBINARY(byte)  \
@@ -56,6 +54,7 @@ void killChildProcess(int a_sig) {
 }
 
 void logEvent(char* a_event) {
+	//is fork really necessary? faster would be simple write. to investigate...
 	if(fork()==0) {
 		char sz_buf[512];
 		snprintf(sz_buf, sizeof sz_buf, "%s - %s", timestamp(), a_event);
@@ -87,63 +86,76 @@ void handleClient( int * a_soc ) {
             //klient przerwal polaczenie
             perror("Connection terminated by client. ");
             exit(1);
+            break;
         }
     } //end while
+}
+
+void acceptConnection( int * socketfd ) {
+	int clisoc;
+	struct sockaddr_in client_addr; 
+	socklen_t clilen = sizeof(client_addr);
+
+	while(1) {
+		clisoc = accept(*socketfd, (struct sockaddr*)&client_addr, &clilen);
+		if(clisoc>=0) {
+			printf("Connected: %s \n", inet_ntoa(client_addr.sin_addr));
+			//char buf[512];
+			//snprintf(buf, sizeof buf, "Connected: %s \n", inet_ntoa(client_addr.sin_addr));
+			//logevent(buf);	
+			fflush(stdout); // just in case 
+			if(fork()==0) {
+                close(*socketfd);
+				if((WEBSOChandshake(&clisoc))>0) {
+                    handleClient(&clisoc);
+                }
+				close(clisoc);
+				exit(0);
+			} else {
+				close(clisoc);
+			}
+		} else {
+			perror("Accepting error: ");
+			exit(0);
+		} //end if(clisoc)
+	}
 }
 
 int main( int argc, char *argv[] ) {
     signal(SIGCHLD, killChildProcess);
     
-    socklen_t clilen;
-
     int socketfd = socket(PF_INET, SOCK_STREAM, 0), //SCKDGRAM - UDP, STREAM - TCP
-        clisoc,
-        port = atoi(argv[1]);
+        port;
+
+    char * port_garbage = NULL;
+    struct Shared * SHM;
 
     if(argc<2) {
         printf("Usage: ./serwer [port]\n");
         exit(0);
     } else {
-        if(port<=0) {
-            perror("Wrong port number.");
+    	port = strtol(argv[1], &port_garbage, 10);;
+        if(*port_garbage || port<=0) {
+            perror("Wrong port number. ");
             exit(0);
-        }   
+        }
+        SHMinit(port, SHM);
     }
  		
 	if(socketfd>0) {
-
-		struct sockaddr_in my_addr, client_addr; 
+		struct sockaddr_in my_addr; 
 		my_addr.sin_family = PF_INET;
 		my_addr.sin_addr.s_addr = INADDR_ANY;
 		my_addr.sin_port = htons(port);
 
 		if(bind(socketfd, (struct sockaddr*)&my_addr, sizeof(my_addr))>=0) {
-			printf("Running on %d\n\n", port);
-			clilen = sizeof(client_addr);
-			listen(socketfd, 10);
-			while(1) {
-				clisoc = accept(socketfd, (struct sockaddr*)&client_addr, &clilen);
-				if(clisoc>=0) {
-					printf("Connected: %s \n", inet_ntoa(client_addr.sin_addr));
-					//char buf[512];
-					//snprintf(buf, sizeof buf, "Connected: %s \n", inet_ntoa(client_addr.sin_addr));
-					//logevent(buf);	
-					fflush(stdout);
-					if(fork()==0) {
-                        close(socketfd);
-						if((WEBSOChandshake(&clisoc))>0) {
-                            handleClient(&clisoc);
-                        }
-						close(clisoc);
-						exit(0);
-					} else {
-						close(clisoc);
-					}
-				} else {
-					perror("Accepting error: ");
-					exit(0);
-				} //end if(clisoc)
-			} // end while(1)
+			if(!listen(socketfd, 10)) { //return 0 if successful
+				printf("Running on %d\n\n", port);
+				acceptConnection(&socketfd);
+			} else {
+				perror("Listening error: ");
+				exit(0);
+			}
 		} else {
 			perror("Binding error: ");
 			exit(0);
