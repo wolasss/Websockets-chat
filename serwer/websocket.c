@@ -147,15 +147,6 @@ unsigned char* WEBSOCdecodeFrame( unsigned char* a_frame, unsigned long * a_fram
     unsigned char mask[MASK_SIZE];    
     bzero(mask, MASK_SIZE);
 
-    printf("frame: %d\n", *a_frameLength);
-    test = a_frame[0] & 15;
-    if(test==0) {
-        printf("text frame\n");
-    } else if(test==9) {
-        printf("ping frame\n");
-    } else if(test==8) {
-        printf("connection close frame\n");
-    }
     length = a_frame[1] & 127;
     indexFirstMask = 2;
 
@@ -181,18 +172,16 @@ unsigned char* WEBSOCdecodeFrame( unsigned char* a_frame, unsigned long * a_fram
         }*/
     } else {
         //thro w error
-        printf("trololo \n");
+        perror("Bad frame length");
+        return NULL;
     }
 
 
     indexFirstData = indexFirstMask + MASK_SIZE;
     if((actualLength+indexFirstData)!=(*a_frameLength)) {
         printf("Blad ramki o co chodzi\n");
-        printf("allocated: %d", *a_frameLength-indexFirstData);
     }
-    printf("allocated: %d", (int)*a_frameLength-indexFirstData);
     unsigned char* decoded = malloc((int)*a_frameLength-indexFirstData);
-      printf("allocated: %d", (int)*a_frameLength-indexFirstData);
     bzero(decoded, *a_frameLength-indexFirstData);
     for(k=indexFirstData, j=0; k<*a_frameLength; k++, j++) {
         decoded[j] = a_frame[k] ^ mask[j % MASK_SIZE];

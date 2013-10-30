@@ -30,11 +30,13 @@ aout - argument tylko do zapisania
 #include <netdb.h>
 #include <unistd.h>
 #include <signal.h>
+#include <time.h>
 #include <fcntl.h>
 #include "sockets.h"
 #include "websocket.h"
 #include "tools.h"
 #include "ipc_shared.h"
+#include "chat.h"
 
 #define BYTETOBINARYPATTERN "%d%d%d%d%d%d%d%d"
 #define BYTETOBINARY(byte)  \
@@ -80,6 +82,7 @@ void handleClient( int * a_soc ) {
             messageLength = strlen((char*)message);
 
             printf("%s\n", message);
+            CHATparseMessage(message, a_soc);
 
             WEBSOCsendMessage(a_soc, (unsigned char*)"Odebralem wiadomosc. hehehheszki. taaaak");
         } else {
@@ -121,14 +124,17 @@ void acceptConnection( int * socketfd ) {
 	}
 }
 
+struct Shared * SHM = NULL;
+int GLOBALsemid;
+
 int main( int argc, char *argv[] ) {
+	srand(time(NULL));
     signal(SIGCHLD, killChildProcess);
     
     int socketfd = socket(PF_INET, SOCK_STREAM, 0), //SCKDGRAM - UDP, STREAM - TCP
         port;
 
     char * port_garbage = NULL;
-    struct Shared * SHM;
 
     if(argc<2) {
         printf("Usage: ./serwer [port]\n");
@@ -139,7 +145,11 @@ int main( int argc, char *argv[] ) {
             perror("Wrong port number. ");
             exit(0);
         }
-        SHMinit(port, SHM);
+        SHMinit(rand()%1000, SHM);
+        printf("go go 0: %d\n", semctl(GLOBALsemid, 0, GETVAL, (int)1));
+        printf("go go 1: %d\n", semctl(GLOBALsemid, 1, GETVAL, (int)1));
+        printf("go go 2: %d\n", semctl(GLOBALsemid, 2, GETVAL, (int)1));
+
     }
  		
 	if(socketfd>0) {
