@@ -27,7 +27,8 @@ var MODloginForm = function(sb){
 	defaultServerChange,
 	parseResponse,
 	cancelLogin,
-	loginSuccess;
+	loginSuccess,
+	keyPressed;
 
 	parsePort = function (port) {
 		var p = -1, m=(""+port).match(/^\d{1,5}$/gi);
@@ -134,7 +135,11 @@ var MODloginForm = function(sb){
 			sb.slideDown(hostnameContainer);
 		}
 	};
-
+	keyPressed = function(e) {
+		if(e.which==13) {
+			logIn();
+		}
+	};
 	return {
 	    init: function() {
 	    	sb.toggleModule();
@@ -148,6 +153,9 @@ var MODloginForm = function(sb){
 	    	errorContainer = sb.find(sb.CSSerror)[0];
 
 	    	sb.addEvent(loginButton, 'click', logIn);
+	    	sb.addEvent(usernameField, 'keyup', keyPressed);
+	    	sb.addEvent(portField, 'keyup', keyPressed);
+	    	sb.addEvent(hostnameField, 'keyup', keyPressed);
 	    	sb.addEvent(defaultServerField, 'change', defaultServerChange);
 
 	    	sb.on(['connectionError', 'connectionSuccess', 'WSresponse'], reactor);
