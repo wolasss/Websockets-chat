@@ -24,7 +24,10 @@ var MODloginForm = function(sb){
 	reactor,
 	showError,
 	logIn,
-	defaultServerChange;
+	defaultServerChange,
+	parseResponse,
+	cancelLogin,
+	loginSuccess;
 
 	parsePort = function (port) {
 		var p = -1, m=(""+port).match(/^\d{1,5}$/gi);
@@ -36,7 +39,7 @@ var MODloginForm = function(sb){
 
 	connectionError = function(msg) {
 		sb.clear(errorContainer);
-		showError('Error. Server is not responding: '+msg);
+		showError(msg);
 		NProgress.done(function(){
 	    	sb.show(errorContainer);
 		});
@@ -44,22 +47,35 @@ var MODloginForm = function(sb){
 	connectionSuccess = function(msg) {
 		NProgress.set(0.9);
 		NProgress.configure({speed:50});
+	};
+	loginSuccess = function(){
 		NProgress.done(function(){
 			setTimeout(sb.toggleModule, 200);
 			sb.emit('loggedIn');
 		});
-		
 	};
-
+	parseResponse = function(response) {
+		console.log(response);
+		if(response.status==101) {
+			//ok
+			loginSuccess();
+		} else {
+			//failure
+			connectionError(response.message);
+		}
+	};
 	//message handler
 	reactor = function( data, topic ){
 	  	switch( topic ){
 		    case "connectionError":
-		    	connectionError(data);
+		    	connectionError('Error. Server is not responding: '+data);
 		    	break;
 		    case "connectionSuccess":
 		    	connectionSuccess(data);
 		      	break;
+		  	case "WSresponse":
+		  		parseResponse(data);
+		  		break;
 		  	}
 	};
 	showError = function(Msg) {
@@ -95,7 +111,6 @@ var MODloginForm = function(sb){
 			showError('Empty username field');
 			errors = 1;
 		}
-		console.log(errors);
 		if(errors) {
 			NProgress.done(function() {
 				sb.show(errorContainer);
@@ -105,10 +120,6 @@ var MODloginForm = function(sb){
 			data.username = username;
 			data.hostname = hostname;
 			sb.emit('loginRequest', data);
-			/*NProgress.done(function(){
-	        	$('.chat').addClass('expanded');
-	        	$('.chat-container').html('');
-        	}); */
 		}
 	};
 	defaultServerChange = function(e) {
@@ -139,7 +150,7 @@ var MODloginForm = function(sb){
 	    	sb.addEvent(loginButton, 'click', logIn);
 	    	sb.addEvent(defaultServerField, 'change', defaultServerChange);
 
-	    	sb.on(['connectionError', 'connectionSuccess'], reactor);
+	    	sb.on(['connectionError', 'connectionSuccess', 'WSresponse'], reactor);
 
 	    },
 	    destroy: function() { 

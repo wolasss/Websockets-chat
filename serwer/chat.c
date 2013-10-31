@@ -19,6 +19,9 @@
 #define SEM_ROOMS 1
 #define SEM_LOGFILE 2
 
+#define MAX_USERS 20
+#define MAX_ROOMS 10
+
 extern struct Shared * SHM;
 extern int GLOBALsemid;
 
@@ -62,7 +65,7 @@ struct CHATcommand * CHATdecodeCommand(unsigned char * a_command) {
 int CHATisLogged ( char * a_name ) {
 	int loginPosition = -1, i;
 	IPCp(GLOBALsemid,0);
-	for(i=0; i<20; i++) {
+	for(i=0; i<MAX_USERS; i++) {
 		if(!strcmp((*SHM).tabUser[i].nick, a_name)) {
 			loginPosition = i;
 			break;
@@ -83,7 +86,7 @@ void CHATassignUser ( int * a_pos, int * a_fd, char* a_nick ) {
 int CHATfirstEmptySlot() {
 	int firstFree = -1, i;
 	IPCp(GLOBALsemid,0);
-	for(i=0; i<20; i++) {
+	for(i=0; i<MAX_USERS; i++) {
 		if((*SHM).tabUser[i].fd==0) {
 			firstFree = i;
 			break;
@@ -93,30 +96,32 @@ int CHATfirstEmptySlot() {
 	return firstFree;
 }
 
-unsigned char * createJSONresponse( int * a_statusCode, char* a_message ) {
+unsigned char * createJSONresponse( int * a_statusCode, unsigned char* a_message ) {
 	static unsigned char reply[512];
-	snprintf(reply, sizeof reply, "{ status: %d, message: \"%s\" }", *a_statusCode, a_message);
+	bzero(reply, 512);
+	snprintf((char*)reply, sizeof reply, "{ \"status\": %d, \"message\": \"%s\" }", *a_statusCode, a_message);
 	return reply;
 }
 
 
 void CHATsendReply( int a_statusCode, char * a_message, int *a_soc ) {
 	unsigned char * reply;
-	reply = createJSONresponse(&a_statusCode, a_message);
+	reply = createJSONresponse(&a_statusCode, (unsigned char*)a_message);
 	WEBSOCsendMessage(a_soc, reply);
-	printf("reply message:\n%s", reply);
+	printf("reply message:\n%s\n", reply);
 }
 
 void CHATloginUser(struct CHATcommand * cmd, int * a_soc) {
 	int firstFree, i, logged=CHATisLogged(cmd->param);
 	if(logged>=0) {
-		CHATsendReply(501, "Taki uzytkownik juz istnieje. wybierz inna nick.", a_soc);
+		CHATsendReply(501, "User already exists. Please choose another nickname.", a_soc);
 	} else {
 		firstFree = CHATfirstEmptySlot();
 		if(firstFree>=0) {
 			CHATassignUser(&firstFree, a_soc, cmd->param);
+			CHATsendReply(101, "You are logged in.", a_soc);
 		} else {
-			CHATsendReply(502, "Brak wolnych miejsc na serwerze.", a_soc);
+			CHATsendReply(502, "There are no empty slots available. Try again later.", a_soc);
 		}
 	}
 }
