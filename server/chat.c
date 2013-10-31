@@ -76,7 +76,8 @@ int CHATisLogged ( char * a_name, int * a_soc ) {
 	return loginPosition;
 }
 
-int CHATremoveUser (  char * a_name, int * a_soc, int * pos ) {
+void CHATremoveUser (  char * a_name, int * a_soc, int * pos ) {
+	int i;
 	if(pos) {
 		IPCp(GLOBALsemid,0);
 		(*SHM).tabUser[*pos].fd = 0;

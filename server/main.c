@@ -92,6 +92,8 @@ void handleClient( int * a_soc ) {
         } else {
             //klient przerwal polaczenie
             perror("Connection terminated by client. ");
+            int pos = CHATisLogged(NULL, a_soc);
+            CHATremoveUser(NULL, NULL, &pos);
             exit(1);
             break;
         }
