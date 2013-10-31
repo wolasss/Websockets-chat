@@ -6,7 +6,7 @@
 #	@Czw 15:10
 #-------------------------
 
-projectname="serwer"
+projectname="server"
 
 mains_number=`find . -name 'main*.c' | wc -w`
 
