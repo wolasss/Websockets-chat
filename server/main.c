@@ -87,8 +87,6 @@ void handleClient( int * a_soc ) {
 
             printf("%s\n", message);
             CHATparseMessage(message, a_soc);
-
-            WEBSOCsendMessage(a_soc, (unsigned char*)"Odebralem wiadomosc. hehehheszki. taaaak");
         } else {
             //klient przerwal polaczenie
             perror("Connection terminated by client. ");

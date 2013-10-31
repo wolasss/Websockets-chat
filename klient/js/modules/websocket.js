@@ -2,6 +2,7 @@ var MODwebsocket = function(sb){
 	var _sock = null, 
 		timeout = 4000, 
 		connected = false,
+		alreadyFailed = false,
 		username = "",
 		connectionError,
 		sendMessage,
@@ -14,8 +15,8 @@ var MODwebsocket = function(sb){
 		reactor;
 
 	connectionError = function(error) {
-		console.log(error);
-		sb.emit('connectionError', error);
+		alreadyFailed = true;
+		sb.emit('connectionError', '');
 	};
 	sendMessage = function(data) {
 		if(_sock.readyState === WebSocket.OPEN) {
@@ -25,6 +26,7 @@ var MODwebsocket = function(sb){
 	connectionSuccess = function(msg) {
 		if(_sock.readyState === WebSocket.OPEN) {
 			connected = true;
+			alreadyFailed = false;
 			sb.emit('connectionSuccess', msg);
 		}
 		sendLoginRequest(username);
@@ -43,7 +45,7 @@ var MODwebsocket = function(sb){
 		connected = false;
 	};
 	checkConnection = function() {
-		if(!connected) {
+		if(!connected && !alreadyFailed) {
 			sb.emit('connectionError', 'timeout');
 		}
 	};
@@ -55,6 +57,7 @@ var MODwebsocket = function(sb){
 	connect = function(hostname, port) {
 		try {
 			_sock = new WebSocket('ws://'+hostname+':'+port, ['chat']);
+			alreadyFailed=false;
 			setTimeout(checkConnection, timeout);
 			_sock.onerror = connectionError;
 			_sock.onopen = connectionSuccess;

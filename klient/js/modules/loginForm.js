@@ -80,7 +80,7 @@ var MODloginForm = function(sb){
 		  	}
 	};
 	showError = function(Msg) {
-		console.log(sb.append(errorContainer, '<p>'+Msg+'</p>'));
+		sb.append(errorContainer, '<p>'+Msg+'</p>');
 	};
 	logIn = function (e) {
 		sb.hide(errorContainer);
