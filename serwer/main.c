@@ -51,6 +51,10 @@ aout - argument tylko do zapisania
 
 #define DEBUG 1
 
+struct Shared * SHM = NULL;
+int GLOBALsemid;
+int GLOBALshmid;
+
 void forceQuit(int a_sig) {
     SHMdestroy();
 }
@@ -60,18 +64,14 @@ void killChildProcess(int a_sig) {
 }
 
 void logEvent(char* a_event) {
-	//is fork really necessary? faster would be simple write. to investigate...
-	if(fork()==0) {
-		char sz_buf[512];
-		snprintf(sz_buf, sizeof sz_buf, "%s - %s", timestamp(), a_event);
-		//p(semid,3);
-		int fd_logfile = open("/tmp/chat.log", O_WRONLY|O_CREAT|O_APPEND, 0666);
-		dup2(fd_logfile, 1);
-		close(fd_logfile);
-		printf("%s\n", sz_buf);
-		//v(semid,3);
-		exit(0);
-	}
+	char sz_buf[512]; 
+	int fd_logfile;
+	bzero(sz_buf, 512);
+	snprintf(sz_buf, sizeof sz_buf, "%s - %s \n", timestamp(), a_event);
+	IPCp(GLOBALsemid,2);
+	fd_logfile = open("/tmp/chat.log", O_WRONLY|O_CREAT|O_APPEND, 0666);
+	write(fd_logfile, sz_buf, 512);
+	IPCv(GLOBALsemid,2);
 }
 
 void handleClient( int * a_soc ) {
@@ -128,10 +128,6 @@ void acceptConnection( int * socketfd ) {
 	}
 }
 
-struct Shared * SHM = NULL;
-int GLOBALsemid;
-int GLOBALshmid;
-
 
 int main( int argc, char *argv[] ) {
 	srand(time(NULL));
@@ -167,6 +163,7 @@ int main( int argc, char *argv[] ) {
 		if(bind(socketfd, (struct sockaddr*)&my_addr, sizeof(my_addr))>=0) {
 			if(!listen(socketfd, 10)) { //return 0 if successful
 				printf("Running on %d\n\n", port);
+				logEvent("Running on trololo");
 				acceptConnection(&socketfd);
 			} else {
 				perror("Listening error: ");
