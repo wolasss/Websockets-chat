@@ -12,7 +12,6 @@ void IPCv(int a_semid, int a_semnum) {
 	buf.sem_num = a_semnum;
 	buf.sem_op = 1;
 	buf.sem_flg = 0;
-	printf("go go up\n");
 	if (semop(a_semid, &buf, 1) == -1){
 		perror("Sem up error: ");
 		exit(1);
@@ -24,10 +23,7 @@ void IPCp(int a_semid, int a_semnum){
 	buf.sem_num = a_semnum;
 	buf.sem_op = -1;
 	buf.sem_flg = 0;
-	printf("go go %d\n", semctl(GLOBALsemid, 0, GETVAL, (int)1));
-
 	if (semop(a_semid, &buf, 1) == -1){
-		
 		perror("Sem down error: ");
 		exit(1);
 	}
@@ -37,7 +33,7 @@ void SHMdestroy() {
 	if(semctl(GLOBALsemid, 0, IPC_RMID, (int)1)==-1) {
 		perror("Error removing semaphore");
 	}
-	if(shmctl(GLOBALshmid, IPC_RMID, 0)==-1) {
+	if(shmctl(GLOBALshmid, IPC_RMID, NULL)==-1) {
 		perror("Error removing shared memory");
 	}
 	exit(1);

@@ -61,8 +61,6 @@ struct CHATcommand * CHATdecodeCommand(unsigned char * a_command) {
 void CHATloginUser(struct CHATcommand * cmd, int * a_soc) {
 	printf("Loguje uzytkownika %s \n", cmd->param);
 	int firstFree = -1, i;
-	printf("zaraz wchodze Loguje uzytkownika %s \n", cmd->param);
-	printf("global: %d\n", GLOBALsemid);
 	IPCp(GLOBALsemid,0);
 	printf("im in! uzytkownika %s \n", cmd->param);
 	/*for(i=0; i<20; i++) {

@@ -102,16 +102,18 @@ void acceptConnection( int * socketfd ) {
 	int clisoc;
 	struct sockaddr_in client_addr; 
 	socklen_t clilen = sizeof(client_addr);
-
+	char log[512];
 	while(1) {
 		clisoc = accept(*socketfd, (struct sockaddr*)&client_addr, &clilen);
 		if(clisoc>=0) {
+			bzero(log, 512);
+
 			printf("Connected: %s \n", inet_ntoa(client_addr.sin_addr));
-			//char buf[512];
-			//snprintf(buf, sizeof buf, "Connected: %s \n", inet_ntoa(client_addr.sin_addr));
-			//logevent(buf);	
+			snprintf(log, sizeof log, "Connected: %s \n", inet_ntoa(client_addr.sin_addr));
+			logEvent(log);	
 			fflush(stdout); // just in case 
 			if(fork()==0) {
+				signal(SIGINT, SIG_DFL);
                 close(*socketfd);
 				if((WEBSOChandshake(&clisoc))>0) {
                     handleClient(&clisoc);
@@ -150,9 +152,6 @@ int main( int argc, char *argv[] ) {
         }
     }
  	SHMinit(rand()%1000, SHM);
-    printf("go go 0: %d\n", semctl(GLOBALsemid, 0, GETVAL, (int)1));
-    printf("go go 1: %d\n", semctl(GLOBALsemid, 1, GETVAL, (int)1));
-    printf("go go 2: %d\n", semctl(GLOBALsemid, 2, GETVAL, (int)1));
 
 	if(socketfd>0) {
 		struct sockaddr_in my_addr; 
