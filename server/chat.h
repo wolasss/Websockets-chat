@@ -22,6 +22,7 @@ struct CHATcommand * CHATdecodeCommand(unsigned char * a_command);
 
 int CHATisLogged ( char * a_name, int * a_soc );
 int CHATfirstEmptySlot();
+int CHATalreadyInRoom ( int a_roomId, int * a_pos );
 
 
 void CHATprepareMainRoom();
@@ -31,5 +32,8 @@ void CHATassignUser ( int * a_pos, int * a_fd, char* a_nick );
 void CHATloginUser(struct CHATcommand * cmd, int * a_soc);
 void CHATexecuteCommand(struct CHATcommand * cmd, int * a_soc);
 void CHATparseMessage(unsigned char * a_message, int * a_soc);
+void CHATjoinToRoom(struct CHATcommand * cmd, int * a_soc);
+void CHATuserAddRoom( int * a_pos , int * a_roomPos );
+void CHATassignToRoom(int a_id, int * a_fd);
 
 #endif

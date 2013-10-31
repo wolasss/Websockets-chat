@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <fcntl.h>
+#include "chat.h"
 #include "sockets.h"
 #include "websocket.h"
 #include "tools.h"
@@ -57,6 +58,8 @@ struct CHATcommand * CHATdecodeCommand(unsigned char * a_command) {
     	cmd.commandId = 1;
     } else if(!strcmp(command, "help")) {
     	cmd.commandId = 2;
+    } else if(!strcmp(command, "join")) {
+    	cmd.commandId = 3;
     }
 
     return &cmd;
@@ -78,7 +81,7 @@ int CHATisLogged ( char * a_name, int * a_soc ) {
 
 void CHATremoveUser ( char * a_name, int * a_soc, int * pos ) {
 	int i;
-	if(pos) {
+	if(pos>=0) {
 		IPCp(GLOBALsemid,0);
 		(*SHM).tabUser[*pos].fd = 0;
 		bzero((*SHM).tabUser[*pos].nick, 32);
@@ -137,13 +140,16 @@ void CHATsendReply( int a_statusCode, char * a_message, int *a_soc ) {
 }
 
 void CHATloginUser(struct CHATcommand * cmd, int * a_soc) {
-	int firstFree, i, logged=CHATisLogged(cmd->param, NULL);
+	int firstFree, i, logged=CHATisLogged(cmd->param, NULL), mainRoom = 0;
 	if(logged>=0) {
 		CHATsendReply(501, "User already exists. Please choose another nickname.", a_soc);
 	} else {
 		firstFree = CHATfirstEmptySlot();
 		if(firstFree>=0) {
 			CHATassignUser(&firstFree, a_soc, cmd->param);
+			//addTomain
+			CHATassignToRoom(0, a_soc);
+			CHATuserAddRoom(&logged, &mainRoom);
 			CHATsendReply(101, "You are logged in.", a_soc);
 			//TODO send new user lists.
 		} else {
@@ -156,7 +162,7 @@ void CHATexecuteCommand(struct CHATcommand * cmd, int * a_soc) {
 	/*
 	1 - login
 	2 - help
-
+	3 - join
 	*/
 	switch(cmd->commandId) {
 		case 1:
@@ -165,14 +171,111 @@ void CHATexecuteCommand(struct CHATcommand * cmd, int * a_soc) {
 		case 2:
 
 			break;
+		case 3:
+			CHATjoinToRoom(cmd, a_soc);
+			break;
+	}
+}
+
+int CHATroomExists( char* a_name ) {
+	int exists = -1, i=1;
+	
+	IPCp(GLOBALsemid,1);
+	for(i=1; i<MAX_ROOMS; i++) {
+		if((*SHM).tabRoom[i].id!=0) {
+			if(!strcmp((*SHM).tabRoom[i].name, a_name)) {
+				exists=i;
+				break;
+			}
+		}
+	}
+	IPCv(GLOBALsemid,1);
+	
+	return exists;
+}
+
+void CHATassignToRoom(int a_id, int * a_fd) {
+	IPCp(GLOBALsemid,1);
+	(*SHM).tabRoom[a_id].id = a_id+1; //TODO
+	IPCv(GLOBALsemid,1);
+}
+
+int CHATcreateRoom( char* a_name, int * a_creator ) {
+	int freeSlot = -1, i; 
+	IPCp(GLOBALsemid,1);
+	for(i=1; i<MAX_ROOMS; i++) {
+		if((*SHM).tabRoom[i].id==0) {
+			freeSlot = i;
+			break;
+		}
+	}
+	if(freeSlot>=0) {
+		(*SHM).tabRoom[freeSlot].id = freeSlot+1;
+		strncpy((*SHM).tabRoom[freeSlot].name, a_name, 32);
+		(*SHM).tabRoom[freeSlot].activeUsers[0] = *a_creator;
+	}
+	IPCv(GLOBALsemid,1);
+
+	return freeSlot;
+}
+
+void CHATuserAddRoom( int * a_pos , int * a_roomPos ) {
+	int i=0;
+	IPCp(GLOBALsemid,0);
+	for(i=0; i<MAX_ROOMS; i++) {
+		if((*SHM).tabUser[*a_pos].activeRooms[i]!=0) {
+			(*SHM).tabUser[*a_pos].activeRooms[i] = *a_roomPos+1; // add id of room, not position
+			break;
+		}
+	}
+	IPCv(GLOBALsemid,0);
+}
+
+int CHATalreadyInRoom ( int a_roomId, int * a_pos ) {
+	int alreadyIn = 0, i=0; 
+	IPCp(GLOBALsemid,0);
+	for(i=0; i<MAX_ROOMS; i++) {
+		if((*SHM).tabUser[*a_pos].activeRooms[i]==a_roomId) {
+			alreadyIn = 1;
+			break;
+		}
+	}
+	IPCv(GLOBALsemid,0);
+	return alreadyIn;
+}
+
+void CHATjoinToRoom(struct CHATcommand * cmd, int * a_soc) {
+	int roomPos = CHATroomExists(cmd->param);
+	int pos = CHATisLogged(NULL, a_soc);
+	if(pos>=0) {
+		if(roomPos>=0) {
+			printf("Room istnieje i dodaje\n");
+			if(!CHATalreadyInRoom(roomPos+1, &pos)) {
+				CHATassignToRoom(roomPos, a_soc);
+				CHATuserAddRoom(&pos, &roomPos);
+			} else {
+				CHATsendReply(503, "You are already in that room.", a_soc);
+			}
+		} else {
+			//tworzymy room
+			roomPos = CHATcreateRoom(cmd->param, a_soc);
+			if(roomPos<0) {
+				CHATsendReply(503, "You cannot join the room. Reached maximum number of rooms.", a_soc);
+			} else {
+				printf("Room nie istnial ale juz istnieje i dodaje\n");
+				CHATuserAddRoom(&pos, &roomPos);
+			}
+		}
+	} else {
+		perror("User cannot join to room, because he is not logged in.");
 	}
 }
 
 void CHATprepareMainRoom() {
-	IPCp(GLOBALsemid,0);
+	IPCp(GLOBALsemid,1);
 	(*SHM).tabRoom[0].id=1;
 	strncpy((*SHM).tabRoom[0].name,"main", 5);
-	IPCv(GLOBALsemid,0);
+	IPCv(GLOBALsemid,1);
 }
 
 void CHATparseMessage(unsigned char * a_message, int * a_soc) {
