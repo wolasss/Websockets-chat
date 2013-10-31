@@ -62,11 +62,11 @@ struct CHATcommand * CHATdecodeCommand(unsigned char * a_command) {
     return &cmd;
 }
 
-int CHATisLogged ( char * a_name ) {
+int CHATisLogged ( char * a_name, int * a_soc ) {
 	int loginPosition = -1, i;
 	IPCp(GLOBALsemid,0);
 	for(i=0; i<MAX_USERS; i++) {
-		if(!strcmp((*SHM).tabUser[i].nick, a_name)) {
+		if((a_soc && (*SHM).tabUser[i].fd==(*a_soc)) || (a_name && !strcmp((*SHM).tabUser[i].nick, a_name)) ) {
 			loginPosition = i;
 			break;
 		}
@@ -74,6 +74,25 @@ int CHATisLogged ( char * a_name ) {
 	IPCv(GLOBALsemid,0);
 
 	return loginPosition;
+}
+
+int CHATremoveUser (  char * a_name, int * a_soc, int * pos ) {
+	if(pos) {
+		IPCp(GLOBALsemid,0);
+		(*SHM).tabUser[*pos].fd = 0;
+		bzero((*SHM).tabUser[*pos].nick, 32);
+		IPCv(GLOBALsemid,0);
+	} else {
+		IPCp(GLOBALsemid,0);
+		for(i=0; i<MAX_USERS; i++) {
+			if((a_soc && (*SHM).tabUser[i].fd==(*a_soc)) || (a_name && !strcmp((*SHM).tabUser[i].nick, a_name)) ) {
+				(*SHM).tabUser[i].fd = 0;
+				bzero((*SHM).tabUser[i].nick, 32);
+				break;
+			}
+		}
+		IPCv(GLOBALsemid,0);
+	}
 }
 
 void CHATassignUser ( int * a_pos, int * a_fd, char* a_nick ) {
@@ -112,7 +131,7 @@ void CHATsendReply( int a_statusCode, char * a_message, int *a_soc ) {
 }
 
 void CHATloginUser(struct CHATcommand * cmd, int * a_soc) {
-	int firstFree, i, logged=CHATisLogged(cmd->param);
+	int firstFree, i, logged=CHATisLogged(cmd->param, NULL);
 	if(logged>=0) {
 		CHATsendReply(501, "User already exists. Please choose another nickname.", a_soc);
 	} else {
