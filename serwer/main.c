@@ -151,7 +151,7 @@ int main( int argc, char *argv[] ) {
             exit(0);
         }
     }
- 	SHMinit(rand()%1000, SHM);
+ 	SHMinit(rand()%1000);
 
 	if(socketfd>0) {
 		struct sockaddr_in my_addr; 

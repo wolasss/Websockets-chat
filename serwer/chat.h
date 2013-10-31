@@ -18,7 +18,10 @@
 #include "tools.h"
 #include "ipc_shared.h"
 
+struct CHATcommand * CHATdecodeCommand(unsigned char * a_command);
 
+void CHATloginUser(struct CHATcommand * cmd, int * a_soc);
+void CHATexecuteCommand(struct CHATcommand * cmd, int * a_soc);
 void CHATparseMessage(unsigned char * a_message, int * a_soc);
 
 #endif

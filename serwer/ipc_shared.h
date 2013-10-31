@@ -27,7 +27,7 @@ struct Shared {
 	struct Room tabRoom[MAX_ROOM];
 };
 
-void SHMinit(int a_sid, struct Shared * a_shm);
+void SHMinit(int a_sid);
 void SHMdestroy();
 void IPCv(int a_semid, int a_semnum);
 void IPCp(int a_semid, int a_semnum);

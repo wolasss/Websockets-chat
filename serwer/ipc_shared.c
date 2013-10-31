@@ -4,6 +4,7 @@
 #include <sys/sem.h>
 #include "ipc_shared.h"
 
+extern struct Shared * SHM;
 extern int GLOBALsemid;
 extern int GLOBALshmid;
 
@@ -39,14 +40,14 @@ void SHMdestroy() {
 	exit(1);
 }
 
-void SHMinit(int a_sid, struct Shared * a_shm) {
+void SHMinit(int a_sid) {
 
-	if( (GLOBALshmid = shmget(a_sid, sizeof(*a_shm), IPC_CREAT|0666))<0 ) {
+	if( (GLOBALshmid = shmget(a_sid, sizeof(*SHM), IPC_CREAT|0666))<0 ) {
 		perror("Creating segment of sahred memory. ");
 		exit(1);
 	}
 	
-	if( (a_shm = shmat(GLOBALshmid, NULL, 0)) == NULL) {
+	if( (SHM = shmat(GLOBALshmid, NULL, 0)) == NULL) {
 		perror("Joining segment of sahred memory. ");
 		exit(1);
 	}
@@ -70,5 +71,4 @@ void SHMinit(int a_sid, struct Shared * a_shm) {
 				exit(1);
 			} 
 	}
-	printf("sem if %d\n", GLOBALsemid);
 }
