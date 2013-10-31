@@ -23,6 +23,8 @@ struct CHATcommand * CHATdecodeCommand(unsigned char * a_command);
 int CHATisLogged ( char * a_name, int * a_soc );
 int CHATfirstEmptySlot();
 
+
+void CHATprepareMainRoom();
 void CHATremoveUser (  char * a_name, int * a_soc, int * pos );
 void CHATsendReply( int a_statusCode, char * a_message, int *a_soc );
 void CHATassignUser ( int * a_pos, int * a_fd, char* a_nick );

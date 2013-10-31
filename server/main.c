@@ -152,7 +152,8 @@ int main( int argc, char *argv[] ) {
         }
     }
  	SHMinit(rand()%1000);
-
+ 	CHATprepareMainRoom();
+ 	
 	if(socketfd>0) {
 		struct sockaddr_in my_addr; 
 		my_addr.sin_family = PF_INET;

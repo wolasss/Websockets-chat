@@ -14,12 +14,14 @@
 
 struct User {
 	char nick[USER_LENGTH];
+	int activeRooms[MAX_ROOM];
 	int fd;
 };
 
 struct Room {
 	unsigned int id;
 	char name[USER_LENGTH];
+	int activeUsers[MAX_USER];
 };
 
 struct Shared {

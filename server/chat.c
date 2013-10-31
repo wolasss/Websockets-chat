@@ -76,7 +76,7 @@ int CHATisLogged ( char * a_name, int * a_soc ) {
 	return loginPosition;
 }
 
-void CHATremoveUser (  char * a_name, int * a_soc, int * pos ) {
+void CHATremoveUser ( char * a_name, int * a_soc, int * pos ) {
 	int i;
 	if(pos) {
 		IPCp(GLOBALsemid,0);
@@ -97,9 +97,14 @@ void CHATremoveUser (  char * a_name, int * a_soc, int * pos ) {
 }
 
 void CHATassignUser ( int * a_pos, int * a_fd, char* a_nick ) {
+	int i;
 	IPCp(GLOBALsemid,0);
 	(*SHM).tabUser[*a_pos].fd = *a_fd;
 	strncpy((*SHM).tabUser[*a_pos].nick, a_nick, 32);
+	for(i=1; i<MAX_ROOMS; i++) {
+		(*SHM).tabUser[*a_pos].activeRooms[i] = -1;
+		//implicitly assign user to main Room (0)
+	}
 	IPCv(GLOBALsemid,0);
 }
 
@@ -140,6 +145,7 @@ void CHATloginUser(struct CHATcommand * cmd, int * a_soc) {
 		if(firstFree>=0) {
 			CHATassignUser(&firstFree, a_soc, cmd->param);
 			CHATsendReply(101, "You are logged in.", a_soc);
+			//TODO send new user lists.
 		} else {
 			CHATsendReply(502, "There are no empty slots available. Try again later.", a_soc);
 		}
@@ -160,6 +166,13 @@ void CHATexecuteCommand(struct CHATcommand * cmd, int * a_soc) {
 
 			break;
 	}
+}
+
+void CHATprepareMainRoom() {
+	IPCp(GLOBALsemid,0);
+	(*SHM).tabRoom[0].id=1;
+	strncpy((*SHM).tabRoom[0].name,"main", 5);
+	IPCv(GLOBALsemid,0);
 }
 
 void CHATparseMessage(unsigned char * a_message, int * a_soc) {
