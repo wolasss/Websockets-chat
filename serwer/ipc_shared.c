@@ -5,6 +5,7 @@
 #include "ipc_shared.h"
 
 extern int GLOBALsemid;
+extern int GLOBALshmid;
 
 void IPCv(int a_semid, int a_semnum) {
 	struct sembuf buf;
@@ -32,15 +33,24 @@ void IPCp(int a_semid, int a_semnum){
 	}
 }
 
-void SHMinit(int a_sid, struct Shared * a_shm) {
-	int shmid;
+void SHMdestroy() {
+	if(semctl(GLOBALsemid, 0, IPC_RMID, (int)1)==-1) {
+		perror("Error removing semaphore");
+	}
+	if(shmctl(GLOBALshmid, IPC_RMID, 0)==-1) {
+		perror("Error removing shared memory");
+	}
+	exit(1);
+}
 
-	if( (shmid = shmget(a_sid, sizeof(*a_shm), IPC_CREAT|0666))<0 ) {
+void SHMinit(int a_sid, struct Shared * a_shm) {
+
+	if( (GLOBALshmid = shmget(a_sid, sizeof(*a_shm), IPC_CREAT|0666))<0 ) {
 		perror("Creating segment of sahred memory. ");
 		exit(1);
 	}
 	
-	if( (a_shm = shmat(shmid, NULL, 0)) == NULL) {
+	if( (a_shm = shmat(GLOBALshmid, NULL, 0)) == NULL) {
 		perror("Joining segment of sahred memory. ");
 		exit(1);
 	}

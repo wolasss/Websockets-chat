@@ -51,6 +51,10 @@ aout - argument tylko do zapisania
 
 #define DEBUG 1
 
+void forceQuit(int a_sig) {
+    SHMdestroy();
+}
+
 void killChildProcess(int a_sig) {
     wait(NULL);
 }
@@ -126,9 +130,12 @@ void acceptConnection( int * socketfd ) {
 
 struct Shared * SHM = NULL;
 int GLOBALsemid;
+int GLOBALshmid;
+
 
 int main( int argc, char *argv[] ) {
 	srand(time(NULL));
+	signal(SIGINT, forceQuit);
     signal(SIGCHLD, killChildProcess);
     
     int socketfd = socket(PF_INET, SOCK_STREAM, 0), //SCKDGRAM - UDP, STREAM - TCP
@@ -145,13 +152,12 @@ int main( int argc, char *argv[] ) {
             perror("Wrong port number. ");
             exit(0);
         }
-        SHMinit(rand()%1000, SHM);
-        printf("go go 0: %d\n", semctl(GLOBALsemid, 0, GETVAL, (int)1));
-        printf("go go 1: %d\n", semctl(GLOBALsemid, 1, GETVAL, (int)1));
-        printf("go go 2: %d\n", semctl(GLOBALsemid, 2, GETVAL, (int)1));
-
     }
- 		
+ 	SHMinit(rand()%1000, SHM);
+    printf("go go 0: %d\n", semctl(GLOBALsemid, 0, GETVAL, (int)1));
+    printf("go go 1: %d\n", semctl(GLOBALsemid, 1, GETVAL, (int)1));
+    printf("go go 2: %d\n", semctl(GLOBALsemid, 2, GETVAL, (int)1));
+
 	if(socketfd>0) {
 		struct sockaddr_in my_addr; 
 		my_addr.sin_family = PF_INET;
@@ -174,6 +180,7 @@ int main( int argc, char *argv[] ) {
 		perror("Error creating a socket: ");
 		exit(0);
 	}
+	SHMdestroy();
 	close(socketfd);
 	return 0;
 }

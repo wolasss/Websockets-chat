@@ -28,6 +28,7 @@ struct Shared {
 };
 
 void SHMinit(int a_sid, struct Shared * a_shm);
+void SHMdestroy();
 void IPCv(int a_semid, int a_semnum);
 void IPCp(int a_semid, int a_semnum);
 
