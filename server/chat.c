@@ -32,6 +32,18 @@ struct CHATcommand {
 	char * param;
 };
 
+unsigned char * createJSONresponse( int * a_statusCode, unsigned char* a_message ) {
+	static unsigned char reply[512];
+	bzero(reply, 512);
+	if(a_message[0]=='[') {
+		snprintf((char*)reply, sizeof reply, "{ \"status\": %d, \"message\": %s }", *a_statusCode, a_message);
+	} else {
+		snprintf((char*)reply, sizeof reply, "{ \"status\": %d, \"message\": \"%s\" }", *a_statusCode, a_message);
+	}
+	
+	return reply;
+}
+
 struct CHATcommand * CHATdecodeCommand(unsigned char * a_command) {
 	static struct CHATcommand cmd;
 
@@ -45,21 +57,24 @@ struct CHATcommand * CHATdecodeCommand(unsigned char * a_command) {
     		i++;
     }
     paramLen = strlen((char*)a_command)-i+1;
-    cmd.param = malloc(paramLen);
-    bzero(cmd.param, paramLen);
-    i++; // remove space 
-    while(a_command[i]!='\0') {
-    		cmd.param[b]=a_command[i];
-    		i++; 
-    		b++;
+    if(paramLen>=0) {
+    	cmd.param = malloc(paramLen);
+	    bzero(cmd.param, paramLen);
+	    i++; // remove space 
+	    while(a_command[i]!='\0') {
+	    		cmd.param[b]=a_command[i];
+	    		i++; 
+	    		b++;
+	    }
     }
-
     if(!strcmp(command, "login")) {
     	cmd.commandId = 1;
     } else if(!strcmp(command, "help")) {
     	cmd.commandId = 2;
     } else if(!strcmp(command, "join")) {
     	cmd.commandId = 3;
+    } else if(!strcmp(command, "users")) {
+    	cmd.commandId = 4;
     }
 
     return &cmd;
@@ -77,6 +92,57 @@ int CHATisLogged ( char * a_name, int * a_soc ) {
 	IPCv(GLOBALsemid,0);
 
 	return loginPosition;
+}
+
+void CHATgetUserList (char * aout_list) {
+	int i;
+	strcpy(aout_list, "[\"");
+	IPCp(GLOBALsemid,0);
+	for(i=0; i<MAX_USERS; i++) {
+		if((*SHM).tabUser[i].fd!=0) {
+			strcat(aout_list, (*SHM).tabUser[i].nick);
+			strcat(aout_list, "\",\"");
+		}
+	}
+	IPCv(GLOBALsemid,0);
+	aout_list[strlen(aout_list)-2] = ']';
+	aout_list[strlen(aout_list)-1] = '\0';
+}
+
+void CHATsendUserList(int * a_soc) {
+	char * list = malloc(512);
+	unsigned char * reply;
+	int statusCode = 104;
+	bzero(list,512);
+	CHATgetUserList(list);
+
+	reply = createJSONresponse(&statusCode, (unsigned char*)list);
+	WEBSOCsendMessage(a_soc, reply);
+
+	printf("soc: %d, reply:\n%s\n", *a_soc, reply);
+}
+
+void CHATsendUserListToAll () {
+	int users[MAX_USERS], i=0, j=0;
+	for(i=0; i<MAX_USERS; i++) {
+		users[i]=-1;
+	}
+
+	i=0;
+	//get all users
+	IPCp(GLOBALsemid,0);
+	for(j=0; j<MAX_USERS; j++) {
+		if((*SHM).tabUser[i].fd!=0) {
+			users[i] = (*SHM).tabUser[i].fd;
+			i++;
+		}
+	}
+	IPCv(GLOBALsemid,0);
+
+	//send to all
+	for(j=0; j<i; j++) {
+		CHATsendUserList(&(users[j]));
+	}
 }
 
 void CHATremoveUser ( char * a_name, int * a_soc, int * pos ) {
@@ -106,7 +172,7 @@ void CHATassignUser ( int * a_pos, int * a_fd, char* a_nick ) {
 	strncpy((*SHM).tabUser[*a_pos].nick, a_nick, 32);
 	for(i=1; i<MAX_ROOMS; i++) {
 		(*SHM).tabUser[*a_pos].activeRooms[i] = -1;
-		//implicitly assign user to main Room (0)
+		//implicitly assign user to main Room (0), because we starting from i=1
 	}
 	IPCv(GLOBALsemid,0);
 }
@@ -124,12 +190,7 @@ int CHATfirstEmptySlot() {
 	return firstFree;
 }
 
-unsigned char * createJSONresponse( int * a_statusCode, unsigned char* a_message ) {
-	static unsigned char reply[512];
-	bzero(reply, 512);
-	snprintf((char*)reply, sizeof reply, "{ \"status\": %d, \"message\": \"%s\" }", *a_statusCode, a_message);
-	return reply;
-}
+
 
 
 void CHATsendReply( int a_statusCode, char * a_message, int *a_soc ) {
@@ -148,10 +209,10 @@ void CHATloginUser(struct CHATcommand * cmd, int * a_soc) {
 		if(firstFree>=0) {
 			CHATassignUser(&firstFree, a_soc, cmd->param);
 			//addTomain
-			CHATassignToRoom(0, a_soc);
 			CHATuserAddRoom(&logged, &mainRoom);
 			CHATsendReply(101, "You are logged in.", a_soc);
 			//TODO send new user lists.
+			CHATsendUserListToAll();
 		} else {
 			CHATsendReply(502, "There are no empty slots available. Try again later.", a_soc);
 		}
@@ -163,6 +224,7 @@ void CHATexecuteCommand(struct CHATcommand * cmd, int * a_soc) {
 	1 - login
 	2 - help
 	3 - join
+	4 - usersList
 	*/
 	switch(cmd->commandId) {
 		case 1:
@@ -173,6 +235,9 @@ void CHATexecuteCommand(struct CHATcommand * cmd, int * a_soc) {
 			break;
 		case 3:
 			CHATjoinToRoom(cmd, a_soc);
+			break;
+		case 4:
+			CHATsendUserList(a_soc);
 			break;
 	}
 }
@@ -223,7 +288,7 @@ void CHATuserAddRoom( int * a_pos , int * a_roomPos ) {
 	int i=0;
 	IPCp(GLOBALsemid,0);
 	for(i=0; i<MAX_ROOMS; i++) {
-		if((*SHM).tabUser[*a_pos].activeRooms[i]!=0) {
+		if((*SHM).tabUser[*a_pos].activeRooms[i]>=0) {
 			(*SHM).tabUser[*a_pos].activeRooms[i] = *a_roomPos+1; // add id of room, not position
 			break;
 		}

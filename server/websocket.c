@@ -126,6 +126,7 @@ unsigned char* WEBSOCgetRequestKey(unsigned char* a_request) {
 }
 
 void WEBSOCsendMessage( int * a_soc, unsigned char* a_message ) {
+    printf("sending: %s\n", a_message);
     if(fork()==0) {
         unsigned long frameSize = 0;
         unsigned char * frame = WEBSOC_createFrame(a_message, &frameSize);
@@ -191,11 +192,11 @@ unsigned char* WEBSOCdecodeFrame( unsigned char* a_frame, unsigned long * a_fram
     return decoded;
 }
 
-int WEBSOChandshake( int * soc ) {
+int WEBSOChandshake( int soc ) {
     unsigned long len;
     unsigned char* request, *reply, *key;   
       
-    request = SOCreceiveMessage(soc, request, &len);
+    request = SOCreceiveMessage(&soc, request, &len);
     
     if(DEBUG) {
       printf("Request:\n%s\n", request);
@@ -210,7 +211,7 @@ int WEBSOChandshake( int * soc ) {
     }
 
     len = strlen((char*)reply);
-    SOCsendMessage(soc,reply,&len);
+    SOCsendMessage(&soc,reply,&len);
 
     return 1;
 }

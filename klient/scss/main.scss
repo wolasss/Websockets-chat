@@ -2,6 +2,7 @@
 @import "flat-ui";
 @import "nprogress";
 @import "compass";
+@import "compass/css3/user-interface";
 
 /* ==========================================================================
    Base styles: opinionated defaults
@@ -387,7 +388,7 @@ body {
   @include inline-block;
 }
 
-#user-list {
+#userlist {
     @include inline-block;
     vertical-align:top;
     background: #293d50;
@@ -395,17 +396,20 @@ body {
     margin-left:10px;
     min-height:100px;
     border-radius: 6px;
+    display:none;
+    visibility:hidden;
     h4 {
         margin-top:15px;
         padding-left:10px;
         font-size:14px;
-        font-family:'Open Sans';
+        font-family:'Lato';
         font-weight:300;
     }
     .list {
         list-style:none;
         padding:0;
         margin:0;
+        margin-bottom:10px;
     }
     .user {
         background: url('../images/icons/png/silhouette_small.png') no-repeat 10px center; 
@@ -413,6 +417,7 @@ body {
         padding:5px 35px;
         font-size:13px;
         cursor:pointer;
+        @include user-select(none);
     }
     .user:hover {
         background-color: #3498db;

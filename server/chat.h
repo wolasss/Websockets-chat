@@ -32,6 +32,7 @@ void CHATassignUser ( int * a_pos, int * a_fd, char* a_nick );
 void CHATloginUser(struct CHATcommand * cmd, int * a_soc);
 void CHATexecuteCommand(struct CHATcommand * cmd, int * a_soc);
 void CHATparseMessage(unsigned char * a_message, int * a_soc);
+
 void CHATjoinToRoom(struct CHATcommand * cmd, int * a_soc);
 void CHATuserAddRoom( int * a_pos , int * a_roomPos );
 void CHATassignToRoom(int a_id, int * a_fd);

@@ -16,7 +16,7 @@ var sandbox = function(core, instanceId, options, moduleId) {
   this.CSSchat = '.chat';
   this.CSSmessageField = '.message-field';
   this.CSSmessagesContainer = '.messages';
-
+  this.CSSuserList = '.list';
 
 
 
@@ -59,6 +59,9 @@ var sandbox = function(core, instanceId, options, moduleId) {
   };
   this.toggleModule = function() {
     return $(DOMid).toggle();
+  };
+  this.slideToggle = function(cb) {
+    return $(DOMid).slideToggle(cb);
   };
   this.prop = "bar";
   this.id = instanceId;

@@ -56,11 +56,10 @@ var MODloginForm = function(sb){
 		});
 	};
 	parseResponse = function(response) {
-		console.log(response);
 		if(response.status==101) {
 			//ok
 			loginSuccess();
-		} else {
+		} else if(response.status>500){
 			//failure
 			connectionError(response.message);
 		}

@@ -1,7 +1,7 @@
 #ifndef WEBSOCKET_H
 #define WEBSOCKET_H
 
-int WEBSOChandshake( int * soc );
+int WEBSOChandshake( int a_soc );
 unsigned char* WEBSOC_createFrame(unsigned char* a_message, unsigned long * aout_size);
 unsigned char* WEBSOCcreateHandshakeResponse(unsigned char* key);
 unsigned char* WEBSOCgenerateAcceptKey(unsigned char* key);

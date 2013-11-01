@@ -39,6 +39,7 @@ var MODwebsocket = function(sb){
 			}
 		} catch(e) {
 			//ignore message it's not json
+			console.log(e.data);
 		}
 	};
 	closeConnection = function() {

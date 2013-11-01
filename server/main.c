@@ -74,23 +74,23 @@ void logEvent(char* a_event) {
 	IPCv(GLOBALsemid,2);
 }
 
-void handleClient( int * a_soc ) {
+void handleClient( int a_soc ) {
     unsigned char *frame, *message;
     unsigned long messageLength = 0, frameLength = 0;
     while(1) {
         bzero(message, messageLength);
 
-        frame = SOCreceiveMessage(a_soc, frame, &frameLength);
+        frame = SOCreceiveMessage(&a_soc, frame, &frameLength);
         if(frameLength!=-1) {
             message = WEBSOCdecodeFrame(frame, &frameLength);
             messageLength = strlen((char*)message);
 
             printf("%s\n", message);
-            CHATparseMessage(message, a_soc);
+            CHATparseMessage(message, &a_soc);
         } else {
             //klient przerwal polaczenie
             perror("Connection terminated by client. ");
-            int pos = CHATisLogged(NULL, a_soc);
+            int pos = CHATisLogged(NULL, &a_soc);
             CHATremoveUser(NULL, NULL, &pos);
             exit(1);
             break;
@@ -108,20 +108,19 @@ void acceptConnection( int * socketfd ) {
 		if(clisoc>=0) {
 			bzero(log, 512);
 
-			printf("Connected: %s \n", inet_ntoa(client_addr.sin_addr));
+			printf("Connected: %s SOCKETFFD: %d\n", inet_ntoa(client_addr.sin_addr), clisoc);
 			snprintf(log, sizeof log, "Connected: %s \n", inet_ntoa(client_addr.sin_addr));
 			logEvent(log);	
 			fflush(stdout); // just in case 
 			if(fork()==0) {
 				signal(SIGINT, SIG_DFL);
                 close(*socketfd);
-				if((WEBSOChandshake(&clisoc))>0) {
-                    handleClient(&clisoc);
+				if((WEBSOChandshake(clisoc))>0) {
+                    handleClient(clisoc);
                 }
 				close(clisoc);
 				exit(0);
 			} else {
-				close(clisoc);
 			}
 		} else {
 			perror("Accepting error: ");
