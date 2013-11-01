@@ -103,16 +103,11 @@ body {
     width:90%;
     margin:0 auto;
     min-height:600px;
-}
-
-.login {
-    padding:0;
-    margin:0;
-    width:100%;
+    color: #edeff1;
 }
 
 .chat {
-    width:600px;
+    width:865px;
     margin:0 auto;
     @include box-sizing(border-box);
     padding:100px 0;
@@ -120,79 +115,82 @@ body {
     @include transition(all 0.4s ease-in);
 }
 
-.login-icon {
-    float:left;
+.chat-container .login-field:focus + .login-field-icon {
+  color: #3498db;
 }
 
-.expanded {
-    //width:800px;
-    .chat-container {
-        height:500px;
+.chat-icon {
+    width: 96px;
+    @include inline-block;
+    vertical-align:top;
+    img {
+        display: block;
+        margin-bottom: 6px;
+        width: 100%;
+    }
+    h4 {
+        font-size: 17px;
+        font-weight: 200;
+        line-height: 34px;
+        @include opacity(0.95);
+    }
+    small {
+        color: inherit;
+        display: block;
+        font-size: inherit;
+        font-weight: 700;
     }
 }
 
 .chat-container {
-    margin-left: 126px;
+    .expanded & {
+        height:500px;
+    }
+    width:445px;
+    @include inline-block;
+    margin-left: 20px;
     position:relative;
-    overflow:hidden;
     @include transition(all 0.4s ease-in);
+    background-color: #edeff1;
+    padding: 24px 23px 20px;
+    border-radius: 6px;
 
-    .form-fieldset {
-        overflow:hidden;
+    &:before {
+        content: '';
+        border-style: solid;
+        border-width: 12px 12px 12px 0;
+        border-color: transparent #edeff1 transparent transparent;
+        height: 0;
+        position: absolute;
+        left: -12px;
+        top: 35px;
+        width: 0;
+        -webkit-transform: rotate(360deg);
     }
-    .hostname {
-        width:60%;
-        margin-right:5%;
+    .form-group {
+        width:50%;
+        float:left;
     }
-    .port {
-        width:30%;
-        .login-field-icon {
-            right:0px;
-        }
+    .login-field {
+        border-color: transparent;
+        width:90%;
+        font-size: 17px;
+        text-indent: 3px;
     }
-    .username {
-        width:60%;
-        margin-right:5%;
-    }
-    .login-button-container {
-        width:30%;
-        margin-bottom:0;
-        .login-button {
-            width:90%;
-            padding: 12px 15px 13px;
-        }
+    .login-field-icon {
+        color: #bfc9ca;
+        font-size: 16px;
+        position: absolute;
+        right: 13px;
+        top: 11px;
+        -webkit-transition: 0.25s;
+        -moz-transition: 0.25s;
+        -o-transition: 0.25s;
+        transition: 0.25s;
+        -webkit-backface-visibility: hidden;
     }
 }
 
-.default-server {
-    margin-top:5px;
-    width:100%;
-    text-align:center;
-    color:#2c3e50;
-    label {
-        margin-left: 4px;
-    }
-}
-
-.login-button {
-    width:60%;
-}
-
-
-
-
-.form-group.username {
-}
-
-.form-group.username input {
-
-}
-
-.login-button {
-    display:block;
-   text-align: center;
-    margin: 0 auto;
-}
 
 /* ==========================================================================
    Modules
@@ -200,6 +198,29 @@ body {
 
 #loginForm {
     display: none;
+    
+    .hostname {
+        width:60%;
+        margin-right:5%;
+    }
+
+    .port {
+        width:30%;
+        .login-field-icon {
+            right:0px;
+        }
+    }
+
+    .username {
+        width:60%;
+        margin-right:5%;
+    }    
+
+    .login-button-container {
+        width:30%;
+        margin-bottom:0;
+    }
+
     .error {
         display:none;
         background: #c0392b;
@@ -211,6 +232,32 @@ body {
             margin: 0;
             font-size: 14px;
         }
+    }
+    .form-fieldset {
+        overflow:hidden;
+    }
+    .login-button {
+        width:90%;
+        padding: 12px 15px 13px;
+        display:block;
+        text-align: center;
+        margin: 0 auto;
+    }
+    .default-server {
+        margin-top:5px;
+        width:100%;
+        text-align:center;
+        color:#2c3e50;
+    }
+    .checkbox {
+        margin-left: 4px;
+    }
+    .login-link {
+        color: #bfc9ca;
+        display: block;
+        font-size: 13px;
+        margin-top: 15px;
+        text-align: center;
     }
 }
 %message {
@@ -287,7 +334,6 @@ body {
                 @include transform(rotate(180deg));
             }
         }
-
         .info {
             font-size:12px;
             position: absolute;
@@ -295,7 +341,6 @@ body {
             bottom:-16px;
             color: #34495e;
         }
-
         .message.me {
             float:left;
             text-align:left;
@@ -313,11 +358,7 @@ body {
                 left:auto;
                 right:4px;
             }
-        }
-        
-        
-
-        
+        }     
     }
 }
 
@@ -338,14 +379,45 @@ body {
     }
 }
 
-
 #loading {
   text-align:center;
 }
+
 #loading .spinner {
   @include inline-block;
 }
 
+#user-list {
+    @include inline-block;
+    vertical-align:top;
+    background: #293d50;
+    width:200px;
+    margin-left:10px;
+    min-height:100px;
+    border-radius: 6px;
+    h4 {
+        margin-top:15px;
+        padding-left:10px;
+        font-size:14px;
+        font-family:'Open Sans';
+        font-weight:300;
+    }
+    .list {
+        list-style:none;
+        padding:0;
+        margin:0;
+    }
+    .user {
+        background: url('../images/icons/png/silhouette_small.png') no-repeat 10px center; 
+        vertical-align:top;
+        padding:5px 35px;
+        font-size:13px;
+        cursor:pointer;
+    }
+    .user:hover {
+        background-color: #3498db;
+    }
+}
 
 
 @media screen and (max-width: 768px) {
