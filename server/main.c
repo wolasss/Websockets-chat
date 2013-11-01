@@ -89,10 +89,8 @@ void handleClient( int a_soc ) {
             CHATparseMessage(message, &a_soc);
         } else {
             //klient przerwal polaczenie
-            printf("poszloooo do usuniecia1\n\n");
             int pos = CHATisLogged(NULL, &a_soc);
             CHATremoveUser(NULL, &a_soc, &pos);
-            printf("poszloooo do usuniecia2\n\n");
 
             perror("Connection terminated by client. ");
             exit(1);
@@ -124,6 +122,7 @@ void acceptConnection( int * socketfd ) {
 				close(clisoc);
 				exit(0);
 			} else {
+				//close clisoc
 			}
 		} else {
 			perror("Accepting error: ");

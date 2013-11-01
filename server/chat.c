@@ -133,18 +133,20 @@ void CHATsendUserListToAll () {
 	}
 
 	i=0;
+	printf("jestem tuuu\n");
 	//get all users
 	IPCp(GLOBALsemid,0);
 	for(j=0; j<MAX_USERS; j++) {
-		if((*SHM).tabUser[i].fd!=0) {
-			users[i] = (*SHM).tabUser[i].fd;
+		if((*SHM).tabUser[j].fd>0) {
+			users[i] = (*SHM).tabUser[j].fd;
 			i++;
 		}
 	}
 	IPCv(GLOBALsemid,0);
-
+	printf("jestem tuuu33 i: %d\n", i);
 	//send to all
 	for(j=0; j<i; j++) {
+		printf("wysylam liste do %d\n", users[j]);
 		CHATsendUserList(&(users[j]));
 	}
 }
@@ -159,25 +161,31 @@ void CHATremoveRoom (int a_id) {
 }
 
 void CHATremoveUserFromActiveRooms ( int a_pos, int a_fd ) {
-	int i,j,k=0, temp;
-	int activeRooms[MAX_ROOMS];
+	int i,j,k=0,l=0, temp;
+	int activeRooms[MAX_ROOMS], toRemove[MAX_ROOMS];
 
+	printf("no to jazda...\n");
 	IPCp(GLOBALsemid,0);
 	for(j=1; j<MAX_ROOMS; j++) {
 		temp = (*SHM).tabUser[a_pos].activeRooms[j];
-		if(temp>0) {
+		if(temp>=0) {
+			printf("aktywny room: %d", (*SHM).tabUser[a_pos].activeRooms[j]);
 			activeRooms[k] = temp;
 			k++;
 			(*SHM).tabUser[a_pos].activeRooms[j] = -1;
 		}
 	}
 	IPCv(GLOBALsemid,0);
-
+	printf("no to jazda %d...\n", k);
 	IPCp(GLOBALsemid,1);
 	for(i=0; i<k; i++) {
-		if((*SHM).tabRoom[activeRooms[i]-1].users<=1) {
-			CHATremoveRoom(activeRooms[i]);
+		printf("jade.\n");
+		if(activeRooms[i]>=1 && ((*SHM).tabRoom[activeRooms[i]-1].users<=1)) {
+			printf("usuwam bo ostatni wychodzi\n");
+			toRemove[l++]=activeRooms[i];
+			printf("po usunieciu\n");
 		} else {
+			printf("W pokoju: %d\n", (*SHM).tabRoom[activeRooms[i]-1].users);
 			//check all users and remove the one
 			for(j=0; j<MAX_USERS; j++) {
 				if((*SHM).tabRoom[activeRooms[i]-1].activeUsers[j]==a_fd) {
@@ -186,25 +194,19 @@ void CHATremoveUserFromActiveRooms ( int a_pos, int a_fd ) {
 					break;
 				}
 			}
+			printf("W pokoju: %d", (*SHM).tabRoom[activeRooms[i]-1].users);
 		}
 	}
 	IPCv(GLOBALsemid,1);
+	for(i=0; i<l; i++) {
+		CHATremoveRoom(toRemove[i]);
+	}
+	printf("uff..\n");
 }
 
 void CHATremoveUser ( char * a_name, int * a_soc, int * a_pos ) {
 	int pos = *a_pos, soc = *a_soc;
 	printf("usuwamy typa...\n");
-	if(a_soc == NULL && a_pos) {
-		IPCp(GLOBALsemid,0);
-		soc = (*SHM).tabUser[*a_pos].fd;
-		IPCv(GLOBALsemid,0);
-		printf("soc: %d", soc);
-	} else if( a_soc == NULL && a_name && !a_pos) {
-		pos = CHATisLogged(a_name, NULL);
-		IPCp(GLOBALsemid,0);
-		soc = (*SHM).tabUser[pos].fd;
-		IPCv(GLOBALsemid,0);
-	}
 	if(pos>=0) {
 		printf("usuwamy go..\n");
 		CHATremoveUserFromActiveRooms(pos, soc);
@@ -314,10 +316,23 @@ int CHATroomExists( char* a_name ) {
 	return exists;
 }
 
-void CHATassignToRoom(int a_id, int * a_fd) {
+int CHATassignToRoom(int a_id, int * a_fd) {
+	int sucess = 1, k;
 	IPCp(GLOBALsemid,1);
-	(*SHM).tabRoom[a_id].id = a_id+1; //TODO
+	if((*SHM).tabRoom[a_id].users==MAX_USERS) {
+		sucess=0;
+	} else {
+		(*SHM).tabRoom[a_id].id = a_id+1; //TODO
+		(*SHM).tabRoom[a_id].users++;
+		for(k=0; k<MAX_USERS; k++) {
+			if((*SHM).tabRoom[a_id].activeUsers[k]!=0) {
+				(*SHM).tabRoom[a_id].activeUsers[k] = *a_fd;
+				break;
+			}
+		}
+	}
 	IPCv(GLOBALsemid,1);
+	return sucess;
 }
 
 int CHATcreateRoom( char* a_name, int * a_creator ) {
@@ -343,7 +358,7 @@ void CHATuserAddRoom( int * a_pos , int * a_roomPos ) {
 	int i=0;
 	IPCp(GLOBALsemid,0);
 	for(i=0; i<MAX_ROOMS; i++) {
-		if((*SHM).tabUser[*a_pos].activeRooms[i]>=0) {
+		if((*SHM).tabUser[*a_pos].activeRooms[i]==-1) {
 			(*SHM).tabUser[*a_pos].activeRooms[i] = *a_roomPos+1; // add id of room, not position
 			break;
 		}
@@ -371,8 +386,11 @@ void CHATjoinToRoom(struct CHATcommand * cmd, int * a_soc) {
 		if(roomPos>=0) {
 			printf("Room istnieje i dodaje\n");
 			if(!CHATalreadyInRoom(roomPos+1, &pos)) {
-				CHATassignToRoom(roomPos, a_soc);
-				CHATuserAddRoom(&pos, &roomPos);
+				if(CHATassignToRoom(roomPos, a_soc)) {
+					CHATuserAddRoom(&pos, &roomPos);
+				} else {
+					CHATsendReply(503, "Room is full.", a_soc);
+				}
 			} else {
 				CHATsendReply(503, "You are already in that room.", a_soc);
 			}
