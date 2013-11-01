@@ -21,7 +21,8 @@ struct User {
 struct Room {
 	unsigned int id;
 	char name[USER_LENGTH];
-	int activeUsers[MAX_USER];
+	int activeUsers[MAX_USER]; //fd of users
+	int users; //how many
 };
 
 struct Shared {

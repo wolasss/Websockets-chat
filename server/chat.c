@@ -47,26 +47,30 @@ unsigned char * createJSONresponse( int * a_statusCode, unsigned char* a_message
 struct CHATcommand * CHATdecodeCommand(unsigned char * a_command) {
 	static struct CHATcommand cmd;
 
-	int paramLen, i=1, b=0;
+	int paramLen, i=1, b=0, cmdLen = strlen((char*)a_command);
 
 	char command[16];
 	bzero(command,16);
-
+	printf("przed pierwsza petla\n");
 	while(a_command[i]!=' ' && i<16) {
     		command[i-1]=a_command[i];
     		i++;
     }
-    paramLen = strlen((char*)a_command)-i+1;
+    printf("i: %d\n", i);
+    paramLen = cmdLen-i+1;
+    printf("paramLen: %d\n", paramLen);
     if(paramLen>=0) {
     	cmd.param = malloc(paramLen);
 	    bzero(cmd.param, paramLen);
 	    i++; // remove space 
-	    while(a_command[i]!='\0') {
+	    while(i<cmdLen) {
+	    		printf("%c", a_command[i]);
 	    		cmd.param[b]=a_command[i];
 	    		i++; 
 	    		b++;
 	    }
     }
+    printf("param: [%s]\n", cmd.param);
     if(!strcmp(command, "login")) {
     	cmd.commandId = 1;
     } else if(!strcmp(command, "help")) {
@@ -145,24 +149,74 @@ void CHATsendUserListToAll () {
 	}
 }
 
-void CHATremoveUser ( char * a_name, int * a_soc, int * pos ) {
-	int i;
-	if(pos>=0) {
-		IPCp(GLOBALsemid,0);
-		(*SHM).tabUser[*pos].fd = 0;
-		bzero((*SHM).tabUser[*pos].nick, 32);
-		IPCv(GLOBALsemid,0);
-	} else {
-		IPCp(GLOBALsemid,0);
-		for(i=0; i<MAX_USERS; i++) {
-			if((a_soc && (*SHM).tabUser[i].fd==(*a_soc)) || (a_name && !strcmp((*SHM).tabUser[i].nick, a_name)) ) {
-				(*SHM).tabUser[i].fd = 0;
-				bzero((*SHM).tabUser[i].nick, 32);
-				break;
+void CHATremoveRoom (int a_id) {
+	IPCp(GLOBALsemid,1);
+	(*SHM).tabRoom[a_id-1].id=0;
+	bzero((*SHM).tabRoom[a_id-1].name, 32);
+	bzero((*SHM).tabRoom[a_id-1].activeUsers, MAX_USERS);
+	(*SHM).tabRoom[a_id-1].users = 0;
+	IPCv(GLOBALsemid,1);
+}
+
+void CHATremoveUserFromActiveRooms ( int a_pos, int a_fd ) {
+	int i,j,k=0, temp;
+	int activeRooms[MAX_ROOMS];
+
+	IPCp(GLOBALsemid,0);
+	for(j=1; j<MAX_ROOMS; j++) {
+		temp = (*SHM).tabUser[a_pos].activeRooms[j];
+		if(temp>0) {
+			activeRooms[k] = temp;
+			k++;
+			(*SHM).tabUser[a_pos].activeRooms[j] = -1;
+		}
+	}
+	IPCv(GLOBALsemid,0);
+
+	IPCp(GLOBALsemid,1);
+	for(i=0; i<k; i++) {
+		if((*SHM).tabRoom[activeRooms[i]-1].users<=1) {
+			CHATremoveRoom(activeRooms[i]);
+		} else {
+			//check all users and remove the one
+			for(j=0; j<MAX_USERS; j++) {
+				if((*SHM).tabRoom[activeRooms[i]-1].activeUsers[j]==a_fd) {
+					(*SHM).tabRoom[activeRooms[i]-1].activeUsers[j] = 0;
+					(*SHM).tabRoom[activeRooms[i]-1].users--;
+					break;
+				}
 			}
 		}
+	}
+	IPCv(GLOBALsemid,1);
+}
+
+void CHATremoveUser ( char * a_name, int * a_soc, int * a_pos ) {
+	int pos = *a_pos, soc = *a_soc;
+	printf("usuwamy typa...\n");
+	if(a_soc == NULL && a_pos) {
+		IPCp(GLOBALsemid,0);
+		soc = (*SHM).tabUser[*a_pos].fd;
+		IPCv(GLOBALsemid,0);
+		printf("soc: %d", soc);
+	} else if( a_soc == NULL && a_name && !a_pos) {
+		pos = CHATisLogged(a_name, NULL);
+		IPCp(GLOBALsemid,0);
+		soc = (*SHM).tabUser[pos].fd;
 		IPCv(GLOBALsemid,0);
 	}
+	if(pos>=0) {
+		printf("usuwamy go..\n");
+		CHATremoveUserFromActiveRooms(pos, soc);
+		printf("usuniety....\n");
+		IPCp(GLOBALsemid,0);
+		(*SHM).tabUser[*a_pos].fd = 0;
+		bzero((*SHM).tabUser[*a_pos].nick, 32);
+		IPCv(GLOBALsemid,0);
+	}
+	//send to all new list of users
+	printf("wysylam do wszystkich\n");
+	CHATsendUserListToAll();
 }
 
 void CHATassignUser ( int * a_pos, int * a_fd, char* a_nick ) {
@@ -170,6 +224,7 @@ void CHATassignUser ( int * a_pos, int * a_fd, char* a_nick ) {
 	IPCp(GLOBALsemid,0);
 	(*SHM).tabUser[*a_pos].fd = *a_fd;
 	strncpy((*SHM).tabUser[*a_pos].nick, a_nick, 32);
+	(*SHM).tabUser[*a_pos].activeRooms[0] = 0;
 	for(i=1; i<MAX_ROOMS; i++) {
 		(*SHM).tabUser[*a_pos].activeRooms[i] = -1;
 		//implicitly assign user to main Room (0), because we starting from i=1
@@ -345,6 +400,7 @@ void CHATprepareMainRoom() {
 
 void CHATparseMessage(unsigned char * a_message, int * a_soc) {
 	if(a_message[0]=='/') {
+		printf("komenda\n");
 		struct CHATcommand * cmd = CHATdecodeCommand(a_message);
 		if(cmd->commandId>0) {
 			CHATexecuteCommand(cmd, a_soc);
