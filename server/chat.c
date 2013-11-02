@@ -40,7 +40,7 @@ char* CHATcreateJSONresponse( int * a_statusCode, char* a_message, char* reply) 
 struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd) {
 	cmd = (struct CHATcommand *) malloc(sizeof(struct CHATcommand));
 
-	int paramLen, i=1, b=0, cmdLen = strlen((char*)a_command);
+	int paramLen, i=1, b=0, cmdLen = strlen(a_command);
 
 	char command[16];
 	bzero(command,16);
@@ -226,6 +226,7 @@ void CHATsendReply( int a_statusCode, char * a_message, int *a_soc ) {
 	char* reply;
 	reply = CHATcreateJSONresponse(&a_statusCode, (char*)a_message, reply);
 	WEBSOCsendMessage(a_soc, reply);
+	free(reply);
 }
 
 void CHATloginUser(struct CHATcommand * cmd, int * a_soc) {
@@ -396,6 +397,7 @@ void CHATparseMessage(char* a_message, int * a_soc) {
 		} else {
 			perror("Unknown command.");
 		}
+		free(cmd->param);
 		free(cmd);
 	} else if(a_message[0]=='@') {
 		printf("to jest prywatna wiadomosc");

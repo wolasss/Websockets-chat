@@ -89,8 +89,9 @@ void handleClient( int * a_soc ) {
             //klient przerwal polaczenie
             int pos = CHATisLogged(NULL, a_soc);
             CHATremoveUser(NULL, a_soc, &pos);
-
             perror("Connection terminated by client. ");
+            free(message);
+        	free(frame);
             //remove thread
             break;
         }
@@ -120,12 +121,17 @@ void acceptConnection( int * socketfd ) {
 		clisoc = accept(*socketfd, (struct sockaddr*)&client_addr, &clilen);
 		if(clisoc>=0) {
 			pthread_t client;
+			pthread_attr_t attr;
+ 			pthread_attr_init(&attr);
+			pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 			bzero(log, 512);
 			printf("Connected: %s SOCKETFFD: %d\n", inet_ntoa(client_addr.sin_addr), clisoc);
 			snprintf(log, sizeof log, "Connected: %s \n", inet_ntoa(client_addr.sin_addr));
 			logEvent(log);	
 			fflush(stdout); // just in case 
-			pthread_create(&client, NULL, handshake, arg_ptr);
+			if(!pthread_create(&client, &attr, handshake, arg_ptr)) {
+				pthread_detach(client);
+			}
 		} else {
 			perror("Accepting error: ");
 			exit(0);
