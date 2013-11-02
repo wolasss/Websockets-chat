@@ -38,7 +38,6 @@ void SHMdestroy() {
 }
 
 void SHMinit(int a_sid) {
-
 	if( (GLOBALsemid = semget(a_sid, 3, IPC_CREAT|IPC_EXCL|0666)) == -1 ) {
 		if( (GLOBALsemid = semget(a_sid, 3, 0666)) == -1 ) {
 			perror("Error creating sem table");
