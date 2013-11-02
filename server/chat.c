@@ -26,45 +26,39 @@
 extern struct Shared * SHM;
 extern int GLOBALsemid;
 
-unsigned char * createJSONresponse( int * a_statusCode, unsigned char* a_message, unsigned char * reply) {
+char* CHATcreateJSONresponse( int * a_statusCode, char* a_message, char* reply) {
 	reply = malloc(512);
 	bzero(reply, 512);
 	if(a_message[0]=='[') {
-		snprintf((char*)reply, 512, "{ \"status\": %d, \"message\": %s }", *a_statusCode, a_message);
+		snprintf(reply, 512, "{ \"status\": %d, \"message\": %s }", *a_statusCode, a_message);
 	} else {
-		snprintf((char*)reply, 512, "{ \"status\": %d, \"message\": \"%s\" }", *a_statusCode, a_message);
+		snprintf(reply, 512, "{ \"status\": %d, \"message\": \"%s\" }", *a_statusCode, a_message);
 	}
-	printf("REPLY FROM JSON: %s\n\n\n", reply);
 	return reply;
 }
 
-struct CHATcommand * CHATdecodeCommand(unsigned char * a_command, struct CHATcommand *cmd) {
+struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd) {
 	cmd = (struct CHATcommand *) malloc(sizeof(struct CHATcommand));
 
 	int paramLen, i=1, b=0, cmdLen = strlen((char*)a_command);
 
 	char command[16];
 	bzero(command,16);
-	printf("przed pierwsza petla\n");
 	while(a_command[i]!=' ' && i<16) {
     		command[i-1]=a_command[i];
     		i++;
     }
-    printf("i: %d\n", i);
     paramLen = cmdLen-i+1;
-    printf("paramLen: %d\n", paramLen);
     if(paramLen>=0) {
     	cmd->param = malloc(paramLen);
 	    bzero(cmd->param, paramLen);
 	    i++; // remove space 
 	    while(i<cmdLen) {
-	    		printf("%c", a_command[i]);
 	    		cmd->param[b]=a_command[i];
 	    		i++; 
 	    		b++;
 	    }
     }
-    printf("param: [%s]\n", cmd->param);
     if(!strcmp(command, "login")) {
     	cmd->commandId = 1;
     } else if(!strcmp(command, "help")) {
@@ -91,7 +85,7 @@ int CHATisLogged ( char * a_name, int * a_soc ) {
 	return loginPosition;
 }
 
-unsigned char* CHATgetUserList (unsigned char * aout_list) {
+char* CHATgetUserList (char* aout_list) {
 	aout_list = malloc(1024);
 	bzero(aout_list, 1024);
 	int i;
@@ -110,13 +104,12 @@ unsigned char* CHATgetUserList (unsigned char * aout_list) {
 }
 
 void CHATsendUserList(int * a_soc) {
-	unsigned char * list;
-	unsigned char * reply;
+	char* list;
+	char* reply;
 	int statusCode = 104;
-	bzero(list,512);
 	list = CHATgetUserList(list);
 
-	reply = createJSONresponse(&statusCode, (unsigned char*)list, reply);
+	reply = CHATcreateJSONresponse(&statusCode, list, reply);
 	WEBSOCsendMessage(a_soc, reply);
 
 	free(list);
@@ -130,7 +123,6 @@ void CHATsendUserListToAll () {
 	}
 
 	i=0;
-	printf("jestem tuuu\n");
 	//get all users
 	IPCp(GLOBALsemid,0);
 	for(j=0; j<MAX_USERS; j++) {
@@ -140,10 +132,8 @@ void CHATsendUserListToAll () {
 		}
 	}
 	IPCv(GLOBALsemid,0);
-	printf("jestem tuuu33 i: %d\n", i);
 	//send to all
 	for(j=0; j<i; j++) {
-		printf("wysylam liste do %d\n", users[j]);
 		CHATsendUserList(&(users[j]));
 	}
 }
@@ -161,28 +151,21 @@ void CHATremoveUserFromActiveRooms ( int a_pos, int a_fd ) {
 	int i,j,k=0,l=0, temp;
 	int activeRooms[MAX_ROOMS], toRemove[MAX_ROOMS];
 
-	printf("no to jazda...\n");
 	IPCp(GLOBALsemid,0);
 	for(j=1; j<MAX_ROOMS; j++) {
 		temp = (*SHM).tabUser[a_pos].activeRooms[j];
 		if(temp>=0) {
-			printf("aktywny room: %d", (*SHM).tabUser[a_pos].activeRooms[j]);
 			activeRooms[k] = temp;
 			k++;
 			(*SHM).tabUser[a_pos].activeRooms[j] = -1;
 		}
 	}
 	IPCv(GLOBALsemid,0);
-	printf("no to jazda %d...\n", k);
 	IPCp(GLOBALsemid,1);
 	for(i=0; i<k; i++) {
-		printf("jade.\n");
 		if(activeRooms[i]>=1 && ((*SHM).tabRoom[activeRooms[i]-1].users<=1)) {
-			printf("usuwam bo ostatni wychodzi\n");
 			toRemove[l++]=activeRooms[i];
-			printf("po usunieciu\n");
 		} else {
-			printf("W pokoju: %d\n", (*SHM).tabRoom[activeRooms[i]-1].users);
 			//check all users and remove the one
 			for(j=0; j<MAX_USERS; j++) {
 				if((*SHM).tabRoom[activeRooms[i]-1].activeUsers[j]==a_fd) {
@@ -191,30 +174,24 @@ void CHATremoveUserFromActiveRooms ( int a_pos, int a_fd ) {
 					break;
 				}
 			}
-			printf("W pokoju: %d", (*SHM).tabRoom[activeRooms[i]-1].users);
 		}
 	}
 	IPCv(GLOBALsemid,1);
 	for(i=0; i<l; i++) {
 		CHATremoveRoom(toRemove[i]);
 	}
-	printf("uff..\n");
 }
 
 void CHATremoveUser ( char * a_name, int * a_soc, int * a_pos ) {
 	int pos = *a_pos, soc = *a_soc;
-	printf("usuwamy typa...\n");
 	if(pos>=0) {
-		printf("usuwamy go..\n");
 		CHATremoveUserFromActiveRooms(pos, soc);
-		printf("usuniety....\n");
 		IPCp(GLOBALsemid,0);
 		(*SHM).tabUser[*a_pos].fd = 0;
 		bzero((*SHM).tabUser[*a_pos].nick, 32);
 		IPCv(GLOBALsemid,0);
 	}
 	//send to all new list of users
-	printf("wysylam do wszystkich\n");
 	CHATsendUserListToAll();
 }
 
@@ -246,12 +223,9 @@ int CHATfirstEmptySlot() {
 
 
 void CHATsendReply( int a_statusCode, char * a_message, int *a_soc ) {
-	unsigned char * reply;
-	printf("status: %d, message: %s\n\n", a_statusCode,a_message);
-	reply = createJSONresponse(&a_statusCode, (unsigned char*)a_message, reply);
+	char* reply;
+	reply = CHATcreateJSONresponse(&a_statusCode, (char*)a_message, reply);
 	WEBSOCsendMessage(a_soc, reply);
-	printf("reply message:\n%s\n", reply);
-	free(reply);
 }
 
 void CHATloginUser(struct CHATcommand * cmd, int * a_soc) {
@@ -413,17 +387,16 @@ void CHATprepareMainRoom() {
 	IPCv(GLOBALsemid,1);
 }
 
-void CHATparseMessage(unsigned char * a_message, int * a_soc) {
+void CHATparseMessage(char* a_message, int * a_soc) {
 	struct CHATcommand * cmd;
 	if(a_message[0]=='/') {
-		printf("komenda\n");
 		cmd = CHATdecodeCommand(a_message, cmd);
 		if(cmd->commandId>0) {
-			printf("wykonuje komende\n");
 			CHATexecuteCommand(cmd, a_soc);
 		} else {
 			perror("Unknown command.");
 		}
+		free(cmd);
 	} else if(a_message[0]=='@') {
 		printf("to jest prywatna wiadomosc");
 	} else {

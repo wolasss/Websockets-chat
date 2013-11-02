@@ -28,7 +28,7 @@ char* timestamp()
     return asctime( localtime(&ltime) );
 }
 
-unsigned char* base64_encode(const unsigned char *data, size_t data_len, char *out, size_t out_len)
+char* base64_encode(const char*data, size_t data_len, char *out, size_t out_len)
 {
     FILE *fp;
     int len;
@@ -62,7 +62,7 @@ unsigned char* base64_encode(const unsigned char *data, size_t data_len, char *o
 
     pclose(fp);
     system("rm ./.base64_src");
-    return (unsigned char*)out;
+    return out;
 }
 
 

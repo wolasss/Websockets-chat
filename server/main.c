@@ -75,29 +75,27 @@ void logEvent(char* a_event) {
 }
 
 void handleClient( int * a_soc ) {
-    unsigned char *frame, *message;
+    char *frame, *message;
     unsigned long messageLength = 0, frameLength = 0;
     while(1) {
-        bzero(message, messageLength);
-
+        //bzero(message, messageLength); no need to do this cause message is freed.
         frame = SOCreceiveMessage(a_soc, frame, &frameLength);
-        printf("frameLength: %d\n", frameLength);
         if(frameLength!=-1) {
             message = WEBSOCdecodeFrame(frame, message, &frameLength);
-            messageLength = strlen((char*)message);
+            messageLength = strlen(message);
 
-            printf("mes: %s\n\n\n", message);
             CHATparseMessage(message, a_soc);
         } else {
             //klient przerwal polaczenie
-            printf("przerwaneeeeeee\n");
             int pos = CHATisLogged(NULL, a_soc);
             CHATremoveUser(NULL, a_soc, &pos);
 
             perror("Connection terminated by client. ");
-            exit(1);
+            //remove thread
             break;
         }
+        free(message);
+        free(frame);
     } //end while
 }
 
@@ -105,13 +103,11 @@ void* handshake ( void* clisoc ) {
 	int * ptr = (int*)clisoc; 
 	int a_soc = *ptr;
 	signal(SIGINT, SIG_DFL);
-	printf("przed handshak\n");
 	if((WEBSOChandshake(a_soc))>0) {
-		printf("handshaked\n\n\n\n");
         handleClient(&a_soc);
     }
 	close(a_soc);
-	exit(0);
+	return NULL;
 }
 
 void acceptConnection( int * socketfd ) {
@@ -162,10 +158,8 @@ int main( int argc, char *argv[] ) {
             exit(0);
         }
     }
-    printf("test\n");
  	SHMinit(rand()%1000);
  	CHATprepareMainRoom();
- 	printf("tes2t\n");
 	if(socketfd>0) {
 		struct sockaddr_in my_addr; 
 		my_addr.sin_family = PF_INET;

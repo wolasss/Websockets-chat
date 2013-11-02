@@ -2,11 +2,14 @@
 #define WEBSOCKET_H
 
 int WEBSOChandshake( int a_soc );
-unsigned char* WEBSOC_createFrame(unsigned char* a_message, unsigned char * frame, unsigned long * aout_size);
-unsigned char* WEBSOCcreateHandshakeResponse(unsigned char* key, char* buffer);
-unsigned char* WEBSOCgenerateAcceptKey(unsigned char* key, unsigned char* res);
-unsigned char* WEBSOCgetRequestKey(unsigned char* a_request, unsigned char* key);
-void WEBSOCsendMessage( int * a_soc, unsigned char* a_message ); 
-unsigned char* WEBSOCdecodeFrame( unsigned char* a_frame, unsigned char* decoded, unsigned long * a_frameLength );
+
+char* WEBSOCcreateFrame(char* a_message, char* frame, unsigned long * aout_size);
+char* WEBSOCcreateHandshakeResponse(char* key, char* buffer);
+char* WEBSOCgenerateAcceptKey(char* key, char* res);
+char* WEBSOCgetRequestKey(char* a_request, char* key);
+char* WEBSOCdecodeFrame( char* a_frame, char* decoded, unsigned long * a_frameLength );
+
+void WEBSOCsendMessage( int * a_soc, char* a_message ); 
+
 
 #endif
