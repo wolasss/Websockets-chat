@@ -90,13 +90,19 @@ void handleClient( int * a_soc ) {
             int pos = CHATisLogged(NULL, a_soc);
             CHATremoveUser(NULL, a_soc, &pos);
             perror("Connection terminated by client. ");
-            free(message);
-        	free(frame);
             //remove thread
+            if(message) {
+            	free(message);
+            } 
+            if(frame) {
+            	free(frame);
+            }
             break;
         }
         free(message);
+        message = NULL;
         free(frame);
+        frame = NULL;
     } //end while
 }
 

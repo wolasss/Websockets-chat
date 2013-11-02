@@ -25,7 +25,7 @@
 
 char* WEBSOC_createFrame(char* a_message, char* frame, unsigned long * aout_size) {
 
-    unsigned long l_msgLen = strlen((char*)a_message), 
+    unsigned long l_msgLen = strlen(a_message), 
          l_frameSize = 0;
 
     unsigned int i_addBytes = 0;
@@ -58,7 +58,7 @@ char* WEBSOC_createFrame(char* a_message, char* frame, unsigned long * aout_size
     *aout_size = l_frameSize;
     frame = realloc( frame, l_frameSize );
     if(frame != NULL) {
-        strncpy((char*)frame+2+i_addBytes, (char*)a_message, l_msgLen);
+        strncpy(frame+2+i_addBytes, a_message, l_msgLen);
     } else {
         perror("Error allocating memory: ");
     } 

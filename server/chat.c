@@ -224,7 +224,7 @@ int CHATfirstEmptySlot() {
 
 void CHATsendReply( int a_statusCode, char * a_message, int *a_soc ) {
 	char* reply;
-	reply = CHATcreateJSONresponse(&a_statusCode, (char*)a_message, reply);
+	reply = CHATcreateJSONresponse(&a_statusCode, a_message, reply);
 	WEBSOCsendMessage(a_soc, reply);
 	free(reply);
 }
