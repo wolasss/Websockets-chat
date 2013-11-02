@@ -24,8 +24,17 @@ var sandbox = function(core, instanceId, options, moduleId) {
   this.append = function(selector, what) {
     return $(selector).append(what);
   };
+  this.height = function(selector) {
+    return $(selector).height();
+  }
+  this.scrollTop = function(selector, how) {
+    return $(selector).scrollTop(how);
+  }
   this.addClass = function(selector, cl) {
     return $(selector).addClass(cl);
+  };
+  this.removeClass = function(selector, cl) {
+    return $(selector).removeClass(cl);
   };
   this.clear = function(selector) {
     return $(selector).html('');
@@ -56,6 +65,9 @@ var sandbox = function(core, instanceId, options, moduleId) {
   };
   this.removeEvent = function(elem, event, callback) {
     return $(elem).off(event, callback);
+  };
+  this.fadeToggleModule = function() {
+    return $(DOMid).fadeToggle();
   };
   this.toggleModule = function() {
     return $(DOMid).toggle();

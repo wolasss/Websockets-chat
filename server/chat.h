@@ -20,6 +20,7 @@
 
 struct CHATcommand {
 	int commandId;
+	char * name;
 	char * param;
 };
 

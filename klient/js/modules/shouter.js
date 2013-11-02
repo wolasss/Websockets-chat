@@ -1,13 +1,26 @@
 var MODshouter = function(sb){
-	var input, show, reactor, button, send;
+	var input, toggle, reactor, button, send, changeRoom, currentRoom;
 	
-	show = function() {
+	toggle = function() {
 		sb.toggleModule();
 	};
 
 	send = function() {
+		var message;
+
+		if(input.value.match(/^\/\w+/)) {
+			//command
+			message = input.value;
+		} else if(input.value[0]=='@') {
+			//private
+			message = input.value;
+		} else {
+			//public
+			message = "%"+currentRoom+" "+input.value;
+		}
+
 		if(input.value.length!==0) {
-			sb.emit('WSsendMessage', input.value);
+			sb.emit('WSsendMessage', message);
 			input.value='';
 		}
 	}
@@ -20,10 +33,13 @@ var MODshouter = function(sb){
 
 	return {
 	    init: function() {
+	    	currentRoom = 'main';
 	    	input = sb.find(sb.CSSmessageField)[0];
 	    	button = sb.find('label')[0];
 
-	    	sb.on('loggedIn', show);
+	    	sb.on('loggedIn', toggle);
+	    	sb.on('loggedOut', toggle);
+	    	sb.on('roomChange', changeRoom)
 	    	sb.addEvent(input, 'keypress', reactor);
 	    	sb.addEvent(button, 'click', send);
 	    },

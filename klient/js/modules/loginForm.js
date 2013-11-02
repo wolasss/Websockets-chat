@@ -49,16 +49,16 @@ var MODloginForm = function(sb){
 		NProgress.set(0.9);
 		NProgress.configure({speed:50});
 	};
-	loginSuccess = function(){
+	loginSuccess = function(data){
 		NProgress.done(function(){
 			setTimeout(sb.toggleModule, 200);
-			sb.emit('loggedIn');
+			sb.emit('loggedIn', data.message);
 		});
 	};
 	parseResponse = function(response) {
 		if(response.status==101) {
 			//ok
-			loginSuccess();
+			loginSuccess(response);
 		} else if(response.status>500){
 			//failure
 			connectionError(response.message);
@@ -75,6 +75,9 @@ var MODloginForm = function(sb){
 		      	break;
 		  	case "WSresponse":
 		  		parseResponse(data);
+		  		break;
+		  	case "loggedOut":
+		  		sb.toggleModule();
 		  		break;
 		  	}
 	};
@@ -157,7 +160,7 @@ var MODloginForm = function(sb){
 	    	sb.addEvent(hostnameField, 'keyup', keyPressed);
 	    	sb.addEvent(defaultServerField, 'change', defaultServerChange);
 
-	    	sb.on(['connectionError', 'connectionSuccess', 'WSresponse'], reactor);
+	    	sb.on(['connectionError', 'connectionSuccess', 'WSresponse', 'loggedOut'], reactor);
 
 	    },
 	    destroy: function() { 

@@ -150,6 +150,7 @@ body {
     }
     text-align:left;
     width:445px;
+    min-height:200px;
     @include inline-block;
     margin-left: 20px;
     position:relative;
@@ -272,16 +273,16 @@ body {
     color: #34495e;
     width:428px;
     overflow:hidden;
-    .messages {
+    .room {
         margin:0;
         padding:0;
         height:400px;
         overflow-y: scroll;
     }
-    .messages::-webkit-scrollbar { 
+    .room::-webkit-scrollbar { 
         display: none; 
     }
-    .messages li {
+    .room li {
         list-style: none;
     }
     .msgContainer {
@@ -294,7 +295,7 @@ body {
             position:relative;
             float:right;
         }
-        .avatar.me {
+        .avatar.mine {
             float:left;
         }
         .nick {
@@ -344,7 +345,7 @@ body {
             bottom:-16px;
             color: #34495e;
         }
-        .message.me {
+        .message.mine {
             float:left;
             text-align:left;
             .bubble {

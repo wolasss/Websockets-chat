@@ -8,11 +8,12 @@ var MODwebsocket = function(sb){
 		sendMessage,
 		connectionSuccess,
 		processMessage,
-		closeConnection,
+		onCloseConnection,
 		sendLoginRequest,
 		connect,
 		processLoginRequest,
-		reactor;
+		reactor,
+		closeConnection;
 
 	connectionError = function(error) {
 		alreadyFailed = true;
@@ -34,16 +35,22 @@ var MODwebsocket = function(sb){
 	processMessage = function(e) {
 		try {
 			var message = JSON.parse(""+e.data);
-			if(message.status) {
+			if(message.status && !message.sender) {
 				sb.emit('WSresponse', message);
+			} else if(message.status==198) {
+				sb.emit('WSreceivedMessage', message);
 			}
-		} catch(e) {
+		} catch(exc) {
 			//ignore message it's not json
-			console.log(e.data);
+			console.log("[DEBUG]: not json:", e.data);
 		}
 	};
-	closeConnection = function() {
-		connected = false;
+	onCloseConnection = function() {
+		if(connected) {
+			sb.emit('loggedOut');
+			connected = false;
+			alreadyFailed = false;
+		}
 	};
 	checkConnection = function() {
 		if(!connected && !alreadyFailed) {
@@ -63,7 +70,7 @@ var MODwebsocket = function(sb){
 			_sock.onerror = connectionError;
 			_sock.onopen = connectionSuccess;
 			_sock.onmessage = processMessage;
-			_sock.onclose = closeConnection;
+			_sock.onclose = onCloseConnection;
 		} catch(e) {
 			connectionError(e.message);
 		}
@@ -72,6 +79,10 @@ var MODwebsocket = function(sb){
 		username = data.username;
 		connect(data.hostname, data.port);
 	};
+	closeConnection = function(data, topic) {
+		_sock.close();
+		sb.emit('logout');
+	}
 	reactor = function( data, topic ){
 	  	switch( topic ){
 		    case "loginRequest":
@@ -80,12 +91,14 @@ var MODwebsocket = function(sb){
 		    case "WSsendMessage":
 		    	sendMessage(data);
 		      	break;
+		    case "WSlogout":
+		    	closeConnection();
 		  	}
 	};
 
 	return {
 	    init: function() {
-	    	sb.on( ['loginRequest', 'WSsendMessage'], reactor );
+	    	sb.on( ['loginRequest', 'WSsendMessage', 'WSlogout'], reactor );
 	    },
 	    destroy: function() { 
 	    	

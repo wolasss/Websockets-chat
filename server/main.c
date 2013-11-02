@@ -77,24 +77,31 @@ void logEvent(char* a_event) {
 void handleClient( int * a_soc ) {
     char *frame, *message;
     unsigned long messageLength = 0, frameLength = 0;
+    int pos;
     while(1) {
         //bzero(message, messageLength); no need to do this cause message is freed.
         frame = SOCreceiveMessage(a_soc, frame, &frameLength);
         if(frameLength!=-1) {
             message = WEBSOCdecodeFrame(frame, message, &frameLength);
-            messageLength = strlen(message);
-
-            CHATparseMessage(message, a_soc);
+            if(message) {
+            	messageLength = strlen(message);
+            	CHATparseMessage(message, a_soc);
+            } else {
+            	//closing frame was sent 
+            	pos = CHATisLogged(NULL, a_soc);
+	            CHATremoveUser(NULL, a_soc, &pos);
+	            break;
+            }
         } else {
             //klient przerwal polaczenie
-            int pos = CHATisLogged(NULL, a_soc);
+            pos = CHATisLogged(NULL, a_soc);
             CHATremoveUser(NULL, a_soc, &pos);
             perror("Connection terminated by client. ");
             //remove thread
-            if(message) {
+            if(message!=NULL) {
             	free(message);
             } 
-            if(frame) {
+            if(frame!=NULL) {
             	free(frame);
             }
             break;

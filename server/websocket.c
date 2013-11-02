@@ -140,6 +140,7 @@ void WEBSOCsendMessage( int * a_soc, char* a_message ) {
 }
 
 char* WEBSOCdecodeFrame( char* a_frame, char* decoded, unsigned long * a_frameLength ) {
+    int closingFrame = 0;
 
     unsigned char length;
 
@@ -152,46 +153,56 @@ char* WEBSOCdecodeFrame( char* a_frame, char* decoded, unsigned long * a_frameLe
     unsigned char mask[MASK_SIZE];    
     bzero(mask, MASK_SIZE);
 
-    length = a_frame[1] & 127;
-    indexFirstMask = 2;
-
-    if(length<=125) {
-        actualLength = length;
-        for(k=0; k<MASK_SIZE; k++) {
-            mask[k] = a_frame[indexFirstMask+k];
+    
+    if( (a_frame[0] & 128)) {
+        //final frame
+    } 
+    if( (a_frame[0] & 15)==8) {
+        closingFrame = 1;
+        decoded=NULL;
+    }
+    if(!closingFrame) {
+        length = a_frame[1] & 127;
+        indexFirstMask = 2;
+        if(length<=125) {
+            actualLength = length;
+            for(k=0; k<MASK_SIZE; k++) {
+                mask[k] = a_frame[indexFirstMask+k];
+            }
+        } else if (length == 126) {
+            //length is on 2bytes
+            actualLength = (a_frame[2] << 8) + a_frame[3];
+            indexFirstMask = 4;
+            for(k=0; k<MASK_SIZE; k++) {
+                mask[k] = a_frame[indexFirstMask+k];
+            }
+        } else if (length == 127) {
+            /*//not supported yet
+            //long - length on 8 bytes
+            actualLength =  (a_frame[2] <<56) + (a_frame[3] << 48) + (a_frame[4] << 40) + (a_frame[5] << 32) + (a_frame[6] << 24) + (a_frame[7] <<16) + (a_frame[8] << 8) + (a_frame[9])
+            indexFirstMask = 10;
+            for(k=0; k<MASK_SIZE; k++) {
+                mask[k] = a_frame[indexFirstMask+k];
+            }*/
+        } else {
+            //thro w error
+            perror("Bad frame length");
+            return NULL;
         }
-    } else if (length == 126) {
-        //length is on 2bytes
-        actualLength = (a_frame[2] << 8) + a_frame[3];
-        indexFirstMask = 4;
-        for(k=0; k<MASK_SIZE; k++) {
-            mask[k] = a_frame[indexFirstMask+k];
+
+
+        indexFirstData = indexFirstMask + MASK_SIZE;
+        if((actualLength+indexFirstData)!=(*a_frameLength)) {
+            printf("Blad ramki o co chodzi\n");
         }
-    } else if (length == 127) {
-        /*//not supported yet
-        //long - length on 8 bytes
-        actualLength =  (a_frame[2] <<56) + (a_frame[3] << 48) + (a_frame[4] << 40) + (a_frame[5] << 32) + (a_frame[6] << 24) + (a_frame[7] <<16) + (a_frame[8] << 8) + (a_frame[9])
-        indexFirstMask = 10;
-        for(k=0; k<MASK_SIZE; k++) {
-            mask[k] = a_frame[indexFirstMask+k];
-        }*/
-    } else {
-        //thro w error
-        perror("Bad frame length");
-        return NULL;
+        decoded = malloc((int)*a_frameLength-indexFirstData+1);
+        bzero(decoded, *a_frameLength-indexFirstData);
+        for(k=indexFirstData, j=0; k<*a_frameLength; k++, j++) {
+            decoded[j] = a_frame[k] ^ mask[j % MASK_SIZE];
+        }
+        decoded[j]='\0';
     }
-
-
-    indexFirstData = indexFirstMask + MASK_SIZE;
-    if((actualLength+indexFirstData)!=(*a_frameLength)) {
-        printf("Blad ramki o co chodzi\n");
-    }
-    decoded = malloc((int)*a_frameLength-indexFirstData+1);
-    bzero(decoded, *a_frameLength-indexFirstData);
-    for(k=indexFirstData, j=0; k<*a_frameLength; k++, j++) {
-        decoded[j] = a_frame[k] ^ mask[j % MASK_SIZE];
-    }
-    decoded[j]='\0';
+    
 
     return decoded;
 }

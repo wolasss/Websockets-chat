@@ -1,7 +1,7 @@
 var MODuserlist = function(sb){
-	var list, reactor, showList, show;
+	var list, reactor, showList, toggle;
 
-	show = function() {
+	toggle = function() {
 		sb.slideToggle();
 	};
 	showList = function(users) {
@@ -18,7 +18,8 @@ var MODuserlist = function(sb){
 	return {
 	    init: function() {
 	    	list = sb.find(sb.CSSuserList)[0];
-	    	sb.on('loggedIn', show);
+	    	sb.on('loggedIn', toggle);
+	    	sb.on('loggedOut', toggle);
 	    	sb.on('WSresponse', reactor);
 	    },
 	    destroy: function() { 

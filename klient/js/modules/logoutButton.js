@@ -1,17 +1,18 @@
 var MODlogoutbutton = function(sb){
-	var button, logout, show;
+	var button, logout, toggle;
 	
-	show = function() {
+	toggle = function() {
 		sb.toggleModule();
 	};
 	logout = function() {
-		sb.emit('WSsendMessage', "/logout");
+		sb.emit('WSlogout');
 	};
 	return {
 	    init: function() {
 	    	button = sb.find(sb.CSSlogoutButton)[0];
 	    	sb.addEvent(button, 'click', logout);
-	    	sb.on('loggedIn', show);
+	    	sb.on('loggedIn', toggle);
+	    	sb.on('loggedOut', toggle);
 	    },
 	    destroy: function() { 
 	    	button = null;

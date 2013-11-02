@@ -37,6 +37,13 @@ char* CHATcreateJSONresponse( int * a_statusCode, char* a_message, char* reply) 
 	return reply;
 }
 
+char* CHATcreateJSONmessage( int * a_statusCode, char* a_sender, char* a_room, char* a_message, char* reply) {
+	reply = malloc(512);
+	bzero(reply, 512);
+	snprintf(reply, 512, "{ \"status\": %d, \"sender\": \"%s\", \"room\": \"%s\", \"message\": \"%s\" }", *a_statusCode, a_sender, a_room, a_message);
+	return reply;
+}
+
 struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd) {
 	cmd = (struct CHATcommand *) malloc(sizeof(struct CHATcommand));
 
@@ -48,6 +55,8 @@ struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd)
     		command[i-1]=a_command[i];
     		i++;
     }
+    cmd->name = malloc(i+1);
+
     paramLen = cmdLen-i+1;
     if(paramLen>=0) {
     	cmd->param = malloc(paramLen);
@@ -59,15 +68,19 @@ struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd)
 	    		b++;
 	    }
     }
-    if(!strcmp(command, "login")) {
-    	cmd->commandId = 1;
-    } else if(!strcmp(command, "help")) {
-    	cmd->commandId = 2;
-    } else if(!strcmp(command, "join")) {
-    	cmd->commandId = 3;
-    } else if(!strcmp(command, "users")) {
-    	cmd->commandId = 4;
+    strncpy(cmd->name, command, strlen(command));
+    if(a_command[0]!='%') {
+    	if(!strcmp(command, "login")) {
+    		cmd->commandId = 1;
+	    } else if(!strcmp(command, "help")) {
+	    	cmd->commandId = 2;
+	    } else if(!strcmp(command, "join")) {
+	    	cmd->commandId = 3;
+	    } else if(!strcmp(command, "users")) {
+	    	cmd->commandId = 4;
+	    } 
     }
+    
     return cmd;
 }
 
@@ -115,6 +128,18 @@ void CHATsendUserList(int * a_soc) {
 	free(list);
 	free(reply);
 }
+
+void CHATsendMessage(int * a_soc, char * a_sender, char* a_room, char * a_message) {
+	char* messageJSON;
+	int statusCode = 198;
+
+	messageJSON = CHATcreateJSONmessage(&statusCode, a_sender, a_room, a_message, messageJSON);
+	WEBSOCsendMessage(a_soc, messageJSON);
+
+	free(messageJSON);
+}
+
+
 
 void CHATsendUserListToAll () {
 	int users[MAX_USERS], i=0, j=0;
@@ -192,7 +217,9 @@ void CHATremoveUser ( char * a_name, int * a_soc, int * a_pos ) {
 		IPCv(GLOBALsemid,0);
 	}
 	//send to all new list of users
+	printf("sending to all \n");
 	CHATsendUserListToAll();
+	close(*a_soc);
 }
 
 void CHATassignUser ( int * a_pos, int * a_fd, char* a_nick ) {
@@ -231,6 +258,9 @@ void CHATsendReply( int a_statusCode, char * a_message, int *a_soc ) {
 
 void CHATloginUser(struct CHATcommand * cmd, int * a_soc) {
 	int firstFree, i, logged=CHATisLogged(cmd->param, NULL), mainRoom = 0;
+	struct CHATcommand room;
+	room.param = malloc(5);
+	strcpy(room.param,"main");
 	if(logged>=0) {
 		CHATsendReply(501, "User already exists. Please choose another nickname.", a_soc);
 	} else {
@@ -238,14 +268,15 @@ void CHATloginUser(struct CHATcommand * cmd, int * a_soc) {
 		if(firstFree>=0) {
 			CHATassignUser(&firstFree, a_soc, cmd->param);
 			//addTomain
-			CHATuserAddRoom(&logged, &mainRoom);
-			CHATsendReply(101, "You are logged in.", a_soc);
+			CHATjoinToRoom(&room, a_soc);
+			CHATsendReply(101, cmd->param, a_soc);
 			//TODO send new user lists.
 			CHATsendUserListToAll();
 		} else {
 			CHATsendReply(502, "There are no empty slots available. Try again later.", a_soc);
 		}
 	}
+	free(room.param);
 }
 
 void CHATexecuteCommand(struct CHATcommand * cmd, int * a_soc) {
@@ -275,7 +306,7 @@ int CHATroomExists( char* a_name ) {
 	int exists = -1, i=1;
 	
 	IPCp(GLOBALsemid,1);
-	for(i=1; i<MAX_ROOMS; i++) {
+	for(i=0; i<MAX_ROOMS; i++) {
 		if((*SHM).tabRoom[i].id!=0) {
 			if(!strcmp((*SHM).tabRoom[i].name, a_name)) {
 				exists=i;
@@ -289,22 +320,22 @@ int CHATroomExists( char* a_name ) {
 }
 
 int CHATassignToRoom(int a_id, int * a_fd) {
-	int sucess = 1, k;
+	int success = 1, k;
 	IPCp(GLOBALsemid,1);
 	if((*SHM).tabRoom[a_id].users==MAX_USERS) {
-		sucess=0;
+		success=0;
 	} else {
 		(*SHM).tabRoom[a_id].id = a_id+1; //TODO
 		(*SHM).tabRoom[a_id].users++;
 		for(k=0; k<MAX_USERS; k++) {
-			if((*SHM).tabRoom[a_id].activeUsers[k]!=0) {
+			if((*SHM).tabRoom[a_id].activeUsers[k]==0) {
 				(*SHM).tabRoom[a_id].activeUsers[k] = *a_fd;
 				break;
 			}
 		}
 	}
 	IPCv(GLOBALsemid,1);
-	return sucess;
+	return success;
 }
 
 int CHATcreateRoom( char* a_name, int * a_creator ) {
@@ -388,6 +419,43 @@ void CHATprepareMainRoom() {
 	IPCv(GLOBALsemid,1);
 }
 
+int CHATfindRoom (char * a_name) {
+	int pos = -1, i;
+	IPCp(GLOBALsemid,1);
+	for(i=0; i<MAX_ROOMS; i++) {
+		if(!strcmp((*SHM).tabRoom[i].name,a_name)) {
+			pos = i;
+			break;
+		}
+	}
+	IPCv(GLOBALsemid,1);
+	return pos;
+}
+
+void CHATsendToAll (int * a_roomId , char* a_roomName, int * a_sender, char* a_message) {
+	int users[MAX_USERS], i=0, k=0;
+	char * nick = malloc(32);
+	IPCp(GLOBALsemid,1);
+	for(i=0; i<MAX_USERS; i++) {
+		printf("fd: %d\n", (*SHM).tabRoom[*a_roomId].activeUsers[i]);
+		if((*SHM).tabRoom[*a_roomId].activeUsers[i]>0) {
+			users[k]=(*SHM).tabRoom[*a_roomId].activeUsers[i];
+			k++;
+		}
+	}
+	IPCv(GLOBALsemid,1);
+
+	IPCp(GLOBALsemid,0);
+	strncpy(nick,(*SHM).tabUser[*a_sender].nick,32);
+	IPCv(GLOBALsemid,0);
+
+	printf("do ilu wysle: %d\n", k);
+	for(i=0; i<k; i++) {
+		CHATsendMessage(&(users[i]), nick, a_roomName, a_message);
+	}
+	free(nick);
+}
+
 void CHATparseMessage(char* a_message, int * a_soc) {
 	struct CHATcommand * cmd;
 	if(a_message[0]=='/') {
@@ -398,10 +466,24 @@ void CHATparseMessage(char* a_message, int * a_soc) {
 			perror("Unknown command.");
 		}
 		free(cmd->param);
+		free(cmd->name);
 		free(cmd);
 	} else if(a_message[0]=='@') {
-		printf("to jest prywatna wiadomosc");
+		printf("private:\n%s\n", a_message);
+	} else if(a_message[0]=='%'){
+		cmd = CHATdecodeCommand(a_message, cmd);
+		int idRoom = CHATroomExists(cmd->name);
+		int idSender = CHATisLogged(NULL, a_soc);
+		if(idRoom>=0) {
+			CHATsendToAll(&idRoom, cmd->name, &idSender, cmd->param);
+		}
+		printf("public:\n%s\n\n", a_message);
+		printf("room name: %s\n", cmd->name);
+
+		free(cmd->param);
+		free(cmd->name);
+		free(cmd);
 	} else {
-		printf("to jest publiczna wiadomosc\n");
+		//dafuq?
 	}
 }
