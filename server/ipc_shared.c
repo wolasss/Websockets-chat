@@ -34,23 +34,10 @@ void SHMdestroy() {
 	if(semctl(GLOBALsemid, 0, IPC_RMID, (int)1)==-1) {
 		perror("Error removing semaphore");
 	}
-	if(shmctl(GLOBALshmid, IPC_RMID, NULL)==-1) {
-		perror("Error removing shared memory");
-	}
 	exit(1);
 }
 
 void SHMinit(int a_sid) {
-
-	if( (GLOBALshmid = shmget(a_sid, sizeof(*SHM), IPC_CREAT|0666))<0 ) {
-		perror("Creating segment of sahred memory. ");
-		exit(1);
-	}
-	
-	if( (SHM = shmat(GLOBALshmid, NULL, 0)) == NULL) {
-		perror("Joining segment of sahred memory. ");
-		exit(1);
-	}
 
 	if( (GLOBALsemid = semget(a_sid, 3, IPC_CREAT|IPC_EXCL|0666)) == -1 ) {
 		if( (GLOBALsemid = semget(a_sid, 3, 0666)) == -1 ) {
