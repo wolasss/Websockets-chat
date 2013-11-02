@@ -2,10 +2,7 @@ var MODuserlist = function(sb){
 	var list, reactor, showList, show;
 
 	show = function() {
-		sb.slideToggle(function(){
-			this.style.visibility = 'visible';
-			this.style.display = 'inline-block';
-		});
+		sb.slideToggle();
 	};
 	showList = function(users) {
 		sb.clear(list);

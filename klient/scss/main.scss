@@ -391,18 +391,15 @@ body {
 }
 
 #userlist {
-    @include inline-block;
-    text-align:left;
-    vertical-align:top;
     background: #293d50;
     width:200px;
     margin-left:10px;
     min-height:100px;
     border-radius: 6px;
     display:none;
-    visibility:hidden;
     h4 {
-        margin-top:15px;
+        margin-top:0;
+        padding-top:15px;
         padding-left:10px;
         font-size:14px;
         font-family:'Lato';
@@ -424,6 +421,21 @@ body {
     }
     .user:hover {
         background-color: #3498db;
+    }
+}
+
+.aside {
+    vertical-align: top;
+    text-align: left;
+    display:inline-block;
+}
+
+#logoutbutton {
+    display:none;
+    margin-left:10px;
+    .logout {
+        font-size:12px;
+        padding: 6px 9px 7px;
     }
 }
 
