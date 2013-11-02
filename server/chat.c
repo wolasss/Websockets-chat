@@ -26,17 +26,21 @@
 extern struct Shared * SHM;
 extern int GLOBALsemid;
 
-void createJSONresponse( int * a_statusCode, unsigned char* a_message, unsigned char * reply) {
+unsigned char * createJSONresponse( int * a_statusCode, unsigned char* a_message, unsigned char * reply) {
 	reply = malloc(512);
 	bzero(reply, 512);
 	if(a_message[0]=='[') {
-		snprintf((char*)reply, sizeof reply, "{ \"status\": %d, \"message\": %s }", *a_statusCode, a_message);
+		snprintf((char*)reply, 512, "{ \"status\": %d, \"message\": %s }", *a_statusCode, a_message);
 	} else {
-		snprintf((char*)reply, sizeof reply, "{ \"status\": %d, \"message\": \"%s\" }", *a_statusCode, a_message);
+		snprintf((char*)reply, 512, "{ \"status\": %d, \"message\": \"%s\" }", *a_statusCode, a_message);
 	}
+	printf("REPLY FROM JSON: %s\n\n\n", reply);
+	return reply;
 }
 
-void CHATdecodeCommand(unsigned char * a_command, struct CHATcommand *cmd) {
+struct CHATcommand * CHATdecodeCommand(unsigned char * a_command, struct CHATcommand *cmd) {
+	cmd = (struct CHATcommand *) malloc(sizeof(struct CHATcommand));
+
 	int paramLen, i=1, b=0, cmdLen = strlen((char*)a_command);
 
 	char command[16];
@@ -70,6 +74,7 @@ void CHATdecodeCommand(unsigned char * a_command, struct CHATcommand *cmd) {
     } else if(!strcmp(command, "users")) {
     	cmd->commandId = 4;
     }
+    return cmd;
 }
 
 int CHATisLogged ( char * a_name, int * a_soc ) {
@@ -86,7 +91,9 @@ int CHATisLogged ( char * a_name, int * a_soc ) {
 	return loginPosition;
 }
 
-void CHATgetUserList (char * aout_list) {
+unsigned char* CHATgetUserList (unsigned char * aout_list) {
+	aout_list = malloc(1024);
+	bzero(aout_list, 1024);
 	int i;
 	strcpy(aout_list, "[\"");
 	IPCp(GLOBALsemid,0);
@@ -99,19 +106,21 @@ void CHATgetUserList (char * aout_list) {
 	IPCv(GLOBALsemid,0);
 	aout_list[strlen(aout_list)-2] = ']';
 	aout_list[strlen(aout_list)-1] = '\0';
+	return aout_list;
 }
 
 void CHATsendUserList(int * a_soc) {
-	char * list = malloc(512);
+	unsigned char * list;
 	unsigned char * reply;
 	int statusCode = 104;
 	bzero(list,512);
-	CHATgetUserList(list);
+	list = CHATgetUserList(list);
 
-	createJSONresponse(&statusCode, (unsigned char*)list, reply);
+	reply = createJSONresponse(&statusCode, (unsigned char*)list, reply);
 	WEBSOCsendMessage(a_soc, reply);
 
-	printf("soc: %d, reply:\n%s\n", *a_soc, reply);
+	free(list);
+	free(reply);
 }
 
 void CHATsendUserListToAll () {
@@ -238,9 +247,11 @@ int CHATfirstEmptySlot() {
 
 void CHATsendReply( int a_statusCode, char * a_message, int *a_soc ) {
 	unsigned char * reply;
-	createJSONresponse(&a_statusCode, (unsigned char*)a_message, reply);
+	printf("status: %d, message: %s\n\n", a_statusCode,a_message);
+	reply = createJSONresponse(&a_statusCode, (unsigned char*)a_message, reply);
 	WEBSOCsendMessage(a_soc, reply);
 	printf("reply message:\n%s\n", reply);
+	free(reply);
 }
 
 void CHATloginUser(struct CHATcommand * cmd, int * a_soc) {
@@ -406,8 +417,9 @@ void CHATparseMessage(unsigned char * a_message, int * a_soc) {
 	struct CHATcommand * cmd;
 	if(a_message[0]=='/') {
 		printf("komenda\n");
-		CHATdecodeCommand(a_message, cmd);
+		cmd = CHATdecodeCommand(a_message, cmd);
 		if(cmd->commandId>0) {
+			printf("wykonuje komende\n");
 			CHATexecuteCommand(cmd, a_soc);
 		} else {
 			perror("Unknown command.");

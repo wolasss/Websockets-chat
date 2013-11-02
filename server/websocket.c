@@ -23,7 +23,7 @@
 #define MASK_SIZE 4
 
 
-void WEBSOC_createFrame(unsigned char* a_message, unsigned char* frame, unsigned long * aout_size) {
+unsigned char* WEBSOC_createFrame(unsigned char* a_message, unsigned char* frame, unsigned long * aout_size) {
 
     unsigned long l_msgLen = strlen((char*)a_message), 
          l_frameSize = 0;
@@ -62,15 +62,16 @@ void WEBSOC_createFrame(unsigned char* a_message, unsigned char* frame, unsigned
     } else {
         perror("Error allocating memory: ");
     } 
+    return frame;
 }
 
-void WEBSOCcreateHandshakeResponse(unsigned char* key, char* buffer) {
+unsigned char* WEBSOCcreateHandshakeResponse(unsigned char* key, char* buffer) {
     unsigned char * acceptKey;
     buffer = malloc(1024);
     char temp[1024];
     bzero(buffer, 1024);
     bzero(temp, 1024);
-    WEBSOCgenerateAcceptKey(key, acceptKey);
+    acceptKey = WEBSOCgenerateAcceptKey(key, acceptKey);
     strcpy(buffer, "HTTP/1.1 101 Switching Protocols\r\n");
     strcat(buffer, "Upgrade: websocket\r\n");
     strcat(buffer, "Connection: Upgrade\r\n");
@@ -78,12 +79,15 @@ void WEBSOCcreateHandshakeResponse(unsigned char* key, char* buffer) {
     strcat(buffer, temp);
     strcat(buffer, "Sec-WebSocket-Protocol: chat\r\n");
     strcat(buffer, "\r\n");
+    return (unsigned char*)buffer;
 }
 
-void WEBSOCgenerateAcceptKey(unsigned char* key, unsigned char* res) {    
+unsigned char* WEBSOCgenerateAcceptKey(unsigned char* key, unsigned char* res) {    
     key[strlen((char*)key)-1]=0; //remove null terminator from 1st string...
     res = malloc(1024);
-
+    bzero(res, 1024);
+    char out[1024];
+    bzero(out,1024);
     //add magic string
     strcat((char*)key,"258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
 
@@ -93,11 +97,12 @@ void WEBSOCgenerateAcceptKey(unsigned char* key, unsigned char* res) {
     SHA1_Update(&ctx, key, strlen((char*)key));
     SHA1_Final(digest, &ctx);
  
-    bzero(res, 1024);
-    base64_encode(digest, SHA_DIGEST_LENGTH, (char*)res, sizeof((char*)res)); // SHA_DIGEST_LENGTH = 20 
+    base64_encode(digest, SHA_DIGEST_LENGTH, out, sizeof(out)); // SHA_DIGEST_LENGTH = 20 
+    strcpy((char*)res, out);
+    return res;
 }
 
-void WEBSOCgetRequestKey(unsigned char* a_request, unsigned char* key) {
+unsigned char* WEBSOCgetRequestKey(unsigned char* a_request, unsigned char* key) {
 	regex_t r;
     regmatch_t m[1];
 
@@ -118,6 +123,7 @@ void WEBSOCgetRequestKey(unsigned char* a_request, unsigned char* key) {
     	bzero(key,512);
     }
     regfree (&r);
+    return key;
 }
 
 void WEBSOCsendMessage( int * a_soc, unsigned char* a_message ) {
@@ -125,13 +131,13 @@ void WEBSOCsendMessage( int * a_soc, unsigned char* a_message ) {
     if(fork()==0) {
         unsigned char * frame;
         unsigned long frameSize = 0;
-        WEBSOC_createFrame(a_message, frame, &frameSize);
+        frame = WEBSOC_createFrame(a_message, frame, &frameSize);
         SOCsendMessage(a_soc, frame, &frameSize);
         exit(0);
     }
 }
 
-unsigned char* WEBSOCdecodeFrame( unsigned char* a_frame, unsigned long * a_frameLength ) {
+unsigned char* WEBSOCdecodeFrame( unsigned char* a_frame, unsigned char* decoded, unsigned long * a_frameLength ) {
 
     unsigned char length;
 
@@ -178,7 +184,7 @@ unsigned char* WEBSOCdecodeFrame( unsigned char* a_frame, unsigned long * a_fram
     if((actualLength+indexFirstData)!=(*a_frameLength)) {
         printf("Blad ramki o co chodzi\n");
     }
-    unsigned char* decoded = malloc((int)*a_frameLength-indexFirstData);
+    decoded = malloc((int)*a_frameLength-indexFirstData);
     bzero(decoded, *a_frameLength-indexFirstData);
     for(k=indexFirstData, j=0; k<*a_frameLength; k++, j++) {
         decoded[j] = a_frame[k] ^ mask[j % MASK_SIZE];
@@ -193,14 +199,14 @@ int WEBSOChandshake( int soc ) {
     unsigned char* request, *reply, *key;   
       
     request = SOCreceiveMessage(&soc, request, &len);
-    
+
     if(DEBUG) {
       printf("Request:\n%s\n", request);
     }
 
-    WEBSOCgetRequestKey(request, key);
+    key = WEBSOCgetRequestKey(request, key);
     //TODO: check if websocket protocol...
-    WEBSOCcreateHandshakeResponse(key, (char*)reply);
+    reply = WEBSOCcreateHandshakeResponse(key, (char*)reply);
 
     if(DEBUG) {
       printf("Reply:\n%s\n", reply); //Handshake reply 
@@ -208,6 +214,7 @@ int WEBSOChandshake( int soc ) {
 
     len = strlen((char*)reply);
     SOCsendMessage(&soc,reply,&len);
+
 
     return 1;
 }

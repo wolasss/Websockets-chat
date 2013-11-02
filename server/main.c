@@ -20,6 +20,7 @@ fd - deskryptor pliku (int)
 aout - argument tylko do zapisania
 */
 #include <stdio.h>
+#include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
@@ -53,7 +54,6 @@ aout - argument tylko do zapisania
 
 struct Shared * SHM = NULL;
 int GLOBALsemid;
-int GLOBALshmid;
 
 void forceQuit(int a_sig) {
     SHMdestroy();
@@ -74,23 +74,25 @@ void logEvent(char* a_event) {
 	IPCv(GLOBALsemid,2);
 }
 
-void handleClient( int a_soc ) {
+void handleClient( int * a_soc ) {
     unsigned char *frame, *message;
     unsigned long messageLength = 0, frameLength = 0;
     while(1) {
         bzero(message, messageLength);
 
-        frame = SOCreceiveMessage(&a_soc, frame, &frameLength);
+        frame = SOCreceiveMessage(a_soc, frame, &frameLength);
+        printf("frameLength: %d\n", frameLength);
         if(frameLength!=-1) {
-            message = WEBSOCdecodeFrame(frame, &frameLength);
+            message = WEBSOCdecodeFrame(frame, message, &frameLength);
             messageLength = strlen((char*)message);
 
-            printf("%s\n", message);
-            CHATparseMessage(message, &a_soc);
+            printf("mes: %s\n\n\n", message);
+            CHATparseMessage(message, a_soc);
         } else {
             //klient przerwal polaczenie
-            int pos = CHATisLogged(NULL, &a_soc);
-            CHATremoveUser(NULL, &a_soc, &pos);
+            printf("przerwaneeeeeee\n");
+            int pos = CHATisLogged(NULL, a_soc);
+            CHATremoveUser(NULL, a_soc, &pos);
 
             perror("Connection terminated by client. ");
             exit(1);
@@ -99,31 +101,35 @@ void handleClient( int a_soc ) {
     } //end while
 }
 
+void* handshake ( void* clisoc ) {
+	int * ptr = (int*)clisoc; 
+	int a_soc = *ptr;
+	signal(SIGINT, SIG_DFL);
+	printf("przed handshak\n");
+	if((WEBSOChandshake(a_soc))>0) {
+		printf("handshaked\n\n\n\n");
+        handleClient(&a_soc);
+    }
+	close(a_soc);
+	exit(0);
+}
+
 void acceptConnection( int * socketfd ) {
-	int clisoc;
 	struct sockaddr_in client_addr; 
 	socklen_t clilen = sizeof(client_addr);
 	char log[512];
 	while(1) {
+		int clisoc;
+		int * arg_ptr = &clisoc;
 		clisoc = accept(*socketfd, (struct sockaddr*)&client_addr, &clilen);
 		if(clisoc>=0) {
+			pthread_t client;
 			bzero(log, 512);
-
 			printf("Connected: %s SOCKETFFD: %d\n", inet_ntoa(client_addr.sin_addr), clisoc);
 			snprintf(log, sizeof log, "Connected: %s \n", inet_ntoa(client_addr.sin_addr));
 			logEvent(log);	
 			fflush(stdout); // just in case 
-			if(fork()==0) {
-				signal(SIGINT, SIG_DFL);
-                close(*socketfd);
-				if((WEBSOChandshake(clisoc))>0) {
-                    handleClient(clisoc);
-                }
-				close(clisoc);
-				exit(0);
-			} else {
-				//close clisoc
-			}
+			pthread_create(&client, NULL, handshake, arg_ptr);
 		} else {
 			perror("Accepting error: ");
 			exit(0);
@@ -131,8 +137,12 @@ void acceptConnection( int * socketfd ) {
 	}
 }
 
+struct Shared shared; //no need to clean this up, is global
 
 int main( int argc, char *argv[] ) {
+	
+	SHM = &shared;
+
 	srand(time(NULL));
 	signal(SIGINT, forceQuit);
     signal(SIGCHLD, killChildProcess);
@@ -152,9 +162,10 @@ int main( int argc, char *argv[] ) {
             exit(0);
         }
     }
+    printf("test\n");
  	SHMinit(rand()%1000);
  	CHATprepareMainRoom();
- 	
+ 	printf("tes2t\n");
 	if(socketfd>0) {
 		struct sockaddr_in my_addr; 
 		my_addr.sin_family = PF_INET;

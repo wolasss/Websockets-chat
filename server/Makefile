@@ -4,7 +4,7 @@ server: main.o ./chat.o ./ipc_shared.o ./sockets.o ./tools.o ./websocket.o
 	gcc main.o ./chat.o ./ipc_shared.o ./sockets.o ./tools.o ./websocket.o  -o server -lcrypto -Wall
 
 main.o: main.c sockets.h websocket.h tools.h ipc_shared.h chat.h
-	gcc -c main.c -o main.o -lcrypto -Wall
+	gcc -c main.c -o main.o -lcrypto -Wall -pthread
 
 chat.o: chat.c chat.h sockets.h websocket.h tools.h ipc_shared.h
 	gcc -c chat.c -o chat.o

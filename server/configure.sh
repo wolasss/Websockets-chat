@@ -22,7 +22,7 @@ fi
 
 touch Makefile
 clr_main=`basename $main | cut -d\. -f1` 
-main_gpp=`gcc -MM $main -Wall`
+main_gpp=`gcc -MM $main -Wall -pthread`
 
 objekty=`find . -name "*.c" | grep -v "main" | sed "s/\.c/\.o/g" | tr '\n' ' ' `
 echo $objekty;
@@ -30,7 +30,7 @@ echo -e "all: $projectname\n\n$projectname: $clr_main.o $objekty\n\tgcc $clr_mai
 
 elem_main=`gcc -MM $main -Wall`
 echo -e "$elem_main" >> Makefile
-echo -e "\tgcc -c $clr_main.c -o $clr_main.o -lcrypto -Wall\n" >> Makefile
+echo -e "\tgcc -c $clr_main.c -o $clr_main.o -lcrypto -Wall -pthread\n" >> Makefile
 
 for parameter in `find . -name "*.c" | grep -v "main"` 
 do
