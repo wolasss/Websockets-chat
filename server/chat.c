@@ -56,10 +56,12 @@ struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd)
     		i++;
     }
     cmd->name = malloc(i+1);
+    bzero(cmd->name, i+1);
 
     paramLen = cmdLen-i+1;
     if(paramLen>=0) {
     	cmd->param = malloc(paramLen);
+    	bzero(cmd->param, paramLen);
 	    bzero(cmd->param, paramLen);
 	    i++; // remove space 
 	    while(i<cmdLen) {
@@ -471,6 +473,7 @@ void CHATparseMessage(char* a_message, int * a_soc) {
 	} else if(a_message[0]=='@') {
 		printf("private:\n%s\n", a_message);
 	} else if(a_message[0]=='%'){
+
 		cmd = CHATdecodeCommand(a_message, cmd);
 		int idRoom = CHATroomExists(cmd->name);
 		int idSender = CHATisLogged(NULL, a_soc);
