@@ -486,18 +486,36 @@ body {
     .login-button {
         width:auto;
     }
+    .chat-icon {
+        width:100%;
+        float:none;
+        img {
+            width: 85px;
+            float:left;
+            margin-right:20px;
+        }
+    }
+    .chat-container {
+        float:left;
+        margin-top:10px;
+        margin-left:0;
+        &:before {
+            display:none;
+        }
+    }
     .chat {
         .clearfix {
             height:auto;
         }
         height:auto;
-        width:400px;
+        width:75%;
+        margin:0 auto;
         .form-group {
             width:100%;
         }
         .port {
             .login-field-icon {
-                right:13px;
+                right:auto;
             }
         }
     }
@@ -508,7 +526,7 @@ body {
     }
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 580px) {
     #board {
         width:100%;
         .messages {
@@ -529,7 +547,7 @@ body {
             }
         }
     }
-    .login-icon {
+    .chat-icon {
         width:100%;
         float:none;
         img {
@@ -545,8 +563,39 @@ body {
         &:before {
             display:none;
         }
+    }
+    #loginForm {
         .form-group {
+            text-align:center;
             width:100%;
+        }
+        .port {
+            .login-field-icon {
+                right:13px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .chat-container {
+        padding: 15px 15px 15px;
+    }
+    #loginForm {
+        .form-group {
+            text-align:center;
+            width:100%;
+        }
+        .login-field {
+            width:85%;
+        }
+        .btn {
+            width:85%;
+        }
+        .port {
+            .login-field-icon {
+                right:13px;
+            }
         }
     }
 }
