@@ -105,7 +105,7 @@ var MODloginForm = function(sb){
 			}
 		} else {
 			data.hostname = 'adamwolski.com';
-			data.port = '12345';
+			data.port = 12345;
 		} 
 
 		if(usernameField.value.length!==0) {
