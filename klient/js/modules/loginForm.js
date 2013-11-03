@@ -85,12 +85,13 @@ var MODloginForm = function(sb){
 		sb.append(errorContainer, '<p>'+Msg+'</p>');
 	};
 	logIn = function (e) {
+		var data ={};
 		sb.hide(errorContainer);
 		sb.clear(errorContainer);
 		errors=0;
 
 		NProgress.start();
-
+		console.log("def:", defaultServer);
 		if(!defaultServer) {
 			port = parsePort(portField.value);
 			if(port===-1) {
@@ -104,8 +105,10 @@ var MODloginForm = function(sb){
 				errors = 1;
 			}
 		} else {
+			console.log('tak');
 			data.hostname = 'adamwolski.com';
 			data.port = 12345;
+			console.log(data);
 		} 
 
 		if(usernameField.value.length!==0) {
@@ -119,23 +122,25 @@ var MODloginForm = function(sb){
 				sb.show(errorContainer);
 			});
 		} else {
-			data.port = port;
+			if(!data.port) data.port = port;
 			data.username = username;
-			data.hostname = hostname;
+			if(!data.hostname) data.hostname = hostname;
 			sb.emit('loginRequest', data);
 		}
 	};
 	defaultServerChange = function(e) {
 		var checked = defaultServerField.checked;
+		
 		if(checked) {
-			defaultServer = 1;
+			defaultServer = true;
 			sb.slideUp(portContainer);
 			sb.slideUp(hostnameContainer);
 		} else {
-			defaultServer = 0;
+			defaultServer = false;
 			sb.slideDown(portContainer);
 			sb.slideDown(hostnameContainer);
 		}
+		console.log(defaultServer);
 	};
 	keyPressed = function(e) {
 		if(e.which==13) {
