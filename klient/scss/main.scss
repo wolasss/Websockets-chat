@@ -289,6 +289,10 @@ body {
     .controlMessage {
         border-top: 1px dotted #bdc3c7;
         padding-top:5px;
+        margin-bottom: 25px;
+        font-size:13px;
+        line-height: 1.4;
+        font-weight:bold;
     }
     .msgContainer {
         margin-bottom: 25px;
@@ -314,6 +318,8 @@ body {
             bottom:-18px;
             font-weight:bold;
             font-size:13px;
+            overflow:hidden;
+            text-overflow: ellipsis;
         }
         .message {
             width:363px;
@@ -428,6 +434,8 @@ body {
         font-size:13px;
         cursor:pointer;
         @include user-select(none);
+        overflow:hidden;
+        text-overflow: ellipsis;
     }
     .user.fox {
         background: url('../images/icons/png/fox_small.png') no-repeat 10px center;
