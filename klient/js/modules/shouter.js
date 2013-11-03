@@ -19,7 +19,8 @@ var MODshouter = function(sb){
 			message = "%"+currentRoom+" "+input.value;
 		}
 
-		if(input.value.length!==0) {
+		//!(equals 0 or only spaces)...
+		if(input.value.length!==0 && (!input.value.match(/^\s+$/)) ) {
 			sb.emit('WSsendMessage', message);
 			input.value='';
 		}

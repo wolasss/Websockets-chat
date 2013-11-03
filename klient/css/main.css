@@ -4904,7 +4904,7 @@ body {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     width: 100%;
-    margin: 35px 0; }
+    margin: 35px 0 15px 0; }
     /* line 563, ../scss/main.scss */
     .chat-container:before {
       display: none; }
@@ -4915,22 +4915,36 @@ body {
     width: 100%; }
   /* line 573, ../scss/main.scss */
   #loginForm .port .login-field-icon {
-    right: 13px; } }
-@media screen and (max-width: 400px) {
+    right: 13px; }
+
+  /* line 578, ../scss/main.scss */
+  .aside {
+    width: 100%; }
+
   /* line 581, ../scss/main.scss */
+  #userlist {
+    width: 100%;
+    margin-left: 0px;
+    min-height: 0; }
+
+  /* line 588, ../scss/main.scss */
+  #logoutbutton {
+    margin-left: 0px; } }
+@media screen and (max-width: 400px) {
+  /* line 594, ../scss/main.scss */
   .chat-container {
     padding: 15px 15px 15px; }
 
-  /* line 585, ../scss/main.scss */
+  /* line 598, ../scss/main.scss */
   #loginForm .form-group {
     text-align: center;
     width: 100%; }
-  /* line 589, ../scss/main.scss */
+  /* line 602, ../scss/main.scss */
   #loginForm .login-field {
     width: 85%; }
-  /* line 592, ../scss/main.scss */
+  /* line 605, ../scss/main.scss */
   #loginForm .btn {
     width: 85%; }
-  /* line 596, ../scss/main.scss */
+  /* line 609, ../scss/main.scss */
   #loginForm .port .login-field-icon {
     right: 13px; } }

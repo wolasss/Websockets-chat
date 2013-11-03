@@ -559,7 +559,7 @@ body {
     .chat-container {
         @include box-sizing(border-box);
         width:100%;
-        margin:35px 0;
+        margin:35px 0 15px 0;
         &:before {
             display:none;
         }
@@ -574,6 +574,19 @@ body {
                 right:13px;
             }
         }
+    }
+    .aside {
+        width:100%;
+    }
+    #userlist {
+        width:100%;
+        margin-left:0px;
+        min-height:0;
+        .user {
+        }
+    }
+    #logoutbutton {
+        margin-left:0px;
     }
 }
 
