@@ -286,6 +286,10 @@ body {
     .room li {
         list-style: none;
     }
+    .controlMessage {
+        border-top: 1px dotted #bdc3c7;
+        padding-top:5px;
+    }
     .msgContainer {
         margin-bottom: 25px;
         .avatar {
