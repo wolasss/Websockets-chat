@@ -12,6 +12,7 @@ var MODuserlist = function(sb){
 				addClass="fox";
 			}
 			sb.append(list, "<li class=\"user "+addClass+"\">"+users[i]+"</li>");
+			addClass = '';
 		}
 	};
 	reactor = function(data, topic) {

@@ -18,7 +18,7 @@ var MODboard = function(sb){
 			now = new Date(),
 			additionalClass = '';
 			if(username === sender) { additionalClass+='mine'; }
-			if(username === "thefox") { additionalClass+=' fox'; }
+			if(data.sender === "thefox") { additionalClass+=' fox'; }
 			var msgTemplate = '<li class="msgContainer clearfix"><div class="avatar '+additionalClass+'"><div class="nick">'+sender+'</div></div><div class="message '+additionalClass+'"><div class="bubble">'+message+'<div class="info">'+now.toString().match(/\d\d:\d\d:\d\d/)[0]+'</div></div></div></li>',
             room = sb.find('.room_'+room)[0];
             

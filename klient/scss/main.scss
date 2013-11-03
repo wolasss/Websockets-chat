@@ -123,6 +123,7 @@ body {
 
 .chat-icon {
     width: 96px;
+    text-align:left;
     @include inline-block;
     vertical-align:top;
     img {
@@ -150,7 +151,7 @@ body {
     }
     text-align:left;
     width:445px;
-    min-height:200px;
+    min-height:130px;
     @include inline-block;
     margin-left: 20px;
     position:relative;
