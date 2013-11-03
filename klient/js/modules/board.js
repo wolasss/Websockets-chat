@@ -16,9 +16,12 @@ var MODboard = function(sb){
 			room = data.room,
 			sender = data.sender
 			now = new Date(),
-			additionalClass = (username === sender) ? 'mine' : '',
-			msgTemplate = '<li class="msgContainer clearfix"><div class="avatar '+additionalClass+'"><div class="nick">'+sender+'</div></div><div class="message '+additionalClass+'"><div class="bubble">'+message+'<div class="info">'+now.toString().match(/\d\d:\d\d:\d\d/)[0]+'</div></div></div></li>',
+			additionalClass = '';
+			if(username === sender) { additionalClass+='mine'; }
+			if(username === "thefox") { additionalClass+=' fox'; }
+			var msgTemplate = '<li class="msgContainer clearfix"><div class="avatar '+additionalClass+'"><div class="nick">'+sender+'</div></div><div class="message '+additionalClass+'"><div class="bubble">'+message+'<div class="info">'+now.toString().match(/\d\d:\d\d:\d\d/)[0]+'</div></div></div></li>',
             room = sb.find('.room_'+room)[0];
+            
             if(room) {
             	sb.append(room, msgTemplate);
             	sb.scrollTop(room, room.scrollHeight);

@@ -6,8 +6,12 @@ var MODuserlist = function(sb){
 	};
 	showList = function(users) {
 		sb.clear(list);
+		var addClass = '';
 		for(var i=0, len=users.length; i<len; i++){
-			sb.append(list, "<li class=\"user\">"+users[i]+"</li>");
+			if(users[i]==="thefox") {
+				addClass="fox";
+			}
+			sb.append(list, "<li class=\"user "+addClass+"\">"+users[i]+"</li>");
 		}
 	};
 	reactor = function(data, topic) {

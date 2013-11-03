@@ -91,7 +91,6 @@ var MODloginForm = function(sb){
 		errors=0;
 
 		NProgress.start();
-		console.log("def:", defaultServer);
 		if(!defaultServer) {
 			port = parsePort(portField.value);
 			if(port===-1) {
@@ -105,10 +104,8 @@ var MODloginForm = function(sb){
 				errors = 1;
 			}
 		} else {
-			console.log('tak');
 			data.hostname = 'adamwolski.com';
 			data.port = 12345;
-			console.log(data);
 		} 
 
 		if(usernameField.value.length!==0) {
@@ -140,7 +137,6 @@ var MODloginForm = function(sb){
 			sb.slideDown(portContainer);
 			sb.slideDown(hostnameContainer);
 		}
-		console.log(defaultServer);
 	};
 	keyPressed = function(e) {
 		if(e.which==13) {
