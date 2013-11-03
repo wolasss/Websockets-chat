@@ -272,13 +272,16 @@ body {
 #board {
     display:none;
     color: #34495e;
-    width:428px;
+    width:104%;
+    //width:428px;
     overflow:hidden;
     .room {
         margin:0;
         padding:0;
         height:400px;
+        padding-right: 20px;
         overflow-y: scroll;
+        overflow: auto;
     }
     .room::-webkit-scrollbar { 
         display: none; 
@@ -296,6 +299,7 @@ body {
     }
     .msgContainer {
         margin-bottom: 25px;
+        width:100%;
         .avatar {
             overflow:visible;
             width:65px;
@@ -322,7 +326,7 @@ body {
             text-overflow: ellipsis;
         }
         .message {
-            width:363px;
+            width:83%;
             float:right;
             text-align:right;
             .bubble {
@@ -412,6 +416,7 @@ body {
     min-height:100px;
     border-radius: 6px;
     display:none;
+    margin-bottom:10px;
     h4 {
         margin-top:0;
         padding-top:15px;
@@ -424,8 +429,8 @@ body {
         list-style:none;
         padding:0;
         margin:0;
-        margin-bottom:10px;
         padding-bottom:10px;
+
     }
     .user {
         background: url('../images/icons/png/silhouette_small.png') no-repeat 10px center; 

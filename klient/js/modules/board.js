@@ -2,8 +2,8 @@ var MODboard = function(sb){
 	var container, show, receiveMessage, hide, username;
 
 	show = function(data, topic) {
+		sb.clear(container);
 		username = data;
-		console.log(username);
 		sb.addClass(sb.CSSchat, 'expanded');
 		setTimeout(sb.fadeToggleModule,600);
 	};

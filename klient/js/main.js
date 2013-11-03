@@ -15,7 +15,7 @@ var sandbox = function(core, instanceId, options, moduleId) {
   this.CSSerror = '.error';
   this.CSSchat = '.chat';
   this.CSSmessageField = '.message-field';
-  this.CSSmessagesContainer = '.messages';
+  this.CSSmessagesContainer = '.room';
   this.CSSuserList = '.list';
   this.CSSlogoutButton = '.logout';
 
