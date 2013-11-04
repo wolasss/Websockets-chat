@@ -313,8 +313,8 @@ body {
         width:100%;
         .avatar {
             overflow:visible;
-            width:65px;
-            height:66px;
+            width:55px;
+            height:56px;
             background: url('../images/icons/png/person.png');
             position:relative;
             float:right;
@@ -326,7 +326,7 @@ body {
             background: url('../images/icons/png/fox.png');
         }
         .nick {
-            width:65px;
+            width:55px;
             position:absolute;
             text-align:center;
             left:0;
@@ -342,9 +342,9 @@ body {
             text-align:right;
             .bubble {
                 min-width:35px;
-                margin-top: 10px;
+                margin-top: 6px;
                 background: #34495e;
-                padding:10px;
+                padding:7px;
                 border-radius: 5px;
                 color: #fff;
                 position:relative;
@@ -352,6 +352,8 @@ body {
                 margin-left: 0px;
                 margin-right: 10px;
                 text-align:left;
+                font-size:13px;
+                font-weight:400;
                 @include inline-block;
             }
             .bubble:before {
@@ -363,12 +365,12 @@ body {
                 width: 0;
                 border-width: 7px 7px 7px 0;
                 right: -6px;
-                top: 10px;
+                top: 8px;
                 @include transform(rotate(180deg));
             }
         }
         .info {
-            font-size:12px;
+            font-size:10px;
             position: absolute;
             left:4px;
             bottom:-16px;
@@ -384,7 +386,7 @@ body {
             .bubble:before {
                 border-width: 7px 7px 7px 0;
                 left: -6px;
-                top: 10px;
+                top: 8px;
                 @include transform(rotate(360deg));
             }
             .info {
