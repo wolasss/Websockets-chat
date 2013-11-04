@@ -193,7 +193,7 @@ void CHATremoveUserFromActiveRooms ( int a_pos, int a_fd ) {
 	IPCv(GLOBALsemid,0);
 	IPCp(GLOBALsemid,1);
 	for(i=0; i<k; i++) {
-		if(activeRooms[i]>=1 && ((*SHM).tabRoom[activeRooms[i]-1].users<=1)) {
+		if(activeRooms[i]>=1 && ((*SHM).tabRoom[activeRooms[i]-1].users<=1) && !((*SHM).tabRoom[activeRooms[i]-1].id==1)) {
 			toRemove[l++]=activeRooms[i];
 		} else {
 			//check all users and remove the one
