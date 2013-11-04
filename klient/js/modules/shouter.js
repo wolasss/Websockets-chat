@@ -21,7 +21,7 @@ var MODshouter = function(sb){
 
 		//!(equals 0 or only spaces)...
 		if(input.value.length!==0 && (!input.value.match(/^\s+$/)) ) {
-			sb.emit('WSsendMessage', message);
+			sb.emit('WSsendMessage', encodeURIComponent(message));
 			input.value='';
 		}
 	}

@@ -31,6 +31,7 @@ char* WEBSOC_createFrame(char* a_message, char* frame, unsigned long * aout_size
     unsigned int i_addBytes = 0;
 
     frame = malloc(10); //max length + 2 bytes
+    bzero(frame, 10);
 
     frame[0] = 129; //type of message text - message
 

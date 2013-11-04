@@ -47,23 +47,24 @@ char* CHATcreateJSONmessage( int * a_statusCode, char* a_sender, char* a_room, c
 struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd) {
 	cmd = (struct CHATcommand *) malloc(sizeof(struct CHATcommand));
 
-	int paramLen, i=1, b=0, cmdLen = strlen(a_command);
+	int paramLen, i=3, b=0, cmdLen = strlen(a_command), k=0;
 
 	char command[16];
 	bzero(command,16);
-	while(a_command[i]!=' ' && i<16) {
-    		command[i-1]=a_command[i];
-    		i++;
+	while(a_command[i]!='%' &&  a_command[i+1]!='2' && a_command[i+2]!='0' && i<16) {
+    		command[k]=a_command[i];
+    		i++; k++;
     }
-    cmd->name = malloc(i+1);
-    bzero(cmd->name, i+1);
+    printf("%s\n", command);
+    cmd->name = malloc(i-2);
+    bzero(cmd->name, i-2);
 
     paramLen = cmdLen-i+1;
     if(paramLen>=0) {
     	cmd->param = malloc(paramLen);
     	bzero(cmd->param, paramLen);
 	    bzero(cmd->param, paramLen);
-	    i++; // remove space 
+	    i=i+3; // remove space 
 	    while(i<cmdLen) {
 	    		cmd->param[b]=a_command[i];
 	    		i++; 
@@ -71,7 +72,9 @@ struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd)
 	    }
     }
     strncpy(cmd->name, command, strlen(command));
-    if(a_command[0]!='%') {
+    printf("%s\n", cmd->param);
+    if(!(a_command[0]=='%' && a_command[1]=='2' && a_command[2]=='5')) {
+    	printf("wchodze\n");
     	if(!strcmp(command, "login")) {
     		cmd->commandId = 1;
 	    } else if(!strcmp(command, "help")) {
@@ -262,6 +265,7 @@ void CHATloginUser(struct CHATcommand * cmd, int * a_soc) {
 	int firstFree, i, logged=CHATisLogged(cmd->param, NULL), mainRoom = 0;
 	struct CHATcommand room;
 	room.param = malloc(5);
+	bzero(room.param, 5);
 	strcpy(room.param,"main");
 	if(logged>=0) {
 		CHATsendReply(501, "User already exists. Please choose another nickname.", a_soc);
@@ -437,6 +441,7 @@ int CHATfindRoom (char * a_name) {
 void CHATsendToAll (int * a_roomId , char* a_roomName, int * a_sender, char* a_message) {
 	int users[MAX_USERS], i=0, k=0;
 	char * nick = malloc(32);
+	bzero(nick ,32);
 	IPCp(GLOBALsemid,1);
 	for(i=0; i<MAX_USERS; i++) {
 		printf("fd: %d\n", (*SHM).tabRoom[*a_roomId].activeUsers[i]);
@@ -460,7 +465,8 @@ void CHATsendToAll (int * a_roomId , char* a_roomName, int * a_sender, char* a_m
 
 void CHATparseMessage(char* a_message, int * a_soc) {
 	struct CHATcommand * cmd;
-	if(a_message[0]=='/') {
+	if(a_message[0]=='%' && a_message[1]=='2' && a_message[2]=='F') {
+		//%40 - urldecode(/)
 		cmd = CHATdecodeCommand(a_message, cmd);
 		if(cmd->commandId>0) {
 			CHATexecuteCommand(cmd, a_soc);
@@ -470,10 +476,11 @@ void CHATparseMessage(char* a_message, int * a_soc) {
 		free(cmd->param);
 		free(cmd->name);
 		free(cmd);
-	} else if(a_message[0]=='@') {
+	} else if(a_message[0]=='%' && a_message[1]=='4' && a_message[2]=='0') {
+		//%40 - urldecode(@)
 		printf("private:\n%s\n", a_message);
-	} else if(a_message[0]=='%'){
-
+	} else if(a_message[0]=='%' && a_message[1]=='2' && a_message[2]=='5' ) {
+		//%25 - urldecode(%)
 		cmd = CHATdecodeCommand(a_message, cmd);
 		int idRoom = CHATroomExists(cmd->name);
 		int idSender = CHATisLogged(NULL, a_soc);

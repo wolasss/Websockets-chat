@@ -35,6 +35,11 @@ var MODwebsocket = function(sb){
 	processMessage = function(e) {
 		try {
 			var message = JSON.parse(""+e.data);
+			if(message.message) {
+				if(typeof(message.message)==="string") {
+					message.message = decodeURIComponent(message.message);
+				}
+			}
 			if(message.status && !message.sender) {
 				sb.emit('WSresponse', message);
 			} else if(message.status==198) {
@@ -59,7 +64,7 @@ var MODwebsocket = function(sb){
 	};
 	sendLoginRequest = function(username) {
 		if(connected) {
-			sendMessage("/login "+username);
+			sendMessage(encodeURIComponent("/login "+username));
 		}
 	};
 	connect = function(hostname, port) {
