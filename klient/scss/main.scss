@@ -295,7 +295,18 @@ body {
         margin-bottom: 25px;
         font-size:13px;
         line-height: 1.4;
-        font-weight:bold;
+        position:relative;
+        .date {
+            position:absolute;
+            right:0;
+            top:4px;
+            font-size:10px;
+        }
+        .prompt {
+            color: #c0392b;
+            font-weight: bold;
+            font-size:12px;
+        }
     }
     .msgContainer {
         margin-bottom: 25px;

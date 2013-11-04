@@ -35,15 +35,18 @@ var MODwebsocket = function(sb){
 	processMessage = function(e) {
 		try {
 			var message = JSON.parse(""+e.data);
+			console.log(message);
 			if(message.message) {
 				if(typeof(message.message)==="string") {
 					message.message = decodeURIComponent(message.message);
 				}
 			}
-			if(message.status && !message.sender) {
-				sb.emit('WSresponse', message);
-			} else if(message.status==198) {
+			if(message.status==198) {
 				sb.emit('WSreceivedMessage', message);
+			} else if(message.status==195) {
+				sb.emit('WSreceivedNotification', message);
+			} else if(message.status && !message.sender) {
+				sb.emit('WSresponse', message);
 			}
 		} catch(exc) {
 			//ignore message it's not json
