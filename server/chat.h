@@ -46,4 +46,7 @@ int CHATgetActiveUsers(int * a_roomId, int * users);
 struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd);
 char* CHATcreateJSONresponse( int * a_statusCode, char* a_message, char* reply);
 
+void DEBUGprintUsers();
+void DEBUGprintRoom(int a_pos);
+
 #endif

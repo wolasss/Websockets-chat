@@ -55,7 +55,6 @@ char * CHATcreateJSON ( int * a_statusCode, char* a_sender, char* a_room, char* 
 
 	snprintf(aout_reply, 512, "{ %s %s %s %s }", statusJSON, senderJSON, roomJSON, messageJSON);
 	
-
 	free(statusJSON);
 	free(senderJSON);
 	free(roomJSON);
@@ -83,7 +82,7 @@ struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd)
         cmd->param = malloc(paramLen);
         bzero(cmd->param, paramLen);
         bzero(cmd->param, paramLen);
-        i=i+3; // remove space 
+        i=i+3; // remove space -> urldecode(%20)
         while(i<cmdLen) {
                 cmd->param[b]=a_command[i];
                 i++; 
@@ -91,9 +90,7 @@ struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd)
         }
     }
     strncpy(cmd->name, command, strlen(command));
-    printf("%s\n", cmd->param);
     if(!(a_command[0]=='%' && a_command[1]=='2' && a_command[2]=='5')) {
-        printf("wchodze\n");
         if(!strcmp(command, "login")) {
             cmd->commandId = 1;
         } else if(!strcmp(command, "help")) {
@@ -207,7 +204,7 @@ void CHATremoveUserFromActiveRooms ( int a_pos, int a_fd ) {
 	int activeRooms[MAX_ROOMS], toRemove[MAX_ROOMS];
 
 	IPCp(GLOBALsemid,0);
-	for(j=1; j<MAX_ROOMS; j++) {
+	for(j=0; j<MAX_ROOMS; j++) {
 		temp = (*SHM).tabUser[a_pos].activeRooms[j];
 		if(temp>=0) {
 			activeRooms[k] = temp;
@@ -261,7 +258,7 @@ void CHATremoveUser ( char * a_name, int * a_soc, int * a_pos ) {
 		CHATremoveUserFromActiveRooms(pos, soc);
 		IPCp(GLOBALsemid,0);
 		(*SHM).tabUser[*a_pos].fd = 0;
-		strcpy(room.param, (*SHM).tabUser[*a_pos].nick);
+		strcpy(room.param, (*SHM).tabUser[*a_pos].nick); //need nick to notify others
 		bzero((*SHM).tabUser[*a_pos].nick, 32);
 		IPCv(GLOBALsemid,0);
 	}
@@ -270,6 +267,8 @@ void CHATremoveUser ( char * a_name, int * a_soc, int * a_pos ) {
 	snprintf(controlMessage, 128, "User %s has logged out.", room.param);
 	CHATsendCtrlMessageToAll(&mainRoom, room.name, controlMessage);
 	CHATsendUserListToAll();
+	DEBUGprintUsers();
+	DEBUGprintRoom(0);
 	free(controlMessage);
 	free(room.name);
 	free(room.param);
@@ -282,7 +281,7 @@ void CHATassignUser ( int * a_pos, int * a_fd, char* a_nick ) {
 	(*SHM).tabUser[*a_pos].fd = *a_fd;
 	strncpy((*SHM).tabUser[*a_pos].nick, a_nick, 32);
 	(*SHM).tabUser[*a_pos].activeRooms[0] = 0;
-	for(i=1; i<MAX_ROOMS; i++) {
+	for(i=0; i<MAX_ROOMS; i++) {
 		(*SHM).tabUser[*a_pos].activeRooms[i] = -1;
 		//implicitly assign user to main Room (0), because we starting from i=1
 	}
@@ -314,7 +313,7 @@ int CHATgetActiveUsers(int * a_roomId, int * users) {
 	int i=0, activeUsers=0;
 	IPCp(GLOBALsemid,1);
 	for(i=0; i<MAX_USERS; i++) {
-		printf("fd: %d\n", (*SHM).tabRoom[*a_roomId].activeUsers[i]);
+		//printf("fd: %d\n", (*SHM).tabRoom[*a_roomId].activeUsers[i]);
 		if((*SHM).tabRoom[*a_roomId].activeUsers[i]>0) {
 			users[activeUsers]=(*SHM).tabRoom[*a_roomId].activeUsers[i];
 			activeUsers++;
@@ -324,9 +323,39 @@ int CHATgetActiveUsers(int * a_roomId, int * users) {
 	return activeUsers;
 } 
 
+void DEBUGprintRoom(int a_pos) {
+	int i=0, j=0;
+	IPCp(GLOBALsemid,1);
+	for(i=0; i<MAX_ROOMS; i++) {
+		printf("\n%d : %s : users: %d \nAU: ", (*SHM).tabRoom[i].id, (*SHM).tabRoom[i].name, (*SHM).tabRoom[i].users);
+		for(j=0; j<MAX_USERS; j++) {
+			printf("%d ", (*SHM).tabRoom[i].activeUsers[j]);
+		}
+	printf("\n");
+	}
+	IPCv(GLOBALsemid,1);
+}
 
-
-
+void DEBUGprintUsers() {
+	int i=0, j=0;
+	IPCp(GLOBALsemid,0);
+	for(i=0; i<MAX_USERS; i++) {
+		printf("%d : %s : \nAR: ", (*SHM).tabUser[i].fd, (*SHM).tabUser[i].nick);
+		for(j=0; j<MAX_ROOMS; j++) {
+			printf("%d ", (*SHM).tabUser[i].activeRooms[j]);
+		}
+		printf("\n");
+	}
+	IPCv(GLOBALsemid,0);
+}
+void CHATclearActiveRooms (int * a_pos) {
+	int i=0;
+	IPCp(GLOBALsemid,0);
+	for(i=0; i<MAX_ROOMS; i++) {
+		(*SHM).tabUser[*a_pos].activeRooms[i] = -1;
+	}
+	IPCv(GLOBALsemid,0);
+}
 void CHATloginUser(struct CHATcommand * cmd, int * a_soc) {
 	int firstFree, i, logged=CHATisLogged(cmd->param, NULL), mainRoom = 0;
 	char * controlMessage = malloc(128);
@@ -340,6 +369,7 @@ void CHATloginUser(struct CHATcommand * cmd, int * a_soc) {
 	} else {
 		firstFree = CHATfirstEmptySlot();
 		if(firstFree>=0) {
+			CHATclearActiveRooms(&firstFree);
 			CHATassignUser(&firstFree, a_soc, cmd->param);
 			//notify all users
 			snprintf(controlMessage, 128, "User %s has logged in.", cmd->param);
@@ -349,6 +379,7 @@ void CHATloginUser(struct CHATcommand * cmd, int * a_soc) {
 			CHATsendReply(101, cmd->param, a_soc);
 			//TODO send new user lists.
 			CHATsendUserListToAll();
+			DEBUGprintUsers();
 		} else {
 			CHATsendReply(502, "There are no empty slots available. Try again later.", a_soc);
 		}
@@ -429,6 +460,7 @@ int CHATcreateRoom( char* a_name, int * a_creator ) {
 		(*SHM).tabRoom[freeSlot].id = freeSlot+1;
 		strncpy((*SHM).tabRoom[freeSlot].name, a_name, 32);
 		(*SHM).tabRoom[freeSlot].activeUsers[0] = *a_creator;
+		(*SHM).tabRoom[freeSlot].users=1;
 	}
 	IPCv(GLOBALsemid,1);
 
@@ -469,6 +501,8 @@ void CHATjoinToRoom(struct CHATcommand * cmd, int * a_soc) {
 			if(!CHATalreadyInRoom(roomPos+1, &pos)) {
 				if(CHATassignToRoom(roomPos, a_soc)) {
 					CHATuserAddRoom(&pos, &roomPos);
+					printf("chat add to room: %d\n", roomPos);
+					DEBUGprintRoom(0);
 				} else {
 					CHATsendReply(503, "Room is full.", a_soc);
 				}
