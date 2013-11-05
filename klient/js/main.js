@@ -18,6 +18,7 @@ var sandbox = function(core, instanceId, options, moduleId) {
   this.CSSmessagesContainer = '.room';
   this.CSSuserList = '.list';
   this.CSSlogoutButton = '.logout';
+  this.CSSrooms = '.room-list';
 
 
   //functions

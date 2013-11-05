@@ -4487,7 +4487,7 @@ body {
 /* line 148, ../scss/main.scss */
 .chat-container {
   text-align: left;
-  width: 445px;
+  width: 405px;
   min-height: 130px;
   display: -moz-inline-stack;
   display: inline-block;
@@ -4832,132 +4832,191 @@ body {
     font-size: 12px;
     padding: 6px 9px 7px; }
 
+/* line 481, ../scss/main.scss */
+#rooms {
+  display: none;
+  position: absolute;
+  bottom: -33px;
+  width: 451px;
+  border-top: 5px solid #2c3e50;
+  left: 0; }
+  /* line 488, ../scss/main.scss */
+  #rooms:hover ul {
+    visibility: visible;
+    opacity: 1; }
+  /* line 492, ../scss/main.scss */
+  #rooms ul {
+    visibility: hidden;
+    -webkit-transition: all 0.4s ease-in;
+    -moz-transition: all 0.4s ease-in;
+    -o-transition: all 0.4s ease-in;
+    transition: all 0.4s ease-in;
+    opacity: 0;
+    padding: 0;
+    margin: 0; }
+  /* line 499, ../scss/main.scss */
+  #rooms li {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    display: -moz-inline-stack;
+    display: inline-block;
+    vertical-align: middle;
+    *vertical-align: auto;
+    zoom: 1;
+    *display: inline;
+    -webkit-transition: all 0.1s ease-in;
+    -moz-transition: all 0.1s ease-in;
+    -o-transition: all 0.1s ease-in;
+    transition: all 0.1s ease-in;
+    padding: 6px 15px;
+    height: 33px;
+    background: #2c3e50;
+    color: #fff;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    font-weight: 300;
+    cursor: pointer; }
+    /* line 513, ../scss/main.scss */
+    #rooms li.active {
+      background: #3498db;
+      font-weight: 400; }
+      /* line 516, ../scss/main.scss */
+      #rooms li.active:hover {
+        background: #3498db; }
+    /* line 520, ../scss/main.scss */
+    #rooms li:hover {
+      background: #2980b9; }
+    /* line 523, ../scss/main.scss */
+    #rooms li:first-child {
+      margin-left: 0; }
+
 @media screen and (max-width: 768px) {
-  /* line 483, ../scss/main.scss */
+  /* line 530, ../scss/main.scss */
   #board {
     width: 244px; }
-    /* line 489, ../scss/main.scss */
+    /* line 536, ../scss/main.scss */
     #board .msgContainer .message {
       width: 169px; }
 
-  /* line 495, ../scss/main.scss */
+  /* line 542, ../scss/main.scss */
   #loginForm .error {
     margin-top: 10px; }
 
-  /* line 499, ../scss/main.scss */
+  /* line 546, ../scss/main.scss */
   .login-button {
     width: auto; }
 
-  /* line 502, ../scss/main.scss */
+  /* line 549, ../scss/main.scss */
   .chat-icon {
     width: 100%;
     float: none; }
-    /* line 505, ../scss/main.scss */
+    /* line 552, ../scss/main.scss */
     .chat-icon img {
       width: 85px;
       float: left;
       margin-right: 20px; }
 
-  /* line 511, ../scss/main.scss */
+  /* line 558, ../scss/main.scss */
   .chat-container {
     float: left;
     margin-top: 10px;
     margin-left: 0; }
-    /* line 515, ../scss/main.scss */
+    /* line 562, ../scss/main.scss */
     .chat-container:before {
       display: none; }
 
-  /* line 519, ../scss/main.scss */
+  /* line 566, ../scss/main.scss */
   .chat {
     height: auto;
     width: 75%;
     margin: 0 auto; }
-    /* line 520, ../scss/main.scss */
+    /* line 567, ../scss/main.scss */
     .chat .clearfix {
       height: auto; }
-    /* line 526, ../scss/main.scss */
+    /* line 573, ../scss/main.scss */
     .chat .form-group {
       width: 100%; }
-    /* line 530, ../scss/main.scss */
+    /* line 577, ../scss/main.scss */
     .chat .port .login-field-icon {
       right: auto; }
 
-  /* line 536, ../scss/main.scss */
+  /* line 583, ../scss/main.scss */
   #shouter .message-field {
     width: 90%; } }
 @media screen and (max-width: 580px) {
-  /* line 543, ../scss/main.scss */
+  /* line 590, ../scss/main.scss */
   #board {
     width: 100%; }
-    /* line 549, ../scss/main.scss */
+    /* line 596, ../scss/main.scss */
     #board .msgContainer .message {
       width: 65%; }
 
-  /* line 554, ../scss/main.scss */
+  /* line 601, ../scss/main.scss */
   .chat {
     padding: 25px 0;
     width: 90%; }
-    /* line 558, ../scss/main.scss */
+    /* line 605, ../scss/main.scss */
     .chat .chat-container-button-container .login-button {
       width: auto; }
 
-  /* line 563, ../scss/main.scss */
+  /* line 610, ../scss/main.scss */
   .chat-icon {
     width: 100%;
     float: none; }
-    /* line 566, ../scss/main.scss */
+    /* line 613, ../scss/main.scss */
     .chat-icon img {
       width: 85px;
       float: left;
       margin-right: 20px; }
 
-  /* line 572, ../scss/main.scss */
+  /* line 619, ../scss/main.scss */
   .chat-container {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     width: 100%;
     margin: 35px 0 15px 0; }
-    /* line 576, ../scss/main.scss */
+    /* line 623, ../scss/main.scss */
     .chat-container:before {
       display: none; }
 
-  /* line 581, ../scss/main.scss */
+  /* line 628, ../scss/main.scss */
   #loginForm .form-group {
     text-align: center;
     width: 100%; }
-  /* line 586, ../scss/main.scss */
+  /* line 633, ../scss/main.scss */
   #loginForm .port .login-field-icon {
     right: 13px; }
 
-  /* line 591, ../scss/main.scss */
+  /* line 638, ../scss/main.scss */
   .aside {
     width: 100%; }
 
-  /* line 594, ../scss/main.scss */
+  /* line 641, ../scss/main.scss */
   #userlist {
     width: 100%;
     margin-left: 0px;
     min-height: 0; }
 
-  /* line 601, ../scss/main.scss */
+  /* line 648, ../scss/main.scss */
   #logoutbutton {
     margin-left: 0px; } }
 @media screen and (max-width: 400px) {
-  /* line 607, ../scss/main.scss */
+  /* line 654, ../scss/main.scss */
   .chat-container {
     padding: 15px 15px 15px; }
 
-  /* line 611, ../scss/main.scss */
+  /* line 658, ../scss/main.scss */
   #loginForm .form-group {
     text-align: center;
     width: 100%; }
-  /* line 615, ../scss/main.scss */
+  /* line 662, ../scss/main.scss */
   #loginForm .login-field {
     width: 85%; }
-  /* line 618, ../scss/main.scss */
+  /* line 665, ../scss/main.scss */
   #loginForm .btn {
     width: 85%; }
-  /* line 622, ../scss/main.scss */
+  /* line 669, ../scss/main.scss */
   #loginForm .port .login-field-icon {
     right: 13px; } }

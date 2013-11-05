@@ -150,7 +150,7 @@ body {
         height:500px;
     }
     text-align:left;
-    width:445px;
+    width:405px;
     min-height:130px;
     @include inline-block;
     margin-left: 20px;
@@ -478,6 +478,53 @@ body {
     }
 }
 
+#rooms {
+    display:none;
+    position:absolute;
+    bottom:-33px;
+    width:451px;
+    border-top: 5px solid #2c3e50;
+    left:0;
+    &:hover ul {
+        visibility:visible;
+        opacity:1;
+    }
+    ul {
+        visibility:hidden;
+        @include transition(all 0.4s ease-in);
+        opacity:0;
+        padding:0;
+        margin:0;
+    }
+    li {
+        @include box-sizing(border-box);
+        @include inline-block;
+        @include transition(all .1s ease-in);
+        //width: 65px;
+        padding:6px 15px;
+        height:33px;
+        background: #2c3e50;
+        color: #fff;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        font-weight: 300;
+        cursor: pointer;
+        //margin-left: -4px;
+        &.active {
+            background: #3498db;
+            font-weight: 400;
+            &:hover {
+                background: #3498db;
+            }
+        }
+        &:hover {
+            background: #2980b9;
+        }
+        &:first-child {
+            margin-left:0;
+        }
+    }
+}
 
 @media screen and (max-width: 768px) {
     #board {
