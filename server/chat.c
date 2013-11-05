@@ -64,15 +64,15 @@ char * CHATcreateJSON ( int * a_statusCode, char* a_sender, char* a_room, char* 
 }
 
 struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd) {
-	cmd = (struct CHATcommand *) malloc(sizeof(struct CHATcommand));
+    cmd = (struct CHATcommand *) malloc(sizeof(struct CHATcommand));
 
-	int paramLen, i=3, b=0, cmdLen = strlen(a_command), k=0;
+    int paramLen, i=3, b=0, cmdLen = strlen(a_command), k=0;
 
-	char command[16];
-	bzero(command,16);
-	while(a_command[i]!='%' &&  a_command[i+1]!='2' && a_command[i+2]!='0' && i<16) {
-    		command[k]=a_command[i];
-    		i++; k++;
+    char command[16];
+    bzero(command,16);
+    while(!(a_command[i]=='%' && a_command[i+1]=='2' && a_command[i+2]=='0') && k<15) {
+            command[k]=a_command[i];
+            i++; k++;
     }
     printf("%s\n", command);
     cmd->name = malloc(i-2);
@@ -80,29 +80,29 @@ struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd)
 
     paramLen = cmdLen-i+1;
     if(paramLen>=0) {
-    	cmd->param = malloc(paramLen);
-    	bzero(cmd->param, paramLen);
-	    bzero(cmd->param, paramLen);
-	    i=i+3; // remove space 
-	    while(i<cmdLen) {
-	    		cmd->param[b]=a_command[i];
-	    		i++; 
-	    		b++;
-	    }
+        cmd->param = malloc(paramLen);
+        bzero(cmd->param, paramLen);
+        bzero(cmd->param, paramLen);
+        i=i+3; // remove space 
+        while(i<cmdLen) {
+                cmd->param[b]=a_command[i];
+                i++; 
+                b++;
+        }
     }
     strncpy(cmd->name, command, strlen(command));
     printf("%s\n", cmd->param);
     if(!(a_command[0]=='%' && a_command[1]=='2' && a_command[2]=='5')) {
-    	printf("wchodze\n");
-    	if(!strcmp(command, "login")) {
-    		cmd->commandId = 1;
-	    } else if(!strcmp(command, "help")) {
-	    	cmd->commandId = 2;
-	    } else if(!strcmp(command, "join")) {
-	    	cmd->commandId = 3;
-	    } else if(!strcmp(command, "users")) {
-	    	cmd->commandId = 4;
-	    } 
+        printf("wchodze\n");
+        if(!strcmp(command, "login")) {
+            cmd->commandId = 1;
+        } else if(!strcmp(command, "help")) {
+            cmd->commandId = 2;
+        } else if(!strcmp(command, "join")) {
+            cmd->commandId = 3;
+        } else if(!strcmp(command, "users")) {
+            cmd->commandId = 4;
+        } 
     }
     
     return cmd;
