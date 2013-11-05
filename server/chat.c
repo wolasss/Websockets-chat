@@ -237,18 +237,42 @@ void CHATremoveUserFromActiveRooms ( int a_pos, int a_fd ) {
 	}
 }
 
+void CHATsendCtrlMessageToAll (int * a_roomId , char* a_roomName, char* a_message) {
+	int users[MAX_USERS], i=0, k=0;
+	k = CHATgetActiveUsers(a_roomId, users);
+	
+	printf("do ilu wysle wiadomosc kontrolna: %d\n", k);
+	for(i=0; i<k; i++) {
+		CHATsendCtrlMessage(&(users[i]), a_roomName, a_message);
+	}
+}
+
 void CHATremoveUser ( char * a_name, int * a_soc, int * a_pos ) {
 	int pos = *a_pos, soc = *a_soc;
+	char * controlMessage = malloc(128);
+	struct CHATcommand room;
+	int mainRoom = 0;
+	room.name = malloc(5);
+	room.param = malloc(32);
+	bzero(room.name, 5);
+	strcpy(room.name,"main");
+
 	if(pos>=0) {
 		CHATremoveUserFromActiveRooms(pos, soc);
 		IPCp(GLOBALsemid,0);
 		(*SHM).tabUser[*a_pos].fd = 0;
+		strcpy(room.param, (*SHM).tabUser[*a_pos].nick);
 		bzero((*SHM).tabUser[*a_pos].nick, 32);
 		IPCv(GLOBALsemid,0);
 	}
 	//send to all new list of users
 	printf("sending to all \n");
+	snprintf(controlMessage, 128, "User %s has logged out.", room.param);
+	CHATsendCtrlMessageToAll(&mainRoom, room.name, controlMessage);
 	CHATsendUserListToAll();
+	free(controlMessage);
+	free(room.name);
+	free(room.param);
 	close(*a_soc);
 }
 
@@ -301,15 +325,7 @@ int CHATgetActiveUsers(int * a_roomId, int * users) {
 } 
 
 
-void CHATsendCtrlMessageToAll (int * a_roomId , char* a_roomName, char* a_message) {
-	int users[MAX_USERS], i=0, k=0;
-	k = CHATgetActiveUsers(a_roomId, users);
-	
-	printf("do ilu wysle wiadomosc kontrolna: %d\n", k);
-	for(i=0; i<k; i++) {
-		CHATsendCtrlMessage(&(users[i]), a_roomName, a_message);
-	}
-}
+
 
 void CHATloginUser(struct CHATcommand * cmd, int * a_soc) {
 	int firstFree, i, logged=CHATisLogged(cmd->param, NULL), mainRoom = 0;

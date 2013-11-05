@@ -41,6 +41,7 @@ void CHATexecuteCommand(struct CHATcommand * cmd, int * a_soc);
 void CHATparseMessage(char* a_message, int * a_soc);
 void CHATjoinToRoom(struct CHATcommand * cmd, int * a_soc);
 void CHATuserAddRoom( int * a_pos , int * a_roomPos );
+int CHATgetActiveUsers(int * a_roomId, int * users);
 
 struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd);
 char* CHATcreateJSONresponse( int * a_statusCode, char* a_message, char* reply);
