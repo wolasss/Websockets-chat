@@ -70,6 +70,43 @@ struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd)
     
     return cmd;
 }
+char * createJSON ( int * a_statusCode, char* a_sender, char* a_room, char* a_message, char* aout_reply ) {
+    aout_reply = malloc(512);
+    long messageAloc = strlen(a_message)+20;
+    char * statusJSON = malloc(32),
+            *senderJSON = malloc(64),
+            *roomJSON = malloc(64),
+            *messageJSON = malloc(messageAloc);
+
+    bzero(statusJSON, 32);
+    bzero(senderJSON, 64);
+    bzero(roomJSON, 64);
+    bzero(aout_reply,512);
+    bzero(messageJSON, messageAloc);
+
+    snprintf(statusJSON, 32, "\"status\": %d,", *a_statusCode);
+    if(a_sender) {
+        snprintf(senderJSON, 64, "\"sender\": \"%s\",", a_sender);
+    }
+    if(a_room) {
+        snprintf(roomJSON, 64, "\"room\": \"%s\",", a_room);
+    }
+    if(a_message[0]=='[') {
+        snprintf(messageJSON, messageAloc, "\"message\": %s", a_message);
+    } else {
+        snprintf(messageJSON, messageAloc, "\"message\": \"%s\"", a_message);
+    }
+
+    snprintf(aout_reply, 512, "{ %s %s %s %s }", statusJSON, senderJSON, roomJSON, messageJSON);
+    
+
+    free(statusJSON);
+    free(senderJSON);
+    free(roomJSON);
+    free(messageJSON);
+    return aout_reply;
+}
+
 
 static char * test_1() {
     struct CHATcommand * test;
@@ -95,10 +132,50 @@ static char * test_3() {
     return 0;
 }
 
+static char * test_4() {
+    char * test;
+    int status = 100;
+    test = createJSON(&status, "trololo", "room1", "trolololo lololol olololo", test);
+    printf("expected: main, : %s\n", test);
+    mu_assert("error, json 1", !strcmp(test, "{ \"status\": 100, \"sender\": \"trololo\", \"room\": \"room1\", \"message\": \"trolololo lololol olololo\" }"));
+    return 0;
+}
+
+static char * test_5() {
+    char * test;
+    int status = 100;
+    test = createJSON(&status, "trololo", NULL, "trolololo lololol olololo", test);
+    printf("expected: main, : %s\n", test);
+    mu_assert("error, json 2", !strcmp(test, "{ \"status\": 100, \"sender\": \"trololo\",  \"message\": \"trolololo lololol olololo\" }"));
+    return 0;
+}
+
+static char * test_6() {
+    char * test;
+    int status = 100;
+    test = createJSON(&status, NULL, NULL, "trolololo lololol olololo", test);
+    printf("expected: main, : %s\n", test);
+    mu_assert("error, json 3", !strcmp(test, "{ \"status\": 100,   \"message\": \"trolololo lololol olololo\" }"));
+    return 0;
+}
+
+static char * test_7() {
+    char * test;
+    int status = 100;
+    test = createJSON(&status, NULL, NULL, "['trolololo', 'lololol', 'olololo']", test);
+    printf("expected: main, : %s\n", test);
+    mu_assert("error, json 4 array", !strcmp(test, "{ \"status\": 100,   \"message\": ['trolololo', 'lololol', 'olololo'] }"));
+    return 0;
+}
+
 static char * all_tests() {
     mu_run_test(test_1);
     mu_run_test(test_2);
     mu_run_test(test_3);
+    mu_run_test(test_4);
+    mu_run_test(test_5);
+    mu_run_test(test_6);
+    mu_run_test(test_7);
     return 0;
 }
 

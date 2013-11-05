@@ -26,29 +26,41 @@
 extern struct Shared * SHM;
 extern int GLOBALsemid;
 
-char* CHATcreateJSONresponse( int * a_statusCode, char* a_message, char* reply) {
-	reply = malloc(512);
-	bzero(reply, 512);
-	if(a_message[0]=='[') {
-		snprintf(reply, 512, "{ \"status\": %d, \"message\": %s }", *a_statusCode, a_message);
-	} else {
-		snprintf(reply, 512, "{ \"status\": %d, \"message\": \"%s\" }", *a_statusCode, a_message);
+char * CHATcreateJSON ( int * a_statusCode, char* a_sender, char* a_room, char* a_message, char* aout_reply ) {
+	aout_reply = malloc(512);
+	long messageAloc = strlen(a_message)+20;
+	char * statusJSON = malloc(32),
+			*senderJSON = malloc(64),
+			*roomJSON = malloc(64),
+			*messageJSON = malloc(messageAloc);
+
+	bzero(statusJSON, 32);
+	bzero(senderJSON, 64);
+	bzero(roomJSON, 64);
+	bzero(aout_reply,512);
+	bzero(messageJSON, messageAloc);
+
+	snprintf(statusJSON, 32, " \"status\": %d,", *a_statusCode);
+	if(a_sender) {
+		snprintf(senderJSON, 64, " \"sender\": \"%s\",", a_sender);
 	}
-	return reply;
-}
+	if(a_room) {
+		snprintf(roomJSON, 64, " \"room\": \"%s\",", a_room);
+	}
+	if(a_message[0]=='[') {
+		snprintf(messageJSON, messageAloc, " \"message\": %s", a_message);
+	} else {
+		snprintf(messageJSON, messageAloc, " \"message\": \"%s\"", a_message);
+	}
 
-char* CHATcreateJSONctrlMessage( int * a_statusCode, char* a_room, char* a_message, char* reply) {
-	reply = malloc(512);
-	bzero(reply, 512);
-	snprintf(reply, 512, "{ \"status\": %d, \"room\": \"%s\", \"message\": \"%s\" }", *a_statusCode, a_room, a_message);
-	return reply;
-}
+	snprintf(aout_reply, 512, "{ %s %s %s %s }", statusJSON, senderJSON, roomJSON, messageJSON);
+	
 
-char* CHATcreateJSONmessage( int * a_statusCode, char* a_sender, char* a_room, char* a_message, char* reply) {
-	reply = malloc(512);
-	bzero(reply, 512);
-	snprintf(reply, 512, "{ \"status\": %d, \"sender\": \"%s\", \"room\": \"%s\", \"message\": \"%s\" }", *a_statusCode, a_sender, a_room, a_message);
-	return reply;
+	free(statusJSON);
+	free(senderJSON);
+	free(roomJSON);
+	free(messageJSON);
+	return aout_reply;
 }
 
 struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd) {
@@ -133,8 +145,7 @@ void CHATsendUserList(int * a_soc) {
 	char* reply;
 	int statusCode = 104;
 	list = CHATgetUserList(list);
-
-	reply = CHATcreateJSONresponse(&statusCode, list, reply);
+	reply = CHATcreateJSON(&statusCode, NULL, NULL, list, reply);
 	WEBSOCsendMessage(a_soc, reply);
 
 	free(list);
@@ -144,8 +155,7 @@ void CHATsendUserList(int * a_soc) {
 void CHATsendMessage(int * a_soc, char * a_sender, char* a_room, char * a_message) {
 	char* messageJSON;
 	int statusCode = 198;
-
-	messageJSON = CHATcreateJSONmessage(&statusCode, a_sender, a_room, a_message, messageJSON);
+	messageJSON = CHATcreateJSON(&statusCode, a_sender, a_room, a_message, messageJSON);
 	WEBSOCsendMessage(a_soc, messageJSON);
 
 	free(messageJSON);
@@ -154,8 +164,7 @@ void CHATsendMessage(int * a_soc, char * a_sender, char* a_room, char * a_messag
 void CHATsendCtrlMessage(int * a_soc, char* a_room, char * a_message) {
 	char* messageJSON;
 	int statusCode = 195;
-
-	messageJSON = CHATcreateJSONctrlMessage(&statusCode, a_room, a_message, messageJSON);
+	messageJSON = CHATcreateJSON(&statusCode, NULL, a_room, a_message, messageJSON);
 	WEBSOCsendMessage(a_soc, messageJSON);
 
 	free(messageJSON);
@@ -272,7 +281,7 @@ int CHATfirstEmptySlot() {
 
 void CHATsendReply( int a_statusCode, char * a_message, int *a_soc ) {
 	char* reply;
-	reply = CHATcreateJSONresponse(&a_statusCode, a_message, reply);
+	reply = CHATcreateJSON(&a_statusCode, NULL, NULL, a_message, reply);
 	WEBSOCsendMessage(a_soc, reply);
 	free(reply);
 }
