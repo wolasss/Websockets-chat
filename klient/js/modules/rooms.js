@@ -19,7 +19,7 @@ var MODrooms = function(sb){
 	newPrivateRoom = function(username) {
 		if(sb.find('.private_'+username).length==0) {
 			var tpl = "<li class=\"private_"+username+"\">"+username+"</li>";
-			sb.append(rooms, tpl);
+			sb.append(rooms, tpl);			
 		}
 	};
 	toggle = function() {

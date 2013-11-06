@@ -34,7 +34,7 @@ var MODshouter = function(sb){
 
 	switchRoom = function(data) {
 		var command = (data.type === "private") ? '@' : '%';
-		currentRoom = command+' '+data.name;
+		currentRoom = command+data.name;
 	}
 
 	return {

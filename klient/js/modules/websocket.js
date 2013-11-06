@@ -43,6 +43,8 @@ var MODwebsocket = function(sb){
 			}
 			if(message.status==198) {
 				sb.emit('WSreceivedMessage', message);
+			} else if(message.status==199) { 
+				sb.emit('WSreceivedPrivMessage', message);
 			} else if(message.status==195) {
 				sb.emit('WSreceivedNotification', message);
 			} else if(message.status && !message.sender) {

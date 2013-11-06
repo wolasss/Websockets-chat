@@ -73,7 +73,6 @@ struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd)
             command[k]=a_command[i];
             i++; k++;
     }
-    printf("%s\n", command);
     cmd->name = malloc(i-2);
     bzero(cmd->name, i-2);
 
@@ -149,10 +148,20 @@ void CHATsendUserList(int * a_soc) {
 	free(reply);
 }
 
-void CHATsendMessage(int * a_soc, char * a_sender, char* a_room, char * a_message) {
+void CHATsendMessage(int type, int * a_soc, char * a_sender, char* a_room, char * a_message) {
 	char* messageJSON;
-	int statusCode = 198;
-	messageJSON = CHATcreateJSON(&statusCode, a_sender, a_room, a_message, messageJSON);
+	int statusCode;
+
+	if(type==0) {
+		statusCode = 198;
+		messageJSON = CHATcreateJSON(&statusCode, a_sender, a_room, a_message, messageJSON);
+		printf("\npublic:%s\n", messageJSON);
+	} else {
+		statusCode = 199;
+		messageJSON = CHATcreateJSON(&statusCode, a_sender, a_room, a_message, messageJSON);
+		printf("\nprivate:%s\n", messageJSON);
+	}
+	
 	WEBSOCsendMessage(a_soc, messageJSON);
 
 	free(messageJSON);
@@ -558,10 +567,31 @@ void CHATsendToAll (int * a_roomId , char* a_roomName, int * a_sender, char* a_m
 
 	printf("do ilu wysle: %d\n", k);
 	for(i=0; i<k; i++) {
-		CHATsendMessage(&(users[i]), nick, a_roomName, a_message);
+		CHATsendMessage(0, &(users[i]), nick, a_roomName, a_message);
 	}
 	free(nick);
 }
+
+void CHATsendPrivate (int * a_sender, int *a_receiver, char* a_message) {
+	int fd_receiver, fd_sender;
+	char * nick = malloc(32);
+	char * nick_r = malloc(32);
+	bzero(nick,32);
+	bzero(nick_r ,32);
+	IPCp(GLOBALsemid,0);
+	strncpy(nick,(*SHM).tabUser[*a_sender].nick,32);
+	strncpy(nick_r,(*SHM).tabUser[*a_receiver].nick,32);
+	fd_sender = (*SHM).tabUser[*a_sender].fd;
+	fd_receiver = (*SHM).tabUser[*a_receiver].fd;
+	IPCv(GLOBALsemid,0);
+
+	CHATsendMessage(1, &fd_receiver, nick, nick, a_message); //send to receiver
+	CHATsendMessage(1, &fd_sender, nick, nick_r, a_message); //send to sender
+
+	free(nick);
+	free(nick_r);
+}
+
 
 
 
@@ -580,7 +610,18 @@ void CHATparseMessage(char* a_message, int * a_soc) {
 		free(cmd);
 	} else if(a_message[0]=='%' && a_message[1]=='4' && a_message[2]=='0') {
 		//%40 - urldecode(@)
-		printf("private:\n%s\n", a_message);
+		cmd = CHATdecodeCommand(a_message, cmd);
+		int idSender = CHATisLogged(NULL, a_soc);
+		int idReceiver = CHATisLogged(cmd->name, NULL);
+		if(idReceiver>=0) {
+			printf("\nprivate:\n%s\n", a_message);
+			CHATsendPrivate(&idSender, &idReceiver, cmd->param);
+		} else {
+			//cant send private message
+		}
+		free(cmd->param);
+		free(cmd->name);
+		free(cmd);
 	} else if(a_message[0]=='%' && a_message[1]=='2' && a_message[2]=='5' ) {
 		//%25 - urldecode(%)
 		cmd = CHATdecodeCommand(a_message, cmd);
