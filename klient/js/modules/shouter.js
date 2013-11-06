@@ -1,5 +1,5 @@
 var MODshouter = function(sb){
-	var input, toggle, reactor, button, send, changeRoom, currentRoom;
+	var input, toggle, reactor, button, send, switchRoom, currentRoom;
 	
 	toggle = function() {
 		sb.toggleModule();
@@ -16,7 +16,7 @@ var MODshouter = function(sb){
 			message = input.value;
 		} else {
 			//public
-			message = "%"+currentRoom+" "+input.value;
+			message = currentRoom+" "+input.value;
 		}
 
 		//!(equals 0 or only spaces)...
@@ -30,17 +30,22 @@ var MODshouter = function(sb){
 		if(e.which === 13) {
 			send();
 		}
+	};
+
+	switchRoom = function(data) {
+		var command = (data.type === "private") ? '@' : '%';
+		currentRoom = command+' '+data.name;
 	}
 
 	return {
 	    init: function() {
-	    	currentRoom = 'main';
+	    	currentRoom = '%main';
 	    	input = sb.find(sb.CSSmessageField)[0];
 	    	button = sb.find('label')[0];
 
 	    	sb.on('loggedIn', toggle);
 	    	sb.on('loggedOut', toggle);
-	    	sb.on('roomChange', changeRoom)
+	    	sb.on('switchRoom', switchRoom)
 	    	sb.addEvent(input, 'keypress', reactor);
 	    	sb.addEvent(button, 'click', send);
 	    },
