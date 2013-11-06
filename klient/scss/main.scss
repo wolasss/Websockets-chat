@@ -282,6 +282,10 @@ body {
         padding-right: 20px;
         overflow-y: scroll;
         overflow: auto;
+        display:none;
+    }
+    .room.active {
+        display:block;
     }
     .room::-webkit-scrollbar { 
         display: none; 

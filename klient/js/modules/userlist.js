@@ -1,8 +1,15 @@
 var MODuserlist = function(sb){
-	var list, reactor, showList, toggle;
+	var list, reactor, showList, toggle, username, privateMessage;
 
-	toggle = function() {
+	toggle = function(data) {
+		if(!username) username = data;
 		sb.slideToggle();
+	};
+	privateMessage = function(e) {
+		var user = e.originalEvent.target.innerHTML;
+		if(user!=username) {
+			sb.emit('newPrivateRoom', user);
+		}
 	};
 	showList = function(users) {
 		sb.clear(list);
@@ -26,6 +33,7 @@ var MODuserlist = function(sb){
 	    	sb.on('loggedIn', toggle);
 	    	sb.on('loggedOut', toggle);
 	    	sb.on('WSresponse', reactor);
+	    	sb.addEvent(list, 'click', privateMessage);
 	    },
 	    destroy: function() { 
 	    	sb.off('WSresponse');

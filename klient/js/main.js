@@ -31,6 +31,9 @@ var sandbox = function(core, instanceId, options, moduleId) {
   this.scrollTop = function(selector, how) {
     return $(selector).scrollTop(how);
   }
+  this.hasClass = function(selector, cl) {
+    return $(selector).hasClass(cl);
+  }
   this.addClass = function(selector, cl) {
     return $(selector).addClass(cl);
   };
@@ -67,6 +70,9 @@ var sandbox = function(core, instanceId, options, moduleId) {
   this.removeEvent = function(elem, event, callback) {
     return $(elem).off(event, callback);
   };
+  this.module = function() {
+    return $(DOMid);
+  }
   this.fadeToggleModule = function() {
     return $(DOMid).fadeToggle();
   };
@@ -76,7 +82,6 @@ var sandbox = function(core, instanceId, options, moduleId) {
   this.slideToggle = function(cb) {
     return $(DOMid).slideToggle(cb);
   };
-  this.prop = "bar";
   this.id = instanceId;
   
   return this;
