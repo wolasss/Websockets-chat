@@ -1,7 +1,10 @@
 var MODboard = function(sb){
-
+<<<<<<< HEAD
 	"use strict";
 	var container, show, receiveMessage, hide, username, leaveRoom, switchRoom, receiveNotification, newPrivateRoom, currentRoom, receivePrivMessage, AUTOnewPrivateRoom, newPublicRoom;
+=======
+	var container, show, receiveMessage, hide, username, receiveNotification, newPrivateRoom, currentRoom, receivePrivMessage, AUTOnewPrivateRoom, newPublicRoom;
+>>>>>>> 2c4fc62d8cf5f3e58db6adaef4e2bcf09711e345
 
 	show = function(data) {
 		var mainRoom = '<ul class=\"room room_main active\"></ul>';
@@ -23,15 +26,21 @@ var MODboard = function(sb){
 		}
 	};
 	newPublicRoom = function(name) {
-
+<<<<<<< HEAD
 		if(sb.find('.room_'+name).length===0) {
+=======
+		if(sb.find('.room_'+name).length==0) {
+>>>>>>> 2c4fc62d8cf5f3e58db6adaef4e2bcf09711e345
 			var tpl = "<ul class=\"room room_"+name+"\"></ul>";
 			sb.append(container, tpl);
 		}
 	};
+<<<<<<< HEAD
 	leaveRoom = function(name) {
 		name = 1;
 	};
+=======
+>>>>>>> 2c4fc62d8cf5f3e58db6adaef4e2bcf09711e345
 	switchRoom = function(data) {
 		var type = data.type, room = data.name,
 		target = (type==='private') ? sb.find('.room_private_'+room)[0] : sb.find('.room_'+room)[0];
@@ -97,6 +106,7 @@ var MODboard = function(sb){
 	};
 	return {
 	    init: function() {
+<<<<<<< HEAD
 			container = sb.module()[0];
 			sb.on('loggedIn', show);
 			sb.on('loggedOut', hide);
@@ -107,6 +117,17 @@ var MODboard = function(sb){
 			sb.on('WSreceivedMessage', receiveMessage);
 			sb.on('WSreceivedPrivMessage', receivePrivMessage);
 			sb.on('WSreceivedNotification', receiveNotification);
+=======
+	    	container = sb.module()[0];
+	    	sb.on('loggedIn', show);
+	    	sb.on('loggedOut', hide);
+	    	sb.on('newPrivateRoom', newPrivateRoom);
+	    	sb.on('WSnewPublicRoom', newPublicRoom);
+	    	sb.on('switchRoom', switchRoom);
+	    	sb.on('WSreceivedMessage', receiveMessage);
+	    	sb.on('WSreceivedPrivMessage', receivePrivMessage);
+	    	sb.on('WSreceivedNotification', receiveNotification);
+>>>>>>> 2c4fc62d8cf5f3e58db6adaef4e2bcf09711e345
 	    },
 	    destroy: function() { 
 			sb.off('loggedIn');
