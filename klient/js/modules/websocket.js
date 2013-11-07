@@ -1,4 +1,5 @@
 var MODwebsocket = function(sb){
+	"use strict";
 	var _sock = null, 
 		timeout = 4000, 
 		connected = false,
@@ -13,9 +14,10 @@ var MODwebsocket = function(sb){
 		connect,
 		processLoginRequest,
 		reactor,
-		closeConnection;
+		closeConnection,
+		checkConnection;
 
-	connectionError = function(error) {
+	connectionError = function() {
 		alreadyFailed = true;
 		sb.emit('connectionError', '');
 	};
@@ -47,6 +49,10 @@ var MODwebsocket = function(sb){
 				sb.emit('WSreceivedPrivMessage', message);
 			} else if(message.status==195) {
 				sb.emit('WSreceivedNotification', message);
+			} else if(message.status==103) {
+				sb.emit('WSnewPublicRoom', message.message);
+			} else if(message.status==103) {
+				sb.emit('WSleftRoom', message.message);
 			} else if(message.status && !message.sender) {
 				sb.emit('WSresponse', message);
 			}
@@ -74,6 +80,7 @@ var MODwebsocket = function(sb){
 	};
 	connect = function(hostname, port) {
 		try {
+			console.log(hostname, port);
 			_sock = new WebSocket('ws://'+hostname+':'+port, ['chat']);
 			alreadyFailed=false;
 			setTimeout(checkConnection, timeout);
@@ -86,32 +93,32 @@ var MODwebsocket = function(sb){
 		}
 	};
 	processLoginRequest = function(data) {
+		console.log(data);
 		username = data.username;
 		connect(data.hostname, data.port);
 	};
-	closeConnection = function(data, topic) {
+	closeConnection = function() {
 		_sock.close();
 		sb.emit('logout');
-	}
+	};
 	reactor = function( data, topic ){
-	  	switch( topic ){
-		    case "loginRequest":
-		    	processLoginRequest(data);
-		    	break;
-		    case "WSsendMessage":
-		    	sendMessage(data);
-		      	break;
-		    case "WSlogout":
-		    	closeConnection();
-		  	}
+		switch( topic ){
+			case "loginRequest":
+				processLoginRequest(data);
+				break;
+			case "WSsendMessage":
+				sendMessage(data);
+					break;
+			case "WSlogout":
+				closeConnection();
+			}
 	};
 
 	return {
 	    init: function() {
-	    	sb.on( ['loginRequest', 'WSsendMessage', 'WSlogout'], reactor );
+			sb.on( ['loginRequest', 'WSsendMessage', 'WSlogout'], reactor );
 	    },
 	    destroy: function() { 
-	    	
 	    }
 	};
 };

@@ -1,4 +1,6 @@
 var MODshouter = function(sb){
+	"use strict";
+
 	var input, toggle, reactor, button, send, switchRoom, currentRoom;
 	
 	toggle = function() {
@@ -24,36 +26,33 @@ var MODshouter = function(sb){
 			sb.emit('WSsendMessage', encodeURIComponent(message));
 			input.value='';
 		}
-	}
-
+	};
 	reactor = function(e) {
 		if(e.which === 13) {
 			send();
 		}
 	};
-
 	switchRoom = function(data) {
 		var command = (data.type === "private") ? '@' : '%';
 		currentRoom = command+data.name;
-	}
-
+	};
 	return {
 	    init: function() {
-	    	currentRoom = '%main';
-	    	input = sb.find(sb.CSSmessageField)[0];
-	    	button = sb.find('label')[0];
+			currentRoom = '%main';
+			input = sb.find(sb.CSSmessageField)[0];
+			button = sb.find('label')[0];
 
-	    	sb.on('loggedIn', toggle);
-	    	sb.on('loggedOut', toggle);
-	    	sb.on('switchRoom', switchRoom)
-	    	sb.addEvent(input, 'keypress', reactor);
-	    	sb.addEvent(button, 'click', send);
+			sb.on('loggedIn', toggle);
+			sb.on('loggedOut', toggle);
+			sb.on('switchRoom', switchRoom);
+			sb.addEvent(input, 'keypress', reactor);
+			sb.addEvent(button, 'click', send);
 	    },
 	    destroy: function() { 
-	    	input = null;
+			input = null;
 
-	    	sb.off('loggedIn');
-	    	sb.removeEvent(input, 'keypress', reactor);
+			sb.off('loggedIn');
+			sb.removeEvent(input, 'keypress', reactor);
 	    }
 	};
 };

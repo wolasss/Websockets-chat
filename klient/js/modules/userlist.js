@@ -1,4 +1,6 @@
 var MODuserlist = function(sb){
+	"use strict";
+
 	var list, reactor, showList, toggle, username, privateMessage;
 
 	toggle = function(data) {
@@ -22,23 +24,23 @@ var MODuserlist = function(sb){
 			addClass = '';
 		}
 	};
-	reactor = function(data, topic) {
+	reactor = function(data) {
 		if(data.status==104) {
 			showList(data.message);
 		}
 	};
 	return {
 	    init: function() {
-	    	list = sb.find(sb.CSSuserList)[0];
-	    	sb.on('loggedIn', toggle);
-	    	sb.on('loggedOut', toggle);
-	    	sb.on('WSresponse', reactor);
-	    	sb.addEvent(list, 'click', privateMessage);
+			list = sb.find(sb.CSSuserList)[0];
+			sb.on('loggedIn', toggle);
+			sb.on('loggedOut', toggle);
+			sb.on('WSresponse', reactor);
+			sb.addEvent(list, 'click', privateMessage);
 	    },
 	    destroy: function() { 
-	    	sb.off('WSresponse');
-	    	sb.off('loggedIn');
-	    	list = null;	
+			sb.off('WSresponse');
+			sb.off('loggedIn');
+			list = null;	
 	    }
 	};
 };

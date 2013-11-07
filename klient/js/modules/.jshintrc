@@ -1,0 +1,11 @@
+{
+  "browser": true,
+  "esnext": true,
+  "globals": {},
+  "globalstrict": true,
+  "quotmark": false,
+  "smarttabs": true,
+  "trailing": false,
+  "undef": true,
+  "unused": true
+}

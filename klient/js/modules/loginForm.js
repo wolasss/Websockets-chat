@@ -1,4 +1,5 @@
 var MODloginForm = function(sb){
+	"use strict";
 
 	var data = {
 		username: '',
@@ -26,9 +27,9 @@ var MODloginForm = function(sb){
 	logIn,
 	defaultServerChange,
 	parseResponse,
-	cancelLogin,
 	loginSuccess,
-	keyPressed;
+	keyPressed,
+	connectionSuccess;
 
 	parsePort = function (port) {
 		var p = -1, m=(""+port).match(/^\d{1,5}$/gi);
@@ -42,10 +43,10 @@ var MODloginForm = function(sb){
 		sb.clear(errorContainer);
 		showError(msg);
 		NProgress.done(function(){
-	    	sb.show(errorContainer);
+			sb.show(errorContainer);
 		});
 	};
-	connectionSuccess = function(msg) {
+	connectionSuccess = function() {
 		NProgress.set(0.9);
 		NProgress.configure({speed:50});
 	};
@@ -66,26 +67,25 @@ var MODloginForm = function(sb){
 	};
 	//message handler
 	reactor = function( data, topic ){
-	  	switch( topic ){
-		    case "connectionError":
-		    	connectionError('Error. Server is not responding: '+data);
-		    	break;
-		    case "connectionSuccess":
-		    	connectionSuccess(data);
-		      	break;
-		  	case "WSresponse":
-		  		parseResponse(data);
-		  		break;
-		  	case "loggedOut":
-		  		sb.toggleModule();
-		  		break;
-		  	}
+		switch( topic ){
+			case "connectionError":
+				connectionError('Error. Server is not responding: '+data);
+				break;
+			case "connectionSuccess":
+				connectionSuccess(data);
+				break;
+			case "WSresponse":
+				parseResponse(data);
+				break;
+			case "loggedOut":
+				sb.toggleModule();
+				break;
+		}
 	};
 	showError = function(Msg) {
 		sb.append(errorContainer, '<p>'+Msg+'</p>');
 	};
-	logIn = function (e) {
-		var data ={};
+	logIn = function () {
 		sb.hide(errorContainer);
 		sb.clear(errorContainer);
 		errors=0;
@@ -119,9 +119,9 @@ var MODloginForm = function(sb){
 				sb.show(errorContainer);
 			});
 		} else {
-			if(!data.port) data.port = port;
+			if(!defaultServer) data.port = port;
 			data.username = username;
-			if(!data.hostname) data.hostname = hostname;
+			if(!defaultServer) data.hostname = hostname;
 			sb.emit('loginRequest', data);
 		}
 	};
@@ -145,38 +145,37 @@ var MODloginForm = function(sb){
 	};
 	return {
 	    init: function() {
-	    	sb.toggleModule();
-	    	loginButton = sb.find(sb.CSSloginButton)[0];
-	    	usernameField = sb.find(sb.CSSusernameField)[0];
-	    	portField = sb.find(sb.CSSportField)[0];
-	    	portContainer = sb.parent(portField);
-	    	hostnameField = sb.find(sb.CSShostnameField)[0];
-	    	hostnameContainer = sb.parent(hostnameField);
-	    	defaultServerField = sb.find(sb.CSSdefaultServerField)[0];
-	    	errorContainer = sb.find(sb.CSSerror)[0];
+			sb.toggleModule();
+			loginButton = sb.find(sb.CSSloginButton)[0];
+			usernameField = sb.find(sb.CSSusernameField)[0];
+			portField = sb.find(sb.CSSportField)[0];
+			portContainer = sb.parent(portField);
+			hostnameField = sb.find(sb.CSShostnameField)[0];
+			hostnameContainer = sb.parent(hostnameField);
+			defaultServerField = sb.find(sb.CSSdefaultServerField)[0];
+			errorContainer = sb.find(sb.CSSerror)[0];
 
-	    	sb.addEvent(loginButton, 'click', logIn);
-	    	sb.addEvent(usernameField, 'keyup', keyPressed);
-	    	sb.addEvent(portField, 'keyup', keyPressed);
-	    	sb.addEvent(hostnameField, 'keyup', keyPressed);
-	    	sb.addEvent(defaultServerField, 'change', defaultServerChange);
+			sb.addEvent(loginButton, 'click', logIn);
+			sb.addEvent(usernameField, 'keyup', keyPressed);
+			sb.addEvent(portField, 'keyup', keyPressed);
+			sb.addEvent(hostnameField, 'keyup', keyPressed);
+			sb.addEvent(defaultServerField, 'change', defaultServerChange);
 
-	    	sb.on(['connectionError', 'connectionSuccess', 'WSresponse', 'loggedOut'], reactor);
-
+			sb.on(['connectionError', 'connectionSuccess', 'WSresponse', 'loggedOut'], reactor);
 	    },
 	    destroy: function() { 
-	    	sb.toggleModule();
+			sb.toggleModule();
 
 			loginButton = null; 
-	    	usernameField = null; 
-	    	portField = null; ;
-	    	portContainer = null; 
-	    	hostnameField = null; 
-	    	hostnameContainer = null; 
-	    	defaultServerField = null;  
+			usernameField = null; 
+			portField = null;
+			portContainer = null; 
+			hostnameField = null; 
+			hostnameContainer = null; 
+			defaultServerField = null;  
 
-	    	sb.removeEvent(loginButton, 'click', logIn);
-	    	sb.removeEvent(defaultServerField, 'change', defaultServerChange);
+			sb.removeEvent(loginButton, 'click', logIn);
+			sb.removeEvent(defaultServerField, 'change', defaultServerChange);
 	    }
 	};
 };

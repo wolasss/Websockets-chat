@@ -1,4 +1,5 @@
 var MODlogoutbutton = function(sb){
+	"use strict";
 	var button, logout, toggle;
 	
 	toggle = function() {
@@ -9,13 +10,13 @@ var MODlogoutbutton = function(sb){
 	};
 	return {
 	    init: function() {
-	    	button = sb.find(sb.CSSlogoutButton)[0];
-	    	sb.addEvent(button, 'click', logout);
-	    	sb.on('loggedIn', toggle);
-	    	sb.on('loggedOut', toggle);
+			button = sb.find(sb.CSSlogoutButton)[0];
+			sb.addEvent(button, 'click', logout);
+			sb.on('loggedIn', toggle);
+			sb.on('loggedOut', toggle);
 	    },
 	    destroy: function() { 
-	    	button = null;
+			button = null;
 	    }
 	};
 };
