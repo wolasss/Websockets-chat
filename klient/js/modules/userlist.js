@@ -1,7 +1,7 @@
 var MODuserlist = function(sb){
 	"use strict";
 
-	var list, reactor, showList, toggle, username, privateMessage, notification, clearNotification;
+	var list, reactor, showList, toggle, username, privateMessage, notification, clearNotification, currentRoom;
 
 	toggle = function(data) {
 		if(!username) username = data;
@@ -9,10 +9,20 @@ var MODuserlist = function(sb){
 	};
 	privateMessage = function(e) {
 		if( sb.is(e.originalEvent.target, 'li') ) {
-			console.log(e);
-			var user = e.originalEvent.target.getAttribute('username');
-			if(user!=username) {
-				sb.emit('newPrivateRoom', user);
+			var t = e.originalEvent.target;
+			if(t.isEqualNode(currentRoom)) {
+				return;
+			}
+			var userNick = t.getAttribute('username');
+			if(userNick!=username) {
+				var data = {};
+				data.type='private';
+				data.name = userNick;
+				sb.emit('newPrivateRoom', userNick);
+				sb.emit('switchRoom', data);
+				currentRoom = t;
+				sb.addClass(t, 'active');
+				sb.emit('currentRoomChangedPrivate');
 			}
 		}
 	};
@@ -55,11 +65,16 @@ var MODuserlist = function(sb){
 	return {
 	    init: function() {
 			list = sb.find(sb.CSSuserList)[0];
+			currentRoom = null;
 			sb.on('loggedIn', toggle);
 			sb.on('loggedOut', toggle);
 			sb.on('WSresponse', reactor);
-			sb.on('unreadMessage', notification);
-			sb.on('readMessages', clearNotification);
+			sb.on('currentRoomChangedPublic', function(){
+				sb.removeClass(currentRoom, 'active');
+				currentRoom = null;
+			});
+			sb.on('PrivateUnreadMessage', notification);
+			sb.on('PrivateReadMessages', clearNotification);
 			sb.addEvent(list, 'click', privateMessage);
 	    },
 	    destroy: function() { 

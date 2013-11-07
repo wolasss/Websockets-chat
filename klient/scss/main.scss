@@ -431,6 +431,73 @@ body {
   @include inline-block;
 }
 
+
+#rooms {
+    background: #293d50;
+    width:200px;
+    margin-left:10px;
+    min-height:100px;
+    border-radius: 6px;
+    display:none;
+    margin-bottom:10px;
+    h4 {
+        margin-top:0;
+        padding-top:15px;
+        padding-left:10px;
+        font-size:14px;
+        font-family:'Lato';
+        font-weight:300;
+    }
+    .room-list {
+        list-style:none;
+        padding:0;
+        margin:0;
+        padding-bottom:10px;
+    }
+    .room {
+        background: url('../images/icons/png/room_small.png') no-repeat 10px center; 
+        vertical-align:top;
+        padding:5px 35px;
+        font-size:13px;
+        cursor:pointer;
+        @include user-select(none);
+        overflow:hidden;
+        text-overflow: ellipsis;
+        &.active {
+            background-color: #34495e;
+            @include box-shadow(inset 0 0 30px #293d50);
+        }
+    }
+    .room:hover {
+        background-color: #3498db;
+    }
+}
+
+#userlist .messages, #rooms .messages {
+    position:relative;
+    @include inline-block;
+    vertical-align: top;
+    margin-left: 5px;
+    width: 16px;
+    height: 16px;
+    pointer-events:none;
+    & span {
+        pointer-events:none;
+        background: #c0392b;
+        border-radius: 50%;
+        min-width:16px;
+        display: inline-block;
+        padding: 2px 4px;
+        box-sizing: border-box;
+        font-size: 10px;
+        position: absolute;
+        -webkit-animation: bounce 2s 1s 1 forwards, bounce2 2s 4s 1 forwards;
+        -moz-animation: bounce 2s 1s 1 forwards, bounce2 2s 4s 1 forwards;
+        -ms-animation: bounce 2s 1s 1 forwards, bounce2 2s 4s 1 forwards;
+        animation: bounce 2s 1s 1 forwards, bounce2 2s 4s 1 forwards;
+    }
+}
+
 #userlist {
     background: #293d50;
     width:200px;
@@ -463,29 +530,9 @@ body {
         @include user-select(none);
         overflow:hidden;
         text-overflow: ellipsis;
-        .messages {
-            position:relative;
-            @include inline-block;
-            vertical-align: top;
-            margin-left: 5px;
-            width: 16px;
-            height: 16px;
-            pointer-events:none;
-            & span {
-                pointer-events:none;
-                background: #c0392b;
-                border-radius: 50%;
-                min-width:16px;
-                display: inline-block;
-                padding: 2px 4px;
-                box-sizing: border-box;
-                font-size: 10px;
-                position: absolute;
-                -webkit-animation: bounce 2s 1s 1 forwards, bounce2 2s 4s 1 forwards;
-                -moz-animation: bounce 2s 1s 1 forwards, bounce2 2s 4s 1 forwards;
-                -ms-animation: bounce 2s 1s 1 forwards, bounce2 2s 4s 1 forwards;
-                animation: bounce 2s 1s 1 forwards, bounce2 2s 4s 1 forwards;
-            }
+        &.active {
+            background-color: #34495e;
+            @include box-shadow(inset 0 0 30px #293d50);
         }
     }
     .user.fox {
@@ -510,7 +557,7 @@ body {
         padding: 6px 9px 7px;
     }
 }
-
+/*
 #rooms {
     display:none;
     position:absolute;
@@ -558,7 +605,7 @@ body {
         }
     }
 }
-
+*/
 @media screen and (max-width: 768px) {
     #board {
         width:244px;
