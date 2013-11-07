@@ -55,14 +55,20 @@ var MODboard = function(sb){
 	};
 	receivePrivMessage = function(data) {
 		var message = data.message,
+			roomDOM,
 			room = data.room,
 			sender = data.sender,
 			now = new Date(),
 			additionalClass = '';
 			if(username === sender) { additionalClass+='mine'; }
 			if(data.sender === "thefox") { additionalClass+=' fox'; }
-			var msgTemplate = '<li class="msgContainer clearfix"><div class="avatar '+additionalClass+'"><div class="nick">'+sender+'</div></div><div class="message '+additionalClass+'"><div class="bubble">'+message+'<div class="info">'+now.toString().match(/\d\d:\d\d:\d\d/)[0]+'</div></div></div></li>',
-            roomDOM = sb.find('.room_private_'+room);
+			var msgTemplate = '<li class="msgContainer clearfix"><div class="avatar '+additionalClass+'"><div class="nick">'+sender+'</div></div><div class="message '+additionalClass+'"><div class="bubble">'+message+'<div class="info">'+now.toString().match(/\d\d:\d\d:\d\d/)[0]+'</div></div></div></li>';
+     		if(room==="__CURRENT__") {
+     			roomDOM = [];
+     			roomDOM.push(currentRoom);
+     		} else {
+     			roomDOM = sb.find('.room_private_'+room);
+     		}
             if(roomDOM.length!==0) {
 				sb.append(roomDOM, msgTemplate);
 				sb.scrollTop(roomDOM[0], roomDOM[0].scrollHeight);
@@ -78,18 +84,24 @@ var MODboard = function(sb){
 	};
 	receiveMessage = function(data) {
 		var message = data.message,
+			roomDOM,
 			room = data.room,
 			sender = data.sender,
 			now = new Date(),
 			additionalClass = '';
 			if(username === sender) { additionalClass+='mine'; }
 			if(data.sender === "thefox") { additionalClass+=' fox'; }
-			var msgTemplate = '<li class="msgContainer clearfix"><div class="avatar '+additionalClass+'"><div class="nick">'+sender+'</div></div><div class="message '+additionalClass+'"><div class="bubble">'+message+'<div class="info">'+now.toString().match(/\d\d:\d\d:\d\d/)[0]+'</div></div></div></li>',
-            roomDOM = sb.find('.room_'+room)[0];
+			var msgTemplate = '<li class="msgContainer clearfix"><div class="avatar '+additionalClass+'"><div class="nick">'+sender+'</div></div><div class="message '+additionalClass+'"><div class="bubble">'+message+'<div class="info">'+now.toString().match(/\d\d:\d\d:\d\d/)[0]+'</div></div></div></li>';
             
+            if(room==="__CURRENT__") {
+     			roomDOM = [];
+     			roomDOM.push(currentRoom);
+     		} else {
+     			roomDOM = sb.find('.room_'+room);
+     		}
             if(roomDOM.length!==0) {
-				sb.append(roomDOM, msgTemplate);
-				sb.scrollTop(roomDOM, roomDOM.scrollHeight);
+				sb.append(roomDOM[0], msgTemplate);
+				sb.scrollTop(roomDOM[0], roomDOM[0].scrollHeight);
             } else {
 				//add and append
             }
@@ -98,9 +110,12 @@ var MODboard = function(sb){
 		var message = data.message,
 		room = data.room,
 		now = new Date(),
-		msgTemplate = '<li class="controlMessage clearfix"><span class="prompt">>>>>  </span>'+message+'<div class="date">['+now.toString().match(/\d\d:\d\d:\d\d/)[0]+']</div></li>';
-
-		room = sb.find('.room_'+room)[0];
+		msgTemplate = '<li class="controlMessage clearfix"><span class="prompt">>>>>  </span><span class="message">'+message+'</span><div class="date">['+now.toString().match(/\d\d:\d\d:\d\d/)[0]+']</div></li>';
+		if(room==="__CURRENT__") {
+			room = currentRoom
+		} else {
+			room = sb.find('.room_'+room)[0];
+		}
 		if(room) {
 			sb.append(room, msgTemplate);
 			sb.scrollTop(room, room.scrollHeight);

@@ -64,12 +64,13 @@ char * CHATcreateJSON ( int * a_statusCode, char* a_sender, char* a_room, char* 
 
 struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd) {
     cmd = (struct CHATcommand *) malloc(sizeof(struct CHATcommand));
+    cmd->name = NULL;
+    cmd->param = NULL;
 
     int paramLen, i=3, b=0, cmdLen = strlen(a_command), k=0;
-
     char command[16];
     bzero(command,16);
-    while(!(a_command[i]=='%' && a_command[i+1]=='2' && a_command[i+2]=='0') && k<15) {
+    while(i<=cmdLen-1 && !(i<cmdLen-1 && a_command[i]=='%' && (i+1<cmdLen-1 && a_command[i+1]=='2') && (i+2<cmdLen-1 && a_command[i+2]=='0') ) && k<=15) {
             command[k]=a_command[i];
             i++; k++;
     }
@@ -314,10 +315,12 @@ int CHATfirstEmptySlot() {
 
 
 void CHATsendReply( int a_statusCode, char * a_message, int *a_soc ) {
-	char* reply;
+	char* reply = NULL;
 	reply = CHATcreateJSON(&a_statusCode, NULL, NULL, a_message, reply);
 	WEBSOCsendMessage(a_soc, reply);
-	free(reply);
+	if(reply){
+		free(reply);
+	}
 }
 
 int CHATgetActiveUsers(int * a_roomId, int * users) {
@@ -638,50 +641,51 @@ void CHATsendPrivate (int * a_sender, int *a_receiver, char* a_message) {
 }
 
 
-
-
 void CHATparseMessage(char* a_message, int * a_soc) {
 	struct CHATcommand * cmd;
-	if(a_message[0]=='%' && a_message[1]=='2' && a_message[2]=='F') {
-		//%40 - urldecode(/)
-		cmd = CHATdecodeCommand(a_message, cmd);
-		if(cmd->commandId>0) {
-			CHATexecuteCommand(cmd, a_soc);
+	int allocated = 1;
+	if(strlen(a_message)>=3) {
+		if(a_message[0]=='%' && a_message[1]=='2' && a_message[2]=='F') {
+			//%40 - urldecode(/)
+			cmd = CHATdecodeCommand(a_message, cmd);
+			if(cmd->commandId>0) {
+				CHATexecuteCommand(cmd, a_soc);
+			} else {
+				perror("Unknown command.");
+			}
+		} else if(a_message[0]=='%' && a_message[1]=='4' && a_message[2]=='0') {
+			//%40 - urldecode(@)
+			cmd = CHATdecodeCommand(a_message, cmd);
+			int idSender = CHATisLogged(NULL, a_soc);
+			int idReceiver = CHATisLogged(cmd->name, NULL);
+			if(idReceiver>=0) {
+				printf("\nprivate:\n%s\n", a_message);
+				CHATsendPrivate(&idSender, &idReceiver, cmd->param);
+			} else {
+				CHATsendCtrlMessage(a_soc, "__CURRENT__", "You can't send message to this user because he is not logged in.");
+			}
+		} else if(a_message[0]=='%' && a_message[1]=='2' && a_message[2]=='5' ) {
+			//%25 - urldecode(%)
+			cmd = CHATdecodeCommand(a_message, cmd);
+			int idRoom = CHATroomExists(cmd->name);
+			int idSender = CHATisLogged(NULL, a_soc);
+			if(idRoom>=0) {
+				CHATsendToAll(&idRoom, cmd->name, &idSender, cmd->param);
+			}
+			printf("public:\n%s\n\n", a_message);
+			printf("room name: %s\n", cmd->name);
 		} else {
-			perror("Unknown command.");
+			CHATsendCtrlMessage(a_soc, "__CURRENT__", "Unknown command.");
+			allocated=0;
 		}
-		free(cmd->param);
-		free(cmd->name);
-		free(cmd);
-	} else if(a_message[0]=='%' && a_message[1]=='4' && a_message[2]=='0') {
-		//%40 - urldecode(@)
-		cmd = CHATdecodeCommand(a_message, cmd);
-		int idSender = CHATisLogged(NULL, a_soc);
-		int idReceiver = CHATisLogged(cmd->name, NULL);
-		if(idReceiver>=0) {
-			printf("\nprivate:\n%s\n", a_message);
-			CHATsendPrivate(&idSender, &idReceiver, cmd->param);
-		} else {
-			//cant send private message
+	}
+	if(allocated) {
+		if(cmd->param!=NULL) {
+			free(cmd->param);
 		}
-		free(cmd->param);
-		free(cmd->name);
+		if(cmd->name!=NULL) {
+			free(cmd->name);
+		} 
 		free(cmd);
-	} else if(a_message[0]=='%' && a_message[1]=='2' && a_message[2]=='5' ) {
-		//%25 - urldecode(%)
-		cmd = CHATdecodeCommand(a_message, cmd);
-		int idRoom = CHATroomExists(cmd->name);
-		int idSender = CHATisLogged(NULL, a_soc);
-		if(idRoom>=0) {
-			CHATsendToAll(&idRoom, cmd->name, &idSender, cmd->param);
-		}
-		printf("public:\n%s\n\n", a_message);
-		printf("room name: %s\n", cmd->name);
-
-		free(cmd->param);
-		free(cmd->name);
-		free(cmd);
-	} else {
-		//dafuq?
 	}
 }
