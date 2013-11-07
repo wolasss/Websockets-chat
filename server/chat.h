@@ -29,7 +29,7 @@ int CHATfirstEmptySlot();
 int CHATalreadyInRoom ( int a_roomId, int * a_pos );
 int CHATassignToRoom(int a_id, int * a_fd);
 
-
+void CHATleaveRoom( int * a_soc, char* a_name );
 void CHATprepareMainRoom();
 void CHATremoveUser ( char * a_name, int * a_soc, int * a_pos );
 void CHATremoveUserFromActiveRooms ( int a_pos, int a_fd );

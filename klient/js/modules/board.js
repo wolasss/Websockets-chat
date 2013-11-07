@@ -1,5 +1,5 @@
 var MODboard = function(sb){
-	var container, show, receiveMessage, hide, username, receiveNotification, newPrivateRoom, currentRoom, receivePrivMessage, AUTOnewPrivateRoom;
+	var container, show, receiveMessage, hide, username, receiveNotification, newPrivateRoom, currentRoom, receivePrivMessage, AUTOnewPrivateRoom, newPublicRoom;
 
 	show = function(data, topic) {
 		var mainRoom = "<ul class=\"room room_main active\"></ul>";
@@ -18,6 +18,12 @@ var MODboard = function(sb){
 	newPrivateRoom = function(user) {
 		if(sb.find('.room_private_'+user).length==0) {
 			var tpl = "<ul class=\"room room_private_"+user+"\"></ul>";
+			sb.append(container, tpl);
+		}
+	};
+	newPublicRoom = function(name) {
+		if(sb.find('.room_'+name).length==0) {
+			var tpl = "<ul class=\"room room_"+name+"\"></ul>";
 			sb.append(container, tpl);
 		}
 	};
@@ -94,6 +100,7 @@ var MODboard = function(sb){
 	    	sb.on('loggedIn', show);
 	    	sb.on('loggedOut', hide);
 	    	sb.on('newPrivateRoom', newPrivateRoom);
+	    	sb.on('WSnewPublicRoom', newPublicRoom);
 	    	sb.on('switchRoom', switchRoom);
 	    	sb.on('WSreceivedMessage', receiveMessage);
 	    	sb.on('WSreceivedPrivMessage', receivePrivMessage);

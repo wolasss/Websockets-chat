@@ -1,5 +1,5 @@
 var MODrooms = function(sb){
-	var rooms, newPrivateRoom, switchRoom, currentRoom;
+	var rooms, newPrivateRoom, switchRoom, currentRoom, newPublicRoom;
 
 	switchRoom = function(e) {
 		var t = e.originalEvent.target, 
@@ -22,6 +22,13 @@ var MODrooms = function(sb){
 			sb.append(rooms, tpl);			
 		}
 	};
+	newPublicRoom = function(name) {
+		console.log(name);
+		if(sb.find('.room_'+name).length==0) {
+			var tpl = "<li class=\"room_"+name+"\">"+name+"</li>";
+			sb.append(rooms, tpl);		
+		}
+	};
 	toggle = function() {
 		sb.slideToggle();
 	};
@@ -31,12 +38,15 @@ var MODrooms = function(sb){
 	    	currentRoom = sb.find('.room_main')[0];
 	    	sb.on('loggedIn', toggle);
 	    	sb.on('newPrivateRoom', newPrivateRoom);
+	    	sb.on('WSnewPublicRoom', newPublicRoom);
 	    	sb.addEvent(rooms, 'click', switchRoom);
 	    	sb.on('loggedOut', toggle);
 	    },
 	    destroy: function() { 
 	    	sb.off('loggedIn');
 	    	sb.off('loggedOut');
+	    	sb.off('newPrivateRoom');
+	    	sb.off('newPublicRoom')
 	    	sb.off('newPrivateRoom');
 	    	rooms = null;	
 	    }

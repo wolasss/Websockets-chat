@@ -98,7 +98,9 @@ struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd)
             cmd->commandId = 3;
         } else if(!strcmp(command, "users")) {
             cmd->commandId = 4;
-        } 
+        } else if (!strcmp(command, "leave")) {
+        	cmd->commandId = 5;
+        }
     }
     
     return cmd;
@@ -403,6 +405,7 @@ void CHATexecuteCommand(struct CHATcommand * cmd, int * a_soc) {
 	2 - help
 	3 - join
 	4 - usersList
+	5 - leaveRoom
 	*/
 	switch(cmd->commandId) {
 		case 1:
@@ -416,6 +419,9 @@ void CHATexecuteCommand(struct CHATcommand * cmd, int * a_soc) {
 			break;
 		case 4:
 			CHATsendUserList(a_soc);
+			break;
+		case 5:
+			CHATleaveRoom(a_soc, cmd->param);
 			break;
 	}
 }
@@ -489,16 +495,53 @@ void CHATuserAddRoom( int * a_pos , int * a_roomPos ) {
 }
 
 int CHATalreadyInRoom ( int a_roomId, int * a_pos ) {
-	int alreadyIn = 0, i=0; 
+	int alreadyIn = -1, i=0; 
 	IPCp(GLOBALsemid,0);
 	for(i=0; i<MAX_ROOMS; i++) {
 		if((*SHM).tabUser[*a_pos].activeRooms[i]==a_roomId) {
-			alreadyIn = 1;
+			alreadyIn = i;
 			break;
 		}
 	}
 	IPCv(GLOBALsemid,0);
 	return alreadyIn;
+}
+
+void CHATleaveRoom( int * a_soc, char* a_name ) {
+	int i=0, k=0, users;
+	int pos = CHATisLogged(NULL, a_soc);
+	int roomPos = CHATroomExists(a_name);
+	if( pos >= 0) {
+		int rpos = CHATalreadyInRoom( roomPos+1 , &pos );
+		if(rpos>=0) {
+			if(rpos == 0) {
+				CHATsendReply(505, "You can't leave main room.", a_soc);
+			} else {
+				IPCp(GLOBALsemid,0);
+				(*SHM).tabUser[pos].activeRooms[rpos] = -1;
+				IPCv(GLOBALsemid,0);
+				IPCp(GLOBALsemid,1);
+				for(k=0; i<MAX_USERS; k++) {
+					if ((*SHM).tabRoom[roomPos].activeUsers[k] == *a_soc) {
+						(*SHM).tabRoom[roomPos].activeUsers[k] = 0;
+						(*SHM).tabRoom[roomPos].users--;
+						users = (*SHM).tabRoom[roomPos].users;
+						break;
+					}
+				}
+				IPCv(GLOBALsemid,1);
+				if(users==0) {
+					CHATremoveRoom(roomPos+1);
+				}
+				CHATsendReply(105, a_name, a_soc);
+			}
+		} else {
+			CHATsendReply(505, "You are not in that room.", a_soc);
+		}
+	} else {
+		//not logged
+		perror("user wants to leave the room but he is not logged in ");
+	}
 }
 
 void CHATjoinToRoom(struct CHATcommand * cmd, int * a_soc) {
@@ -507,10 +550,11 @@ void CHATjoinToRoom(struct CHATcommand * cmd, int * a_soc) {
 	if(pos>=0) {
 		if(roomPos>=0) {
 			printf("Room istnieje i dodaje\n");
-			if(!CHATalreadyInRoom(roomPos+1, &pos)) {
+			if(!(CHATalreadyInRoom(roomPos+1, &pos)>=0)) {
 				if(CHATassignToRoom(roomPos, a_soc)) {
 					CHATuserAddRoom(&pos, &roomPos);
 					printf("chat add to room: %d\n", roomPos);
+					CHATsendReply(103, cmd->param, a_soc);
 					DEBUGprintRoom(0);
 				} else {
 					CHATsendReply(503, "Room is full.", a_soc);
@@ -526,6 +570,7 @@ void CHATjoinToRoom(struct CHATcommand * cmd, int * a_soc) {
 			} else {
 				printf("Room nie istnial ale juz istnieje i dodaje\n");
 				CHATuserAddRoom(&pos, &roomPos);
+				CHATsendReply(103, cmd->param, a_soc);
 			}
 		}
 	} else {
