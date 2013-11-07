@@ -15,7 +15,8 @@ var MODwebsocket = function(sb){
 		processLoginRequest,
 		reactor,
 		closeConnection,
-		checkConnection;
+		checkConnection,
+		_timeout;
 
 	connectionError = function() {
 		alreadyFailed = true;
@@ -28,6 +29,8 @@ var MODwebsocket = function(sb){
 	};
 	connectionSuccess = function(msg) {
 		if(_sock.readyState === WebSocket.OPEN) {
+			console.log(_timeout);
+			clearTimeout(_timeout);
 			connected = true;
 			alreadyFailed = false;
 			sb.emit('connectionSuccess', msg);
@@ -61,9 +64,10 @@ var MODwebsocket = function(sb){
 			console.log("[DEBUG]: not json:", e.data);
 		}
 	};
-	onCloseConnection = function() {
+	onCloseConnection = function(e) {
+		clearTimeout(_timeout);
 		if(connected) {
-			sb.emit('loggedOut');
+			sb.emit('loggedOut', 'Connection closed');
 			connected = false;
 			alreadyFailed = false;
 		}
@@ -80,10 +84,9 @@ var MODwebsocket = function(sb){
 	};
 	connect = function(hostname, port) {
 		try {
-			console.log(hostname, port);
 			_sock = new WebSocket('ws://'+hostname+':'+port, ['chat']);
 			alreadyFailed=false;
-			setTimeout(checkConnection, timeout);
+			_timeout = setTimeout(checkConnection, timeout);
 			_sock.onerror = connectionError;
 			_sock.onopen = connectionSuccess;
 			_sock.onmessage = processMessage;
