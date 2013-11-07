@@ -8,6 +8,7 @@ var MODboard = function(sb){
 		sb.clear(container);
 		sb.append(container, mainRoom);
 		currentRoom = sb.find('.room_main')[0];
+		receiveNotification({ room:'__CURRENT__', message: '<strong>Welcome to Websockets chat!</strong><br>Now, you are in the main room. If you need any help, just type: /help' });
 		username = data;
 		sb.addClass(sb.CSSchat, 'expanded');
 		setTimeout(sb.fadeToggleModule,600);
@@ -112,14 +113,16 @@ var MODboard = function(sb){
 		now = new Date(),
 		msgTemplate = '<li class="controlMessage clearfix"><span class="prompt">>>>>  </span><span class="message">'+message+'</span><div class="date">['+now.toString().match(/\d\d:\d\d:\d\d/)[0]+']</div></li>';
 		if(room==="__CURRENT__") {
-			room = currentRoom
+			if(currentRoom) {
+				room = currentRoom;
+			} else {
+				room = sb.find('.room_main')[0];
+			}
 		} else {
 			room = sb.find('.room_'+room)[0];
 		}
-		if(room) {
-			sb.append(room, msgTemplate);
-			sb.scrollTop(room, room.scrollHeight);
-        }
+		sb.append(room, msgTemplate);
+		sb.scrollTop(room, room.scrollHeight);
 	};
 	return {
 	    init: function() {

@@ -29,7 +29,6 @@ var MODwebsocket = function(sb){
 	};
 	connectionSuccess = function(msg) {
 		if(_sock.readyState === WebSocket.OPEN) {
-			console.log(_timeout);
 			clearTimeout(_timeout);
 			connected = true;
 			alreadyFailed = false;
@@ -64,7 +63,7 @@ var MODwebsocket = function(sb){
 			console.log("[DEBUG]: not json:", e.data);
 		}
 	};
-	onCloseConnection = function(e) {
+	onCloseConnection = function() {
 		clearTimeout(_timeout);
 		if(connected) {
 			sb.emit('loggedOut', 'Connection closed');
@@ -96,7 +95,6 @@ var MODwebsocket = function(sb){
 		}
 	};
 	processLoginRequest = function(data) {
-		console.log(data);
 		username = data.username;
 		connect(data.hostname, data.port);
 	};

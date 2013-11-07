@@ -307,9 +307,14 @@ body {
             font-size:10px;
         }
         .prompt {
+            vertical-align: top;
             color: #c0392b;
             font-weight: bold;
             font-size:12px;
+        }
+        .message {
+            @include inline-block;
+            width:80%;
         }
     }
     .msgContainer {
