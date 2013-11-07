@@ -17,13 +17,15 @@ var MODboard = function(sb){
 		sb.toggleModule();
 	};
 	newPrivateRoom = function(user) {
+		console.log(user);
 		if(sb.find('.room_private_'+user).length===0) {
 			var tpl = "<ul class=\"room room_private_"+user+"\"></ul>";
 			sb.append(container, tpl);
+		} else {
+			//activate it
 		}
 	};
 	newPublicRoom = function(name) {
-
 		if(sb.find('.room_'+name).length===0) {
 			var tpl = "<ul class=\"room room_"+name+"\"></ul>";
 			sb.append(container, tpl);
@@ -39,6 +41,11 @@ var MODboard = function(sb){
 			sb.removeClass(currentRoom, 'active');
 			currentRoom = target;
 			sb.addClass(target, 'active');
+			var classes = currentRoom.getAttribute('class').match(/.room_private_\w+/);
+			if(classes.length!==0) {
+				var nick = classes[0].split('_')[2];
+				sb.emit('readMessages', nick);
+			}
 		}
 	};
 	AUTOnewPrivateRoom = function(name) {
@@ -58,11 +65,15 @@ var MODboard = function(sb){
             roomDOM = sb.find('.room_private_'+room);
             if(roomDOM.length!==0) {
 				sb.append(roomDOM, msgTemplate);
-				sb.scrollTop(roomDOM, roomDOM.scrollHeight);
+				sb.scrollTop(roomDOM[0], roomDOM[0].scrollHeight);
+				if( (!roomDOM[0].isEqualNode(currentRoom)) && (sender != username)) {
+					sb.emit('unreadMessage', sender);
+				}
             } else {
 				roomDOM = new AUTOnewPrivateRoom(data.sender);
 				sb.append(roomDOM, msgTemplate);
 				sb.scrollTop(roomDOM, roomDOM.scrollHeight);
+				sb.emit('unreadMessage', sender);
             }
 	};
 	receiveMessage = function(data) {

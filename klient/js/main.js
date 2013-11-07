@@ -25,6 +25,9 @@ var sandbox = function(core, instanceId, options, moduleId) {
   this.append = function(selector, what) {
     return $(selector).append(what);
   };
+  this.is = function(target, what) {
+    return $(target).is(what);
+  }
   this.height = function(selector) {
     return $(selector).height();
   }

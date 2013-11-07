@@ -4,24 +4,43 @@ var MODrooms = function(sb){
 	var rooms, newPrivateRoom, switchRoom, currentRoom, newPublicRoom, toggle;
 
 	switchRoom = function(e) {
-		var t = e.originalEvent.target, 
-			name = t.innerHTML;
-		var data = {};
-		sb.addClass(t, 'active');
-		sb.removeClass(currentRoom, 'active');
-		currentRoom = t;
-		if(sb.hasClass(currentRoom, 'private_'+name)) {
-			data.type = 'private';
+
+		
+		if(typeof(e)==="string") {
+			var name = e,
+			t = sb.find('.private_'+name)[0];
+			console.log(t);
 		} else {
-			data.type = 'public';
+			if( sb.is(e.originalEvent.target, 'li') ) {
+				var t = e.originalEvent.target, 
+				name = t.innerHTML;	
+				console.log(e);
+			} else {
+				var t = null;
+			}
+			
 		}
-		data.name = name;
-		sb.emit('switchRoom', data);
+		if(t) {
+			var data = {};
+			sb.addClass(t, 'active');
+			sb.removeClass(currentRoom, 'active');
+			currentRoom = t;
+			if(sb.hasClass(currentRoom, 'private_'+name)) {
+				data.type = 'private';
+			} else {
+				data.type = 'public';
+			}
+			data.name = name;
+			sb.emit('switchRoom', data);
+		}
 	};
 	newPrivateRoom = function(username) {
 		if(sb.find('.private_'+username).length===0) {
 			var tpl = "<li class=\"private_"+username+"\">"+username+"</li>";
 			sb.append(rooms, tpl);			
+		} else {
+			console.log('switching');
+			switchRoom(username);
 		}
 	};
 	newPublicRoom = function(name) {
