@@ -415,7 +415,7 @@ void CHATexecuteCommand(struct CHATcommand * cmd, int * a_soc) {
 			CHATloginUser(cmd, a_soc);
 			break;
 		case 2:
-
+			CHATsendCtrlMessage(a_soc, "__CURRENT__", "/join name - joining to room\\n /leave name - leaving room\\n @name - send private message to user\\n");
 			break;
 		case 3:
 			CHATjoinToRoom(cmd, a_soc);
