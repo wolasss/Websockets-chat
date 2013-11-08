@@ -51,6 +51,9 @@ var sandbox = function(core, instanceId, options, moduleId) {
   this.addClass = function(selector, cl) {
     return $(selector).addClass(cl);
   };
+  this.remove = function(selector) {
+    return $(selector).remove();
+  }
   this.removeClass = function(selector, cl) {
     return $(selector).removeClass(cl);
   };

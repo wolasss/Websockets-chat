@@ -1,7 +1,7 @@
 var MODrooms = function(sb){
 	"use strict";
 
-	var rooms, newPrivateRoom, switchRoom, currentRoom, newPublicRoom, toggle, notification, clearNotification;
+	var rooms, newPrivateRoom, switchRoom, currentRoom, newPublicRoom, toggle, notification, clearNotification, leaveRoom;
 
 	switchRoom = function(e) {
 		var data={}, t, name;
@@ -57,6 +57,12 @@ var MODrooms = function(sb){
 			sb.clear(messagesContainer);
 		}
 	};
+	leaveRoom = function(name) {
+		var room = sb.find('.room_'+name);
+		if(room.length!==0) {
+			sb.remove(room[0]);
+		}
+	}
 	return {
 	    init: function() {
 			rooms = sb.find(sb.CSSrooms)[0];
@@ -72,6 +78,7 @@ var MODrooms = function(sb){
 
 			sb.on('newPrivateRoom', newPrivateRoom);
 			sb.on('WSnewPublicRoom', newPublicRoom);
+			sb.on('WSleftRoom', leaveRoom);
 			sb.on('loggedIn', toggle);
 			sb.on('loggedOut', toggle);
 	    },

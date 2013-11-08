@@ -53,7 +53,7 @@ var MODwebsocket = function(sb){
 				sb.emit('WSreceivedNotification', message);
 			} else if(message.status==103) {
 				sb.emit('WSnewPublicRoom', message.message);
-			} else if(message.status==103) {
+			} else if(message.status==105) {
 				sb.emit('WSleftRoom', message.message);
 			} else if(message.status && !message.sender) {
 				sb.emit('WSresponse', message);

@@ -32,7 +32,10 @@ var MODboard = function(sb){
 		}
 	};
 	leaveRoom = function(name) {
-		name = 1;
+		var room = sb.find('.room_'+name);
+		if(room.length!==0) {
+			sb.remove(room[0]);
+		}
 	};
 	switchRoom = function(data) {
 		var type = data.type, room = data.name,
