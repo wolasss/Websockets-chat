@@ -31,7 +31,7 @@ void IPCp(int a_semid, int a_semnum){
 }
 
 void SHMdestroy() {
-	if(semctl(GLOBALsemid, 0, IPC_RMID, (int)1)==-1) {
+	if(semctl(GLOBALsemid, 0, IPC_RMID)==-1) {
 		perror("Error removing semaphore");
 	}
 	exit(1);

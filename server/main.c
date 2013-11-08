@@ -1,24 +1,3 @@
-/*
-a argument
-s   string (łańcuch znaków)
-sz  string (łańcuch znaków zakończony bajtem zerowym - null'em)
-c   char (jeden znak), również const - wartość stała (szczególnie w przypadku użycia wskaźników)
-by  byte, unsigned char
-n   short
-i   int
-x, y    int (przy zmiennych określających współrzędne)
-cx, cy  int (przy zmiennych określających rozmiar, długość)
-l   long
-w   word
-dw  dword
-b   boolean (wartość logiczna: prawda lub fałsz)
-f   flaga
-fn  funkcja
-h   handle (uchwyt)
-p   pointer (wskaźnik)
-fd - deskryptor pliku (int)
-aout - argument tylko do zapisania
-*/
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
@@ -38,17 +17,6 @@ aout - argument tylko do zapisania
 #include "tools.h"
 #include "ipc_shared.h"
 #include "chat.h"
-
-#define BYTETOBINARYPATTERN "%d%d%d%d%d%d%d%d"
-#define BYTETOBINARY(byte)  \
-  (byte & 0x80 ? 1 : 0), \
-  (byte & 0x40 ? 1 : 0), \
-  (byte & 0x20 ? 1 : 0), \
-  (byte & 0x10 ? 1 : 0), \
-  (byte & 0x08 ? 1 : 0), \
-  (byte & 0x04 ? 1 : 0), \
-  (byte & 0x02 ? 1 : 0), \
-  (byte & 0x01 ? 1 : 0) 
 
 #define DEBUG 1
 
@@ -127,7 +95,7 @@ void* handshake ( void* clisoc ) {
 void acceptConnection( int * socketfd ) {
 	struct sockaddr_in client_addr; 
 	socklen_t clilen = sizeof(client_addr);
-	char log[512];
+	char log[128];
 	while(1) {
 		int clisoc;
 		int * arg_ptr = &clisoc;
@@ -137,7 +105,7 @@ void acceptConnection( int * socketfd ) {
 			pthread_attr_t attr;
  			pthread_attr_init(&attr);
 			pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-			bzero(log, 512);
+			bzero(log, 128);
 			printf("Connected: %s SOCKETFFD: %d\n", inet_ntoa(client_addr.sin_addr), clisoc);
 			snprintf(log, sizeof log, "Connected: %s \n", inet_ntoa(client_addr.sin_addr));
 			logEvent(log);	
@@ -152,7 +120,7 @@ void acceptConnection( int * socketfd ) {
 	}
 }
 
-struct Shared shared; //no need to clean this up, is global
+struct Shared shared; //no need to clean this up, is global so all props will be set to 0
 
 int main( int argc, char *argv[] ) {
 	
@@ -188,7 +156,6 @@ int main( int argc, char *argv[] ) {
 		if(bind(socketfd, (struct sockaddr*)&my_addr, sizeof(my_addr))>=0) {
 			if(!listen(socketfd, 10)) { //return 0 if successful
 				printf("Running on %d\n\n", port);
-				logEvent("Running on trololo");
 				acceptConnection(&socketfd);
 			} else {
 				perror("Listening error: ");

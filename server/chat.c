@@ -327,7 +327,6 @@ int CHATgetActiveUsers(int * a_roomId, int * users) {
 	int i=0, activeUsers=0;
 	IPCp(GLOBALsemid,1);
 	for(i=0; i<MAX_USERS; i++) {
-		//printf("fd: %d\n", (*SHM).tabRoom[*a_roomId].activeUsers[i]);
 		if((*SHM).tabRoom[*a_roomId].activeUsers[i]>0) {
 			users[activeUsers]=(*SHM).tabRoom[*a_roomId].activeUsers[i];
 			activeUsers++;
@@ -412,10 +411,14 @@ void CHATexecuteCommand(struct CHATcommand * cmd, int * a_soc) {
 	*/
 	switch(cmd->commandId) {
 		case 1:
-			CHATloginUser(cmd, a_soc);
+			if(CHATisLogged(NULL, a_soc)<0) {
+				CHATloginUser(cmd, a_soc);
+			} else {
+				CHATsendCtrlMessage(a_soc, "__CURRENT__", "You are already logged in.");
+			}
 			break;
 		case 2:
-			CHATsendCtrlMessage(a_soc, "__CURRENT__", "/join name - joining to room\\n /leave name - leaving room\\n @name - send private message to user\\n");
+			CHATsendCtrlMessage(a_soc, "__CURRENT__", "<strong>/join name</strong> - joining to room called 'name'<br> <strong>/leave name</strong> - leaving room called 'name'<br><strong>@name msg</strong> - send private message 'msg' to user 'name'<br>");
 			break;
 		case 3:
 			CHATjoinToRoom(cmd, a_soc);
@@ -431,7 +434,6 @@ void CHATexecuteCommand(struct CHATcommand * cmd, int * a_soc) {
 
 int CHATroomExists( char* a_name ) {
 	int exists = -1, i=1;
-	
 	IPCp(GLOBALsemid,1);
 	for(i=0; i<MAX_ROOMS; i++) {
 		if((*SHM).tabRoom[i].id!=0) {
@@ -442,7 +444,6 @@ int CHATroomExists( char* a_name ) {
 		}
 	}
 	IPCv(GLOBALsemid,1);
-	
 	return exists;
 }
 
@@ -588,20 +589,6 @@ void CHATprepareMainRoom() {
 	IPCv(GLOBALsemid,1);
 }
 
-int CHATfindRoom (char * a_name) {
-	int pos = -1, i;
-	IPCp(GLOBALsemid,1);
-	for(i=0; i<MAX_ROOMS; i++) {
-		if(!strcmp((*SHM).tabRoom[i].name,a_name)) {
-			pos = i;
-			break;
-		}
-	}
-	IPCv(GLOBALsemid,1);
-	return pos;
-}
-
-
 void CHATsendToAll (int * a_roomId , char* a_roomName, int * a_sender, char* a_message) {
 	int users[MAX_USERS], i=0, k=0;
 	k = CHATgetActiveUsers(a_roomId, users);
@@ -613,7 +600,6 @@ void CHATsendToAll (int * a_roomId , char* a_roomName, int * a_sender, char* a_m
 	strncpy(nick,(*SHM).tabUser[*a_sender].nick,32);
 	IPCv(GLOBALsemid,0);
 
-	printf("do ilu wysle: %d\n", k);
 	for(i=0; i<k; i++) {
 		CHATsendMessage(0, &(users[i]), nick, a_roomName, a_message);
 	}
@@ -640,7 +626,6 @@ void CHATsendPrivate (int * a_sender, int *a_receiver, char* a_message) {
 	free(nick_r);
 }
 
-
 void CHATparseMessage(char* a_message, int * a_soc) {
 	struct CHATcommand * cmd;
 	int allocated = 1;
@@ -651,7 +636,7 @@ void CHATparseMessage(char* a_message, int * a_soc) {
 			if(cmd->commandId>0) {
 				CHATexecuteCommand(cmd, a_soc);
 			} else {
-				perror("Unknown command.");
+				CHATsendCtrlMessage(a_soc, "__CURRENT__", "Unknown command. To see list of available commands type <strong>/help</strong>");
 			}
 		} else if(a_message[0]=='%' && a_message[1]=='4' && a_message[2]=='0') {
 			//%40 - urldecode(@)
@@ -659,8 +644,11 @@ void CHATparseMessage(char* a_message, int * a_soc) {
 			int idSender = CHATisLogged(NULL, a_soc);
 			int idReceiver = CHATisLogged(cmd->name, NULL);
 			if(idReceiver>=0) {
-				printf("\nprivate:\n%s\n", a_message);
-				CHATsendPrivate(&idSender, &idReceiver, cmd->param);
+				if(idSender!=idReceiver) {
+					CHATsendPrivate(&idSender, &idReceiver, cmd->param);
+				} else {
+					CHATsendCtrlMessage(a_soc, "__CURRENT__", "You can't send message to yourself. But nice try.");
+				}
 			} else {
 				CHATsendCtrlMessage(a_soc, "__CURRENT__", "You can't send message to this user because he is not logged in.");
 			}
@@ -671,9 +659,9 @@ void CHATparseMessage(char* a_message, int * a_soc) {
 			int idSender = CHATisLogged(NULL, a_soc);
 			if(idRoom>=0) {
 				CHATsendToAll(&idRoom, cmd->name, &idSender, cmd->param);
+			} else {
+				CHATsendCtrlMessage(a_soc, "__CURRENT__", "Can't send public message. Room does not exists.");
 			}
-			printf("public:\n%s\n\n", a_message);
-			printf("room name: %s\n", cmd->name);
 		} else {
 			CHATsendCtrlMessage(a_soc, "__CURRENT__", "Unknown command.");
 			allocated=0;
