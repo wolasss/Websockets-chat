@@ -109,7 +109,12 @@ var MODloginForm = function(sb){
 		} 
 
 		if(usernameField.value.length!==0) {
-			username = usernameField.value;
+			if(usernameField.value.match(/^[a-zA-Z][a-zA-Z0-9-_\.]{1,31}$/)) {
+				username = usernameField.value;
+			} else {
+				showError('Wrong username.');
+				errors = 1;
+			}
 		} else {
 			showError('Empty username field');
 			errors = 1;

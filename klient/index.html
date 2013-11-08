@@ -37,12 +37,12 @@
                                 </div>
 
                                 <div class="form-group port">
-                                    <input type="text" class="form-control login-field port-field" value="" placeholder="Port" />
+                                    <input type="text" class="form-control login-field port-field" value="" placeholder="Port" pattern="/^\d+$/"/>
                                     <label class="login-field-icon fui-gear" for="-port-field"></label>
                                 </div>
 
                                 <div class="form-group username">
-                                    <input type="text" class="form-control login-field nick-field" value="" placeholder="Nick" required />
+                                    <input type="text" class="form-control login-field nick-field" value="" placeholder="Nick" pattern="/^[a-zA-Z][a-zA-Z0-9-_\.]{1,31}$/" required />
                                     <label class="login-field-icon fui-user" for="nick-field"></label>
                                 </div>
                                 <div class="form-group login-button-container">
