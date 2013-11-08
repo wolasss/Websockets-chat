@@ -1,11 +1,17 @@
-
-
 var sandbox = function(core, instanceId, options, moduleId) {
   core._mediator.installTo(this);
 
   //private vars
   var DOMid = instanceId ? '#'+instanceId : '';
   
+  var entityMap = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': '&quot;',
+    "'": '&#39;',
+    "/": '&#x2F;'
+  };
   //selectors
   this.CSSloginButton = '.login-button';
   this.CSSusernameField = '.nick-field';
@@ -22,6 +28,11 @@ var sandbox = function(core, instanceId, options, moduleId) {
 
 
   //functions
+  this.escapeHTML = function(string) {
+    return String(string).replace(/[&<>"'\/]/g, function (s) {
+      return entityMap[s];
+    });
+  };
   this.append = function(selector, what) {
     return $(selector).append(what);
   };

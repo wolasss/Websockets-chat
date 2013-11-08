@@ -24,20 +24,21 @@ var MODrooms = function(sb){
 			}
 		}
 		data.name = name;
-		console.log(data);
 		sb.emit('switchRoom', data);
 	};
 	newPublicRoom = function(name) {
+		name = sb.escapeHTML(name);
 		if(sb.find('.room_'+name).length===0) {
 			var tpl = "<li class=\"room room_"+name+"\" roomname=\""+name+"\">"+name+"<span class=\"messages\"></span></li>";
 			sb.append(rooms, tpl);		
 		}
 	};
 	toggle = function() {
+		sb.clear(rooms);
+		sb.append(rooms, '<li class="room room_main active" roomname="main">main<span class="messages"></span></li>');
 		sb.slideToggle();
 	};
 	notification = function(room) {
-		console.log(room);
 		var item = sb.find('.room_'+room);
 		if(item.length!==0) {
 			item = item[0];
@@ -59,26 +60,31 @@ var MODrooms = function(sb){
 	    init: function() {
 			rooms = sb.find(sb.CSSrooms)[0];
 			currentRoom = sb.find('.room_main')[0];
-			console.log('current', currentRoom);
-			sb.on('loggedIn', toggle);
-			sb.on('newPrivateRoom', newPrivateRoom);
-			sb.on('WSnewPublicRoom', newPublicRoom);
+			
+			sb.addEvent(rooms, 'click', switchRoom);
+			
 			sb.on('currentRoomChangedPrivate', function(){
 				sb.removeClass(currentRoom, 'active');
 				currentRoom = null;
 			});
 			sb.on('PublicUnreadMessage', notification);
 			sb.on('PublicReadMessages', clearNotification);
-			sb.addEvent(rooms, 'click', switchRoom);
+
+			sb.on('newPrivateRoom', newPrivateRoom);
+			sb.on('WSnewPublicRoom', newPublicRoom);
+			sb.on('loggedIn', toggle);
 			sb.on('loggedOut', toggle);
 	    },
 	    destroy: function() { 
 			sb.off('loggedIn');
 			sb.off('loggedOut');
 			sb.off('newPrivateRoom');
-			sb.off('newPublicRoom');
-			sb.off('newPrivateRoom');
+			sb.off('WSnewPublicRoom');
+			sb.off('PublicUnreadMessage');
+			sb.off('PublicReadMessages');
+			sb.off('currentRoomChangedPrivate');
 			rooms = null;
+			currentRoom = null;
 	    }
 	};
 };

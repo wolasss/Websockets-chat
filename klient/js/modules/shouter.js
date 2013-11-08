@@ -20,7 +20,6 @@ var MODshouter = function(sb){
 			//public
 			message = currentRoom+" "+input.value;
 		}
-
 		//!(equals 0 or only spaces)...
 		if(input.value.length!==0 && (!input.value.match(/^\s+$/)) ) {
 			sb.emit('WSsendMessage', encodeURIComponent(message));
@@ -42,7 +41,6 @@ var MODshouter = function(sb){
 			currentRoom = '%main';
 			input = sb.find(sb.CSSmessageField)[0];
 			button = sb.find('label')[0];
-
 			sb.on('loggedIn', toggle);
 			sb.on('loggedOut', toggle);
 			sb.on('switchRoom', switchRoom);
@@ -51,7 +49,6 @@ var MODshouter = function(sb){
 	    },
 	    destroy: function() { 
 			input = null;
-
 			sb.off('loggedIn');
 			sb.removeEvent(input, 'keypress', reactor);
 	    }

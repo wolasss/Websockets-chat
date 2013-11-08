@@ -18,12 +18,14 @@ var MODboard = function(sb){
 		sb.toggleModule();
 	};
 	newPrivateRoom = function(user) {
+		user = sb.escapeHTML(user);
 		if(sb.find('.room_private_'+user).length===0) {
 			var tpl = "<ul class=\"room room_private_"+user+"\"></ul>";
 			sb.append(container, tpl);
 		}
 	};
 	newPublicRoom = function(name) {
+		name = sb.escapeHTML(name);
 		if(sb.find('.room_'+name).length===0) {
 			var tpl = "<ul class=\"room room_"+name+"\"></ul>";
 			sb.append(container, tpl);
@@ -33,7 +35,6 @@ var MODboard = function(sb){
 		name = 1;
 	};
 	switchRoom = function(data) {
-		console.log('switchuje', data);
 		var type = data.type, room = data.name,
 		target = (type==='private') ? sb.find('.room_private_'+room)[0] : sb.find('.room_'+room)[0];
 		if(target.length!==0) {
@@ -48,10 +49,10 @@ var MODboard = function(sb){
 		}
 	};
 	receivePrivMessage = function(data) {
-		var message = data.message,
+		var message = sb.escapeHTML(data.message),
 			roomDOM,
 			room = data.room,
-			sender = data.sender,
+			sender = sb.escapeHTML(data.sender),
 			now = new Date(),
 			additionalClass = '';
 			if(username === sender) { additionalClass+='mine'; }
@@ -72,10 +73,10 @@ var MODboard = function(sb){
             }
 	};
 	receiveMessage = function(data) {
-		var message = data.message,
+		var message = sb.escapeHTML(data.message),
 			roomDOM,
 			room = data.room,
-			sender = data.sender,
+			sender = sb.escapeHTML(data.sender),
 			now = new Date(),
 			additionalClass = '';
 			if(username === sender) { additionalClass+='mine'; }

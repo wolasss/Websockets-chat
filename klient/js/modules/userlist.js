@@ -30,10 +30,12 @@ var MODuserlist = function(sb){
 		sb.clear(list);
 		var addClass = '';
 		for(var i=0, len=users.length; i<len; i++){
+			//easter egg
 			if(users[i]==="thefox") {
 				addClass="fox";
 			}
-			sb.append(list, "<li class=\"user "+addClass+" user_"+users[i]+"\" username=\""+users[i]+"\">"+users[i]+"<span class=\"messages\"></span></li>");
+			var name = sb.escapeHTML(users[i]);
+			sb.append(list, "<li class=\"user "+addClass+" user_"+name+"\" username=\""+name+"\">"+name+"<span class=\"messages\"></span></li>");
 			addClass = '';
 		}
 	};
@@ -49,10 +51,8 @@ var MODuserlist = function(sb){
 		}
 		var messagesContainer = sb.find('.user_'+user+' .messages')[0];
 		var messages = sb.find('.user_'+user+' .messages > span')[0];
-		console.log('span:', messages);
 		var count = (messages) ? parseInt(messages.innerHTML,10) : 0;
 		count++;
-		console.log('mes, count', messagesContainer, count);
 		sb.clear(messagesContainer);
 		sb.append(messagesContainer, '<span>'+count+'</span>');
 	};
