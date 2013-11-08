@@ -35,6 +35,7 @@ var MODshouter = function(sb){
 	switchRoom = function(data) {
 		var command = (data.type === "private") ? '@' : '%';
 		currentRoom = command+data.name;
+		input.focus();
 	};
 	return {
 	    init: function() {
