@@ -104,9 +104,15 @@ var MODboard = function(sb){
 			}
 		} else {
 			room = sb.find('.room_'+room)[0];
+			if(!room) {
+				room = currentRoom;
+			}
 		}
-		sb.append(room, msgTemplate);
-		sb.scrollTop(room, room.scrollHeight);
+		//if response show only error messages
+		if( data.status>=500 || data.status==195) {
+			sb.append(room, msgTemplate);
+			sb.scrollTop(room, room.scrollHeight);
+		}
 	};
 	return {
 	    init: function() {
@@ -120,6 +126,7 @@ var MODboard = function(sb){
 			sb.on('WSreceivedMessage', receiveMessage);
 			sb.on('WSreceivedPrivMessage', receivePrivMessage);
 			sb.on('WSreceivedNotification', receiveNotification);
+			sb.on('WSresponse', receiveNotification);
 	    },
 	    destroy: function() { 
 			sb.off('loggedIn');
