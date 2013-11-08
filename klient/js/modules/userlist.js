@@ -4,7 +4,6 @@ var MODuserlist = function(sb){
 	var list, reactor, showList, toggle, username, privateMessage, notification, clearNotification, currentRoom;
 
 	toggle = function(data) {
-		console.log('toggl', data);
 		if(!username) username = data;
 		sb.slideToggle();
 	};
@@ -21,6 +20,7 @@ var MODuserlist = function(sb){
 				data.name = userNick;
 				sb.emit('newPrivateRoom', userNick);
 				sb.emit('switchRoom', data);
+				sb.removeClass(currentRoom, 'active');
 				currentRoom = t;
 				sb.addClass(t, 'active');
 				sb.emit('currentRoomChangedPrivate');
@@ -33,8 +33,8 @@ var MODuserlist = function(sb){
 		for(var i=0, len=users.length; i<len; i++){
 			//easter egg
 			addClass='';
-			if(users[i]==="thefox ") {
-				addClass+="fox";
+			if(users[i]==="thefox") {
+				addClass+="fox ";
 			}
 			if(users[i]===username) {
 				addClass+="me";
