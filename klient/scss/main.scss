@@ -464,8 +464,8 @@ body {
         overflow:hidden;
         text-overflow: ellipsis;
         &.active {
-            background-color: #34495e;
-            @include box-shadow(inset 0 0 30px #293d50);
+            background-color: #436483;
+            @include box-shadow(inset 0 0 10px #293d50);
         }
     }
     .room:hover {
@@ -531,8 +531,11 @@ body {
         overflow:hidden;
         text-overflow: ellipsis;
         &.active {
-            background-color: #34495e;
-            @include box-shadow(inset 0 0 30px #293d50);
+            background-color: #436483;
+            @include box-shadow(inset 0 0 10px #293d50);
+        }
+        &.me {
+            cursor: default;
         }
     }
     .user.fox {

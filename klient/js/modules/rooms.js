@@ -16,8 +16,8 @@ var MODrooms = function(sb){
 					return;
 				}
 				name = t.getAttribute('roomname');
-				sb.addClass(t, 'active');
 				sb.removeClass(currentRoom, 'active');
+				sb.addClass(t, 'active');
 				currentRoom = t;
 				data.type = 'public';
 				sb.emit("currentRoomChangedPublic");	
@@ -36,6 +36,7 @@ var MODrooms = function(sb){
 	toggle = function() {
 		sb.clear(rooms);
 		sb.append(rooms, '<li class="room room_main active" roomname="main">main<span class="messages"></span></li>');
+		currentRoom = sb.find('.room_main')[0];
 		sb.slideToggle();
 	};
 	notification = function(room) {
@@ -59,7 +60,6 @@ var MODrooms = function(sb){
 	return {
 	    init: function() {
 			rooms = sb.find(sb.CSSrooms)[0];
-			currentRoom = sb.find('.room_main')[0];
 			
 			sb.addEvent(rooms, 'click', switchRoom);
 			
