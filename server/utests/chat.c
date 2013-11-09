@@ -18,18 +18,16 @@
 #define MAX_USERS 20
 #define MAX_ROOMS 10
 
-//testing 
+//testing
 #include "minunit.h"
  
 int tests_run = 0;
-
 
 struct CHATcommand {
     int commandId;
     char * name;
     char * param;
 };
-
 
 struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd) {
     cmd = (struct CHATcommand *) malloc(sizeof(struct CHATcommand));
