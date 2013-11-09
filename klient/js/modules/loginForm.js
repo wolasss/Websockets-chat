@@ -78,6 +78,8 @@ var MODloginForm = function(sb){
 				break;
 			case "loggedOut":
 				sb.toggleModule();
+				showError('Connection closed.');
+				sb.show(errorContainer);
 				break;
 		}
 	};
