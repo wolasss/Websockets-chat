@@ -20,7 +20,7 @@ char* WEBSOC_createFrame(char* a_message, char* frame, unsigned long * aout_size
 
     unsigned int i_addBytes = 0;
 
-    frame = malloc(10); //max length + 2 bytes
+    frame = malloc(sizeof(char)*10); //max length + 2 bytes
     bzero(frame, 10);
 
     frame[0] = 129; //type of message text - message
@@ -47,7 +47,7 @@ char* WEBSOC_createFrame(char* a_message, char* frame, unsigned long * aout_size
 
     l_frameSize = l_msgLen+i_addBytes+2;
     *aout_size = l_frameSize;
-    frame = realloc( frame, l_frameSize );
+    frame = realloc( frame, sizeof(char)*l_frameSize );
     if(frame != NULL) {
         strncpy(frame+2+i_addBytes, a_message, l_msgLen);
     } else {
@@ -61,7 +61,7 @@ char* WEBSOCcreateHandshakeResponse(char* key, char* buffer) {
     char* acceptKey;
     char temp[1024];
 
-    buffer = malloc(1024);
+    buffer = malloc(sizeof(char)*1024);
     bzero(buffer, 1024);
     bzero(temp, 1024);
     acceptKey = WEBSOCgenerateAcceptKey(key, acceptKey);
@@ -102,7 +102,7 @@ char* WEBSOCgetRequestKey(char* a_request, char* a_key) {
 	regex_t r;
     regmatch_t m[1];
 
-    a_key = malloc(512);
+    a_key = malloc(sizeof(char)*512);
     bzero(a_key, 512); 
 
     compile_regex(&r, "Sec-WebSocket-Key:[[:blank:]]");
@@ -186,7 +186,7 @@ char* WEBSOCdecodeFrame( char* a_frame, char* decoded, unsigned long * a_frameLe
         if((actualLength+indexFirstData)!=(*a_frameLength)) {
             printf("Blad ramki o co chodzi\n");
         }
-        decoded = malloc((int)*a_frameLength-indexFirstData+1);
+        decoded = malloc(sizeof(char)*((int)*a_frameLength-indexFirstData+1));
         bzero(decoded, *a_frameLength-indexFirstData);
         for(k=indexFirstData, j=0; k<*a_frameLength; k++, j++) {
             decoded[j] = a_frame[k] ^ mask[j % MASK_SIZE];

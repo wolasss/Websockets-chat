@@ -20,7 +20,7 @@ char* SOCreceiveMessage ( int * a_soc, char* aout_message, unsigned long * aout_
                 i_bufInt = 0,
                 alreadyReceived = 0;
     char buf[i_bufSize];
-    aout_message = malloc(i_msgSize);
+    aout_message = malloc(sizeof(char)*i_msgSize);
 
     bzero(aout_message, i_msgSize);
     bzero(buf, i_bufSize);
@@ -28,7 +28,7 @@ char* SOCreceiveMessage ( int * a_soc, char* aout_message, unsigned long * aout_
         i_msgSize+=i_r;
         alreadyReceived+=i_r;
 
-        if((aout_message = realloc(aout_message, i_msgSize))<0) {
+        if((aout_message = realloc(aout_message, sizeof(char)*i_msgSize))<0) {
             perror("Error allocating memory: ");
         }
         

@@ -26,12 +26,12 @@ extern struct Shared * SHM;
 extern int GLOBALsemid;
 
 char * CHATcreateJSON ( int * a_statusCode, char* a_sender, char* a_room, char* a_message, char* aout_reply ) {
-	aout_reply = malloc(512);
+	aout_reply = malloc(sizeof(char)*512);
 	long messageAloc = strlen(a_message)+20;
-	char * statusJSON = malloc(32),
-			*senderJSON = malloc(64),
-			*roomJSON = malloc(64),
-			*messageJSON = malloc(messageAloc);
+	char * statusJSON = malloc(sizeof(char)*32),
+			*senderJSON = malloc(sizeof(char)*64),
+			*roomJSON = malloc(sizeof(char)*64),
+			*messageJSON = malloc(sizeof(char)*messageAloc);
 
 	bzero(statusJSON, 32);
 	bzero(senderJSON, 64);
@@ -73,12 +73,12 @@ struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd)
             command[k]=a_command[i];
             i++; k++;
     }
-    cmd->name = malloc(i-2);
+    cmd->name = malloc(sizeof(char)*(i-2));
     bzero(cmd->name, i-2);
 
     paramLen = cmdLen-i+1;
     if(paramLen>=0) {
-        cmd->param = malloc(paramLen);
+        cmd->param = malloc(sizeof(char)*paramLen);
         bzero(cmd->param, paramLen);
         bzero(cmd->param, paramLen);
         i=i+3; // remove space -> urldecode(%20)
@@ -121,7 +121,7 @@ int CHATisLogged ( char * a_name, int * a_soc ) {
 }
 
 char* CHATgetUserList (char* aout_list) {
-	aout_list = malloc(1024);
+	aout_list = malloc(sizeof(char)*1024);
 	bzero(aout_list, 1024);
 	int i;
 	strcpy(aout_list, "[\"");
@@ -257,11 +257,11 @@ void CHATsendCtrlMessageToAll (int * a_roomId , char* a_roomName, char* a_messag
 
 void CHATremoveUser ( char * a_name, int * a_soc, int * a_pos ) {
 	int pos = *a_pos, soc = *a_soc;
-	char * controlMessage = malloc(128);
+	char * controlMessage = malloc(sizeof(char)*128);
 	struct CHATcommand room;
 	int mainRoom = 0;
-	room.name = malloc(5);
-	room.param = malloc(32);
+	room.name = malloc(sizeof(char)*5);
+	room.param = malloc(sizeof(char)*32);
 	bzero(room.name, 5);
 	strcpy(room.name,"main");
 
@@ -370,10 +370,10 @@ void CHATclearActiveRooms (int * a_pos) {
 }
 void CHATloginUser(struct CHATcommand * cmd, int * a_soc) {
 	int firstFree, i, logged=CHATisLogged(cmd->param, NULL), mainRoom = 0;
-	char * controlMessage = malloc(128);
+	char * controlMessage = malloc(sizeof(char)*128);
 	bzero(controlMessage, 128);
 	struct CHATcommand room;
-	room.param = malloc(5);
+	room.param = malloc(sizeof(char)*5);
 	bzero(room.param, 5);
 	strcpy(room.param,"main");
 	if(logged>=0) {
@@ -592,7 +592,7 @@ void CHATsendToAll (int * a_roomId , char* a_roomName, int * a_sender, char* a_m
 	int users[MAX_USERS], i=0, k=0;
 	k = CHATgetActiveUsers(a_roomId, users);
 	
-	char * nick = malloc(32);
+	char * nick = malloc(sizeof(char)*32);
 	bzero(nick ,32);
 
 	IPCp(GLOBALsemid,0);
@@ -607,8 +607,8 @@ void CHATsendToAll (int * a_roomId , char* a_roomName, int * a_sender, char* a_m
 
 void CHATsendPrivate (int * a_sender, int *a_receiver, char* a_message) {
 	int fd_receiver, fd_sender;
-	char * nick = malloc(32);
-	char * nick_r = malloc(32);
+	char * nick = malloc(sizeof(char)*32);
+	char * nick_r = malloc(sizeof(char)*32);
 	bzero(nick,32);
 	bzero(nick_r ,32);
 	IPCp(GLOBALsemid,0);
