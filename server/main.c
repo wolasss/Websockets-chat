@@ -40,7 +40,7 @@ void logEvent(char* a_event) {
 
 void handleClient( int * a_soc ) {
     char *frame, *message;
-    unsigned long messageLength = 0, frameLength = 0;
+    unsigned long frameLength = 0;
     int pos;
     while(1) {
         //bzero(message, messageLength); no need to do this cause message is freed.
@@ -48,7 +48,6 @@ void handleClient( int * a_soc ) {
         if(frameLength!=-1) {
             message = WEBSOCdecodeFrame(frame, message, &frameLength);
             if(message) {
-            	messageLength = strlen(message);
             	CHATparseMessage(message, a_soc);
             } else {
             	//closing frame was sent 

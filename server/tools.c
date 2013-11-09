@@ -101,7 +101,7 @@ int match_regex (regex_t * r, const char * to_match)
                 printf ("$& is ");
             }
             else {
-                printf ("$%d is ", i);
+                printf ("$%d is ", (int)i);
             }
             printf ("'%.*s' (bytes %d:%d)\n", (finish - start),
                     to_match + start, start, finish);

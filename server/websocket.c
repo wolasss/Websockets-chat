@@ -168,23 +168,16 @@ char* WEBSOCdecodeFrame( char* a_frame, char* decoded, unsigned long * a_frameLe
                 mask[k] = a_frame[indexFirstMask+k];
             }
         } else if (length == 127) {
-            /*//not supported yet
-            //long - length on 8 bytes
-            actualLength =  (a_frame[2] <<56) + (a_frame[3] << 48) + (a_frame[4] << 40) + (a_frame[5] << 32) + (a_frame[6] << 24) + (a_frame[7] <<16) + (a_frame[8] << 8) + (a_frame[9])
-            indexFirstMask = 10;
-            for(k=0; k<MASK_SIZE; k++) {
-                mask[k] = a_frame[indexFirstMask+k];
-            }*/
+            //not supported 
         } else {
-            //thro w error
+            //throw error
             perror("Bad frame length");
             return NULL;
         }
 
-
         indexFirstData = indexFirstMask + MASK_SIZE;
         if((actualLength+indexFirstData)!=(*a_frameLength)) {
-            printf("Blad ramki o co chodzi\n");
+            perror("Bad frame");
         }
         decoded = malloc(sizeof(char)*((int)*a_frameLength-indexFirstData+1));
         bzero(decoded, *a_frameLength-indexFirstData);
@@ -194,7 +187,6 @@ char* WEBSOCdecodeFrame( char* a_frame, char* decoded, unsigned long * a_frameLe
         decoded[j]='\0';
     }
     
-
     return decoded;
 }
 

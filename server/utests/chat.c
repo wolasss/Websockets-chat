@@ -33,25 +33,26 @@ struct CHATcommand {
 
 struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd) {
     cmd = (struct CHATcommand *) malloc(sizeof(struct CHATcommand));
+    cmd->name = NULL;
+    cmd->param = NULL;
 
-    int paramLen, i=3, b=0, cmdLen = strlen(a_command), k=0;
-
+    int paramLen, i=3, cmdLen = strlen(a_command), k=0;
     char command[16];
     bzero(command,16);
-    while(!(a_command[i]=='%' && a_command[i+1]=='2' && a_command[i+2]=='0') && k<15) {
+    while(i<=cmdLen-1 && !(i<cmdLen-1 && a_command[i]=='%' && (i+1<cmdLen-1 && a_command[i+1]=='2') && (i+2<cmdLen-1 && a_command[i+2]=='0') ) && k<=15) {
             command[k]=a_command[i];
             i++; k++;
     }
-    printf("%s\n", command);
-    cmd->name = malloc(i-2);
+    cmd->name = malloc(sizeof(char)*(i-2));
     bzero(cmd->name, i-2);
 
     paramLen = cmdLen-i+1;
     if(paramLen>=0) {
-        cmd->param = malloc(paramLen);
+        int b=0;
+        cmd->param = malloc(sizeof(char)*paramLen);
         bzero(cmd->param, paramLen);
         bzero(cmd->param, paramLen);
-        i=i+3; // remove space 
+        i=i+3; // remove space -> urldecode(%20)
         while(i<cmdLen) {
                 cmd->param[b]=a_command[i];
                 i++; 
@@ -59,9 +60,7 @@ struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd)
         }
     }
     strncpy(cmd->name, command, strlen(command));
-    printf("%s\n", cmd->param);
     if(!(a_command[0]=='%' && a_command[1]=='2' && a_command[2]=='5')) {
-        printf("wchodze\n");
         if(!strcmp(command, "login")) {
             cmd->commandId = 1;
         } else if(!strcmp(command, "help")) {
@@ -70,7 +69,9 @@ struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd)
             cmd->commandId = 3;
         } else if(!strcmp(command, "users")) {
             cmd->commandId = 4;
-        } 
+        } else if (!strcmp(command, "leave")) {
+            cmd->commandId = 5;
+        }
     }
     
     return cmd;

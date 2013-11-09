@@ -66,7 +66,7 @@ struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd)
     cmd->name = NULL;
     cmd->param = NULL;
 
-    int paramLen, i=3, b=0, cmdLen = strlen(a_command), k=0;
+    int paramLen, i=3, cmdLen = strlen(a_command), k=0;
     char command[16];
     bzero(command,16);
     while(i<=cmdLen-1 && !(i<cmdLen-1 && a_command[i]=='%' && (i+1<cmdLen-1 && a_command[i+1]=='2') && (i+2<cmdLen-1 && a_command[i+2]=='0') ) && k<=15) {
@@ -78,6 +78,7 @@ struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd)
 
     paramLen = cmdLen-i+1;
     if(paramLen>=0) {
+    	int b=0;
         cmd->param = malloc(sizeof(char)*paramLen);
         bzero(cmd->param, paramLen);
         bzero(cmd->param, paramLen);
@@ -139,8 +140,8 @@ char* CHATgetUserList (char* aout_list) {
 }
 
 void CHATsendUserList(int * a_soc) {
-	char* list;
-	char* reply;
+	char* list = NULL;
+	char* reply = NULL;
 	int statusCode = 104;
 	list = CHATgetUserList(list);
 	reply = CHATcreateJSON(&statusCode, NULL, NULL, list, reply);
@@ -151,7 +152,7 @@ void CHATsendUserList(int * a_soc) {
 }
 
 void CHATsendMessage(int type, int * a_soc, char * a_sender, char* a_room, char * a_message) {
-	char* messageJSON;
+	char* messageJSON = NULL;
 	int statusCode;
 
 	if(type==0) {
@@ -170,7 +171,7 @@ void CHATsendMessage(int type, int * a_soc, char * a_sender, char* a_room, char 
 }
 
 void CHATsendCtrlMessage(int * a_soc, char* a_room, char * a_message) {
-	char* messageJSON;
+	char* messageJSON = NULL;
 	int statusCode = 195;
 	messageJSON = CHATcreateJSON(&statusCode, NULL, a_room, a_message, messageJSON);
 	WEBSOCsendMessage(a_soc, messageJSON);
@@ -369,7 +370,7 @@ void CHATclearActiveRooms (int * a_pos) {
 	IPCv(GLOBALsemid,0);
 }
 void CHATloginUser(struct CHATcommand * cmd, int * a_soc) {
-	int firstFree, i, logged=CHATisLogged(cmd->param, NULL), mainRoom = 0;
+	int firstFree, logged=CHATisLogged(cmd->param, NULL), mainRoom = 0;
 	char * controlMessage = malloc(sizeof(char)*128);
 	bzero(controlMessage, 128);
 	struct CHATcommand room;
@@ -447,13 +448,14 @@ int CHATroomExists( char* a_name ) {
 }
 
 int CHATassignToRoom(int a_id, int * a_fd) {
-	int success = 1, k;
+	int success = 1;
 	IPCp(GLOBALsemid,1);
 	if((*SHM).tabRoom[a_id].users==MAX_USERS) {
 		success=0;
 	} else {
 		(*SHM).tabRoom[a_id].id = a_id+1; //TODO
 		(*SHM).tabRoom[a_id].users++;
+		int k;
 		for(k=0; k<MAX_USERS; k++) {
 			if((*SHM).tabRoom[a_id].activeUsers[k]==0) {
 				(*SHM).tabRoom[a_id].activeUsers[k] = *a_fd;
@@ -511,7 +513,6 @@ int CHATalreadyInRoom ( int a_roomId, int * a_pos ) {
 }
 
 void CHATleaveRoom( int * a_soc, char* a_name ) {
-	int i=0, k=0, users;
 	int pos = CHATisLogged(NULL, a_soc);
 	int roomPos = CHATroomExists(a_name);
 	if( pos >= 0) {
@@ -524,7 +525,8 @@ void CHATleaveRoom( int * a_soc, char* a_name ) {
 				(*SHM).tabUser[pos].activeRooms[rpos] = -1;
 				IPCv(GLOBALsemid,0);
 				IPCp(GLOBALsemid,1);
-				for(k=0; i<MAX_USERS; k++) {
+				int k=0, users;
+				for(k=0; k<MAX_USERS; k++) {
 					if ((*SHM).tabRoom[roomPos].activeUsers[k] == *a_soc) {
 						(*SHM).tabRoom[roomPos].activeUsers[k] = 0;
 						(*SHM).tabRoom[roomPos].users--;

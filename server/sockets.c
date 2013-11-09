@@ -27,7 +27,7 @@ char* SOCreceiveMessage ( int * a_soc, char* aout_message, unsigned long * aout_
     while((i_r=read(*a_soc, buf, i_bufSize-1))>0) { //blocking function...
         i_msgSize+=i_r;
         alreadyReceived+=i_r;
-
+        
         if((aout_message = realloc(aout_message, sizeof(char)*i_msgSize))<0) {
             perror("Error allocating memory: ");
         }
