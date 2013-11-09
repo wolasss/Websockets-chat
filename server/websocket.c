@@ -13,55 +13,54 @@
 #define MASK_SIZE 4
 
 
-char* WEBSOC_createFrame(char* a_message, char* frame, unsigned long * aout_size) {
-
-    unsigned long l_msgLen = strlen(a_message), 
-         l_frameSize = 0;
+char *WEBSOC_createFrame(char *a_message, char *frame, unsigned long *aout_size) {
+    unsigned long l_msgLen = strlen(a_message),
+                  l_frameSize = 0;
 
     unsigned int i_addBytes = 0;
 
-    frame = malloc(sizeof(char)*10); //max length + 2 bytes
+    frame = malloc(sizeof(char) * 10);  // max length + 2 bytes
     bzero(frame, 10);
 
-    frame[0] = 129; //type of message text - message
+    frame[0] = 129;  // type of message text - message
 
-    if(l_msgLen<=125) {
-        frame[1]=l_msgLen;
-    } else if(l_msgLen>125 && l_msgLen<=65535) {
+    if (l_msgLen <= 125) {
+        frame[1] = l_msgLen;
+    } else if (l_msgLen > 125 && l_msgLen <= 65535) {
         i_addBytes = 2;
         frame[1] = 126;
-        frame[2] = ( l_msgLen >> 8 ) & 255;
-        frame[3] = ( l_msgLen      ) & 255;
+        frame[2] = (l_msgLen>>8)&255;
+        frame[3] = (l_msgLen)&255;
     } else {
         i_addBytes = 8;
         frame[1] = 127;
-        frame[2] = ( l_msgLen >> 56 ) & 255;
-        frame[3] = ( l_msgLen >> 48 ) & 255;
-        frame[4] = ( l_msgLen >> 40 ) & 255;
-        frame[5] = ( l_msgLen >> 32 ) & 255;
-        frame[6] = ( l_msgLen >> 24 ) & 255;
-        frame[7] = ( l_msgLen >> 16 ) & 255;
-        frame[8] = ( l_msgLen >>  8 ) & 255;
-        frame[9] = ( l_msgLen       ) & 255;
+        frame[2] = (l_msgLen>>56)&255;
+        frame[3] = (l_msgLen>>48)&255;
+        frame[4] = (l_msgLen>>40)&255;
+        frame[5] = (l_msgLen>>32)&255;
+        frame[6] = (l_msgLen>>24)&255;
+        frame[7] = (l_msgLen>>16)&255;
+        frame[8] = (l_msgLen>> 8)&255;
+        frame[9] = l_msgLen&255;
     }
 
-    l_frameSize = l_msgLen+i_addBytes+2;
+    l_frameSize = l_msgLen + i_addBytes + 2;
     *aout_size = l_frameSize;
-    frame = realloc( frame, sizeof(char)*l_frameSize );
-    if(frame != NULL) {
-        strncpy(frame+2+i_addBytes, a_message, l_msgLen);
+    frame = realloc( frame, sizeof(char) * l_frameSize );
+    if (frame != NULL) {
+        strncpy(frame + 2 + i_addBytes, a_message, l_msgLen);
     } else {
         perror("Error allocating memory: ");
-    } 
+    }
 
     return frame;
 }
 
-char* WEBSOCcreateHandshakeResponse(char* key, char* buffer) {
-    char* acceptKey;
+char *WEBSOCcreateHandshakeResponse(char *key, char *buffer) {
+    char *acceptKey;
     char temp[1024];
 
-    buffer = malloc(sizeof(char)*1024);
+    buffer = malloc(sizeof(char) * 1024);
     bzero(buffer, 1024);
     bzero(temp, 1024);
     acceptKey = WEBSOCgenerateAcceptKey(key, acceptKey);
@@ -77,139 +76,139 @@ char* WEBSOCcreateHandshakeResponse(char* key, char* buffer) {
     return buffer;
 }
 
-char* WEBSOCgenerateAcceptKey(char* key, char* aout_acceptKey) {
-    char temp[1024]; //temp    
-    key[strlen((char*)key)-1]=0; //remove null terminator from 1st string...
+char *WEBSOCgenerateAcceptKey(char *key, char *aout_acceptKey) {
+    char temp[1024];  // temp
+    key[strlen((char *)key) - 1] = 0;  // remove null terminator from 1st string...
     aout_acceptKey = malloc(1024);
     bzero(aout_acceptKey, 1024);
 
-    bzero(temp,1024);
-    //add magic string
-    strcat(key,"258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
+    bzero(temp, 1024);
+    // add magic string
+    strcat(key, "258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
 
     char digest[SHA_DIGEST_LENGTH];
     SHA_CTX ctx;
     SHA1_Init(&ctx);
     SHA1_Update(&ctx, key, strlen(key));
-    SHA1_Final((unsigned char*)digest, &ctx);
-    base64_encode(digest, SHA_DIGEST_LENGTH, temp, sizeof(temp)); // SHA_DIGEST_LENGTH = 20 
+    SHA1_Final((unsigned char *)digest, &ctx);
+    base64_encode(digest, SHA_DIGEST_LENGTH, temp, sizeof(temp));  // SHA_DIGEST_LENGTH = 20
 
     strcpy(aout_acceptKey, temp);
     return aout_acceptKey;
 }
 
-char* WEBSOCgetRequestKey(char* a_request, char* a_key) {
-	regex_t r;
+char *WEBSOCgetRequestKey(char *a_request, char *a_key) {
+    regex_t r;
     regmatch_t m[1];
 
-    a_key = malloc(sizeof(char)*512);
-    bzero(a_key, 512); 
+    a_key = malloc(sizeof(char) * 512);
+    bzero(a_key, 512);
 
     compile_regex(&r, "Sec-WebSocket-Key:[[:blank:]]");
     int ex = regexec(&r, a_request, 1, m, REG_EXTENDED);
-    if(!ex) {
-    	register unsigned int i=0; 
-    	while(a_request[m[0].rm_eo+i]!='\n') {
-    		a_key[i]=a_request[m[0].rm_eo+i];
-    		i++;
-    	}
-    	a_key[i]='\0';
-    	regfree (&r);
+    if (!ex) {
+        register unsigned int i = 0;
+        while (a_request[m[0].rm_eo + i] != '\n') {
+            a_key[i] = a_request[m[0].rm_eo + i];
+            i++;
+        }
+        a_key[i] = '\0';
+        regfree(&r);
     } else {
-    	bzero(a_key,512);
+        bzero(a_key, 512);
     }
-    regfree (&r);
+    regfree(&r);
     return a_key;
 }
 
-void WEBSOCsendMessage( int * a_soc, char* a_message ) {
-    char* frame;
+void WEBSOCsendMessage(int *a_soc, char *a_message) {
+    char *frame;
     unsigned long frameSize = 0;
     frame = WEBSOC_createFrame(a_message, frame, &frameSize);
     SOCsendMessage(a_soc, frame, &frameSize);
     free(frame);
 }
 
-char* WEBSOCdecodeFrame( char* a_frame, char* decoded, unsigned long * a_frameLength ) {
+char *WEBSOCdecodeFrame(char *a_frame, char *decoded, unsigned long *a_frameLength) {
     int closingFrame = 0;
 
     unsigned char length;
 
     unsigned int indexFirstMask = 2,
-        indexFirstData = 0,
-        actualLength = 0,
-        j,k, test;
+                 indexFirstData = 0,
+                 actualLength = 0,
+                 j, k, test;
 
-    
-    unsigned char mask[MASK_SIZE];    
+
+    unsigned char mask[MASK_SIZE];
     bzero(mask, MASK_SIZE);
 
-    
-    if( (a_frame[0] & 128)) {
-        //final frame
-    } 
-    if( (a_frame[0] & 15)==8) {
-        closingFrame = 1;
-        decoded=NULL;
+
+    if ((a_frame[0] & 128)) {
+        // final frame
     }
-    if(!closingFrame) {
+    if ((a_frame[0] & 15) == 8) {
+        closingFrame = 1;
+        decoded = NULL;
+    }
+    if (!closingFrame) {
         length = a_frame[1] & 127;
         indexFirstMask = 2;
-        if(length<=125) {
+        if (length <= 125) {
             actualLength = length;
-            for(k=0; k<MASK_SIZE; k++) {
-                mask[k] = a_frame[indexFirstMask+k];
+            for (k = 0; k < MASK_SIZE; k++) {
+                mask[k] = a_frame[indexFirstMask + k];
             }
         } else if (length == 126) {
-            //length is on 2bytes
+            // length is on 2bytes
             actualLength = (a_frame[2] << 8) + a_frame[3];
             indexFirstMask = 4;
-            for(k=0; k<MASK_SIZE; k++) {
-                mask[k] = a_frame[indexFirstMask+k];
+            for (k = 0; k < MASK_SIZE; k++) {
+                mask[k] = a_frame[indexFirstMask + k];
             }
         } else if (length == 127) {
-            //not supported 
+            // not supported
         } else {
-            //throw error
+            // throw error
             perror("Bad frame length");
             return NULL;
         }
 
         indexFirstData = indexFirstMask + MASK_SIZE;
-        if((actualLength+indexFirstData)!=(*a_frameLength)) {
+        if ((actualLength + indexFirstData) != (*a_frameLength)) {
             perror("Bad frame");
         }
-        decoded = malloc(sizeof(char)*((int)*a_frameLength-indexFirstData+1));
-        bzero(decoded, *a_frameLength-indexFirstData);
-        for(k=indexFirstData, j=0; k<*a_frameLength; k++, j++) {
+        decoded = malloc(sizeof(char) * ((int) * a_frameLength - indexFirstData + 1));
+        bzero(decoded, *a_frameLength - indexFirstData);
+        for (k = indexFirstData, j = 0; k < *a_frameLength; k++, j++) {
             decoded[j] = a_frame[k] ^ mask[j % MASK_SIZE];
         }
-        decoded[j]='\0';
+        decoded[j] = '\0';
     }
-    
+
     return decoded;
 }
 
-int WEBSOChandshake( int soc ) {
+int WEBSOChandshake(int soc) {
     unsigned long len;
-    char* request, *reply, *key;   
-      
+    char *request, *reply, *key;
+
     request = SOCreceiveMessage(&soc, request, &len);
 
-    if(DEBUG) {
-      printf("Request:\n%s\n", request);
+    if (DEBUG) {
+        printf("Request:\n%s\n", request);
     }
 
     key = WEBSOCgetRequestKey(request, key);
-    //TODO: check if websocket protocol...
+    // TO DO: check if websocket protocol...
     reply = WEBSOCcreateHandshakeResponse(key, reply);
 
-    if(DEBUG) {
-      printf("Reply:\n%s\n", reply); //Handshake reply 
+    if (DEBUG) {
+        printf("Reply:\n%s\n", reply);  // Handshake reply
     }
 
     len = strlen(reply);
-    SOCsendMessage(&soc,reply,&len);
+    SOCsendMessage(&soc, reply, &len);
 
     free(request);
     free(reply);
