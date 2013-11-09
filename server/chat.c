@@ -67,9 +67,9 @@ struct CHATcommand *CHATdecodeCommand(char *a_command, struct CHATcommand *cmd) 
     cmd->param = NULL;
 
     int paramLen, i = 3, b = 0, cmdLen = strlen(a_command), k = 0;
-    char command[16];
-    bzero(command, 16);
-    while (i <= cmdLen - 1 && !(i < cmdLen - 1 && a_command[i] == '%' && (i + 1 < cmdLen - 1 && a_command[i + 1] == '2') && (i + 2 < cmdLen - 1 && a_command[i + 2] == '0') ) && k <= 15) {
+    char command[128];
+    bzero(command, 128);
+    while (i <= cmdLen - 1 && !(i < cmdLen - 1 && a_command[i] == '%' && (i + 1 < cmdLen - 1 && a_command[i + 1] == '2') && (i + 2 < cmdLen - 1 && a_command[i + 2] == '0') ) && k <= 128) {
         command[k] = a_command[i];
         i++; k++;
     }
@@ -88,6 +88,7 @@ struct CHATcommand *CHATdecodeCommand(char *a_command, struct CHATcommand *cmd) 
             b++;
         }
     }
+    printf("strlen: %d \n", strlen(command));
     strncpy(cmd->name, command, strlen(command));
     if (!(a_command[0] == '%' && a_command[1] == '2' && a_command[2] == '5')) {
         if (!strcmp(command, "login")) {
@@ -640,6 +641,7 @@ void CHATparseMessage(char *a_message, int *a_soc) {
         } else if (a_message[0] == '%' && a_message[1] == '4' && a_message[2] == '0') {
             //%40 - urldecode(@)
             cmd = CHATdecodeCommand(a_message, cmd);
+            printf("priv do: %s\n", cmd->name);
             int idSender = CHATisLogged(NULL, a_soc);
             int idReceiver = CHATisLogged(cmd->name, NULL);
             if (idReceiver >= 0) {
