@@ -70,6 +70,7 @@ var MODboard = function(sb){
 				}
             } else {
 				newPrivateRoom(data.room);
+				roomDOM = sb.find('.room_private_'+room);
 				sb.append(roomDOM, msgTemplate);
 				sb.scrollTop(roomDOM, roomDOM.scrollHeight);
 				sb.emit('PrivateUnreadMessage', sender);
