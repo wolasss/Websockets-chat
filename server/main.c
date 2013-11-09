@@ -3,15 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
-#include <sys/wait.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#include <unistd.h>
 #include <signal.h>
-#include <time.h>
-#include <fcntl.h>
 #include "sockets.h"
 #include "websocket.h"
 #include "tools.h"

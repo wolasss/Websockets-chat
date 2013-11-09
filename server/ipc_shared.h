@@ -1,12 +1,10 @@
 #ifndef IPC_STRUCT
 #define IPC_STRUCT
 #include <stdio.h>
-#include <sys/types.h>
+#include <stdlib.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
 #include <sys/shm.h>
-#include <sys/wait.h>
-#include <stdlib.h>
 
 #define USER_LENGTH 32
 #define MAX_USER 20

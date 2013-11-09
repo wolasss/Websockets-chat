@@ -8,7 +8,6 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <unistd.h>
-#include <signal.h>
 #include <fcntl.h>
 #include "chat.h"
 #include "sockets.h"
