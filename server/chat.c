@@ -20,7 +20,7 @@
 #define SEM_LOGFILE 2
 
 #define MAX_USERS 20
-#define MAX_ROOMS 10
+#define MAX_ROOMS 4
 
 extern struct Shared * SHM;
 extern int GLOBALsemid;
@@ -158,11 +158,9 @@ void CHATsendMessage(int type, int * a_soc, char * a_sender, char* a_room, char 
 	if(type==0) {
 		statusCode = 198;
 		messageJSON = CHATcreateJSON(&statusCode, a_sender, a_room, a_message, messageJSON);
-		printf("\npublic:%s\n", messageJSON);
 	} else {
 		statusCode = 199;
 		messageJSON = CHATcreateJSON(&statusCode, a_sender, a_room, a_message, messageJSON);
-		printf("\nprivate:%s\n", messageJSON);
 	}
 	
 	WEBSOCsendMessage(a_soc, messageJSON);
@@ -212,12 +210,12 @@ void CHATremoveRoom (int a_id) {
 }
 
 void CHATremoveUserFromActiveRooms ( int a_pos, int a_fd ) {
-	int i,j,k=0,l=0, temp;
+	int i,j,k=0,l=0;
 	int activeRooms[MAX_ROOMS], toRemove[MAX_ROOMS];
 
 	IPCp(GLOBALsemid,0);
 	for(j=0; j<MAX_ROOMS; j++) {
-		temp = (*SHM).tabUser[a_pos].activeRooms[j];
+		int temp = (*SHM).tabUser[a_pos].activeRooms[j];
 		if(temp>=0) {
 			activeRooms[k] = temp;
 			k++;
@@ -295,7 +293,6 @@ void CHATassignUser ( int * a_pos, int * a_fd, char* a_nick ) {
 	(*SHM).tabUser[*a_pos].activeRooms[0] = 0;
 	for(i=0; i<MAX_ROOMS; i++) {
 		(*SHM).tabUser[*a_pos].activeRooms[i] = -1;
-		//implicitly assign user to main Room (0), because we starting from i=1
 	}
 	IPCv(GLOBALsemid,0);
 }
@@ -554,8 +551,8 @@ void CHATjoinToRoom(struct CHATcommand * cmd, int * a_soc) {
 	int pos = CHATisLogged(NULL, a_soc);
 	if(pos>=0) {
 		if(roomPos>=0) {
-			printf("Room istnieje i dodaje\n");
 			if(!(CHATalreadyInRoom(roomPos+1, &pos)>=0)) {
+				printf("Room istnieje i dodaje\n");
 				if(CHATassignToRoom(roomPos, a_soc)) {
 					CHATuserAddRoom(&pos, &roomPos);
 					printf("chat add to room: %d\n", roomPos);

@@ -157,7 +157,7 @@ static char * test_9() {
 }
 
 static char * test_4() {
-    char * test;
+    char * test = NULL;
     int status = 100;
     test = createJSON(&status, "trololo", "room1", "trolololo lololol olololo", test);
     printf(": %s\n", test);
@@ -166,7 +166,7 @@ static char * test_4() {
 }
 
 static char * test_5() {
-    char * test;
+    char * test = NULL;
     int status = 100;
     test = createJSON(&status, "trololo", NULL, "trolololo lololol olololo", test);
     printf(": %s\n", test);
@@ -175,7 +175,7 @@ static char * test_5() {
 }
 
 static char * test_6() {
-    char * test;
+    char * test = NULL;
     int status = 100;
     test = createJSON(&status, NULL, NULL, "trolololo lololol olololo", test);
     printf(": %s\n", test);
@@ -184,7 +184,7 @@ static char * test_6() {
 }
 
 static char * test_7() {
-    char * test;
+    char * test = NULL;
     int status = 100;
     test = createJSON(&status, NULL, NULL, "['trolololo', 'lololol', 'olololo']", test);
     printf(": %s\n", test);
