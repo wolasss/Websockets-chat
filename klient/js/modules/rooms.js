@@ -62,7 +62,7 @@ var MODrooms = function(sb){
 		if(room.length!==0) {
 			sb.remove(room[0]);
 		}
-	}
+	};
 	return {
 	    init: function() {
 			rooms = sb.find(sb.CSSrooms)[0];

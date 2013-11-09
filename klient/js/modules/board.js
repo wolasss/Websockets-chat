@@ -1,7 +1,7 @@
 var MODboard = function(sb){
 
 	"use strict";
-	var container, show, receiveMessage, hide, username, leaveRoom, switchRoom, receiveNotification, newPrivateRoom, currentRoom, receivePrivMessage, AUTOnewPrivateRoom, newPublicRoom;
+	var container, show, receiveMessage, hide, username, leaveRoom, switchRoom, receiveNotification, newPrivateRoom, currentRoom, receivePrivMessage, newPublicRoom;
 
 	show = function(data) {
 		var mainRoom = '<ul class=\"room room_main active\"></ul>';
@@ -61,7 +61,7 @@ var MODboard = function(sb){
 			if(username === sender) { additionalClass+='mine'; }
 			if(data.sender === "thefox") { additionalClass+=' fox'; }
 			var msgTemplate = '<li class="msgContainer clearfix"><div class="avatar '+additionalClass+'"><div class="nick">'+sender+'</div></div><div class="message '+additionalClass+'"><div class="bubble">'+message+'<div class="info">'+now.toString().match(/\d\d:\d\d:\d\d/)[0]+'</div></div></div></li>';
-     		roomDOM = sb.find('.room_private_'+room);
+			roomDOM = sb.find('.room_private_'+room);
             if(roomDOM.length!==0) {
 				sb.append(roomDOM, msgTemplate);
 				sb.scrollTop(roomDOM[0], roomDOM[0].scrollHeight);
@@ -86,7 +86,7 @@ var MODboard = function(sb){
 			if(username === sender) { additionalClass+='mine'; }
 			if(data.sender === "thefox") { additionalClass+=' fox'; }
 			var msgTemplate = '<li class="msgContainer clearfix"><div class="avatar '+additionalClass+'"><div class="nick">'+sender+'</div></div><div class="message '+additionalClass+'"><div class="bubble">'+message+'<div class="info">'+now.toString().match(/\d\d:\d\d:\d\d/)[0]+'</div></div></div></li>';
-     		roomDOM = sb.find('.room_'+room);
+			roomDOM = sb.find('.room_'+room);
             if(roomDOM.length!==0) {
 				sb.append(roomDOM[0], msgTemplate);
 				sb.scrollTop(roomDOM[0], roomDOM[0].scrollHeight);

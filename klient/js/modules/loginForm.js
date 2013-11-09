@@ -21,15 +21,14 @@ var MODloginForm = function(sb){
 	defaultServer = 0,
 	parsePort,
 	connectionError,
-	connectionSucess,
+	connectionSuccess,
 	reactor,
 	showError,
 	logIn,
 	defaultServerChange,
 	parseResponse,
 	loginSuccess,
-	keyPressed,
-	connectionSuccess;
+	keyPressed;
 
 	parsePort = function (port) {
 		var p = -1, m=(""+port).match(/^\d{1,5}$/gi);
@@ -130,7 +129,7 @@ var MODloginForm = function(sb){
 			sb.emit('loginRequest', data);
 		}
 	};
-	defaultServerChange = function(e) {
+	defaultServerChange = function() {
 		var checked = defaultServerField.checked;
 		
 		if(checked) {

@@ -1,4 +1,5 @@
 var sandbox = function(core, instanceId, options, moduleId) {
+  "use strict";
   core._mediator.installTo(this);
 
   //private vars
@@ -38,34 +39,34 @@ var sandbox = function(core, instanceId, options, moduleId) {
   };
   this.is = function(target, what) {
     return $(target).is(what);
-  }
+  };
   this.height = function(selector) {
     return $(selector).height();
-  }
+  };
   this.scrollTop = function(selector, how) {
     return $(selector).scrollTop(how);
-  }
+  };
   this.hasClass = function(selector, cl) {
     return $(selector).hasClass(cl);
-  }
+  };
   this.addClass = function(selector, cl) {
     return $(selector).addClass(cl);
   };
   this.remove = function(selector) {
     return $(selector).remove();
-  }
+  };
   this.removeClass = function(selector, cl) {
     return $(selector).removeClass(cl);
   };
   this.clear = function(selector) {
     return $(selector).html('');
-  }
+  };
   this.hide = function(selector) {
     return $(selector).hide();
   };
   this.show = function(selector) {
     return $(selector).show();
-  }
+  };
   this.toggle = function(selector) {
     return $(selector).toggle();
   };
@@ -77,7 +78,7 @@ var sandbox = function(core, instanceId, options, moduleId) {
   };
   this.slideDown = function(selector) {
     return $(selector).slideDown();
-  }
+  };
   this.find = function(selector) {
     return $(DOMid).find(selector);
   };
@@ -89,7 +90,7 @@ var sandbox = function(core, instanceId, options, moduleId) {
   };
   this.module = function() {
     return $(DOMid);
-  }
+  };
   this.fadeToggleModule = function() {
     return $(DOMid).fadeToggle();
   };
