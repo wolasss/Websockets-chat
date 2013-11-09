@@ -29,19 +29,19 @@ char *WEBSOC_createFrame(char *a_message, char *frame, unsigned long *aout_size)
     } else if (l_msgLen > 125 && l_msgLen <= 65535) {
         i_addBytes = 2;
         frame[1] = 126;
-        frame[2] = (l_msgLen>>8)&255;
-        frame[3] = (l_msgLen)&255;
+        frame[2] = (l_msgLen >> 8) & 255;
+        frame[3] = (l_msgLen) & 255;
     } else {
         i_addBytes = 8;
         frame[1] = 127;
-        frame[2] = (l_msgLen>>56)&255;
-        frame[3] = (l_msgLen>>48)&255;
-        frame[4] = (l_msgLen>>40)&255;
-        frame[5] = (l_msgLen>>32)&255;
-        frame[6] = (l_msgLen>>24)&255;
-        frame[7] = (l_msgLen>>16)&255;
-        frame[8] = (l_msgLen>> 8)&255;
-        frame[9] = l_msgLen&255;
+        frame[2] = (l_msgLen >> 56) & 255;
+        frame[3] = (l_msgLen >> 48) & 255;
+        frame[4] = (l_msgLen >> 40) & 255;
+        frame[5] = (l_msgLen >> 32) & 255;
+        frame[6] = (l_msgLen >> 24) & 255;
+        frame[7] = (l_msgLen >> 16) & 255;
+        frame[8] = (l_msgLen >> 8) & 255;
+        frame[9] = l_msgLen & 255;
     }
 
     l_frameSize = l_msgLen + i_addBytes + 2;
@@ -105,7 +105,8 @@ char *WEBSOCgetRequestKey(char *a_request, char *a_key) {
     bzero(a_key, 512);
 
     compile_regex(&r, "Sec-WebSocket-Key:[[:blank:]]");
-    int ex = regexec(&r, a_request, 1, m, REG_EXTENDED);
+    int ex = 1;
+    ex = regexec(&r, a_request, 1, m, REG_EXTENDED);
     if (!ex) {
         register unsigned int i = 0;
         while (a_request[m[0].rm_eo + i] != '\n') {
@@ -191,27 +192,45 @@ char *WEBSOCdecodeFrame(char *a_frame, char *decoded, unsigned long *a_frameLeng
 
 int WEBSOChandshake(int soc) {
     unsigned long len;
-    char *request, *reply, *key;
+    char *request = NULL,
+          *reply = NULL,
+           *key = NULL;
+    int ret = 1;
 
     request = SOCreceiveMessage(&soc, request, &len);
 
     if (DEBUG) {
         printf("Request:\n%s\n", request);
     }
+    if (request != NULL) {
+        key = WEBSOCgetRequestKey(request, key);
+    } else {
+        ret = 0;
+    }
 
-    key = WEBSOCgetRequestKey(request, key);
     // TO DO: check if websocket protocol...
-    reply = WEBSOCcreateHandshakeResponse(key, reply);
+    if (key != NULL) {
+        reply = WEBSOCcreateHandshakeResponse(key, reply);
+    } else {
+        ret = 0;
+    }
+
 
     if (DEBUG) {
         printf("Reply:\n%s\n", reply);  // Handshake reply
     }
-
-    len = strlen(reply);
-    SOCsendMessage(&soc, reply, &len);
-
-    free(request);
-    free(reply);
-    free(key);
-    return 1;
+    if (reply != NULL) {
+        len = strlen(reply);
+        SOCsendMessage(&soc, reply, &len);
+    }
+    if (request != NULL) {
+        free(request);
+    }
+    if (reply != NULL) {
+        free(reply);
+    }
+    if (key != NULL) {
+        free(key);
+    }
+    return ret;
 }
