@@ -178,7 +178,7 @@ body {
     }
     .login-field {
         border-color: transparent;
-        width:90%;
+        width:100%;
         font-size: 17px;
         text-indent: 3px;
     }
@@ -210,10 +210,7 @@ body {
     }
 
     .port {
-        width:30%;
-        .login-field-icon {
-            right:0px;
-        }
+        width:34%;
     }
 
     .username {
@@ -417,14 +414,20 @@ body {
     left: 15px;
     right: 15px;
     bottom: 15px;
-    .message-field {
-        width:95%;
-    }
+    @include box-sizing(border-box);
     label {
         cursor:pointer;
         &:hover {
             color: #3498dc;
         }
+    }
+    .message-field {
+        width:100%;
+    }
+    .form-control {
+        @include box-sizing(border-box);
+        padding: 7px 35px 8px 13px;
+        height: 44px;
     }
 }
 
@@ -683,7 +686,11 @@ body {
     }
     #shouter {
         .message-field {
-            width:90%;
+            width:100%;
+        }
+        .form-control {
+            padding: 7px 35px 8px 13px;
+            height: 44px;
         }
     }
 }

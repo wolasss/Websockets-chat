@@ -1,3 +1,5 @@
+@import "compass/css3";
+
 @font-face {
   font-family: 'Lato';
   src: url('../fonts/lato/lato-black-webfont.eot');
@@ -1243,8 +1245,9 @@ label {
   color: #34495e;
   font-family: 'Lato', Helvetica, Arial, sans-serif;
   font-size: 15px;
-  padding: 8px 12px;
-  height: 25px;
+  padding: 8px 35px 8px 12px;
+  height: 44px;
+  @include box-sizing(border-box);
   -webkit-appearance: none;
   border-radius: 6px;
   -webkit-box-shadow: none;
