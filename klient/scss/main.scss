@@ -477,6 +477,7 @@ body {
             @include box-shadow(inset 0 0 10px #293d50);
         }
         .name {
+            pointer-events: none;
             @include inline-block;
             width: 135px;
             overflow: hidden;
@@ -554,6 +555,7 @@ body {
             cursor: default;
         }
         .name {
+            pointer-events: none;
             @include inline-block;
             width: 135px;
             overflow: hidden;
