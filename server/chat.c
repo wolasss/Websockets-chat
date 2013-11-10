@@ -81,7 +81,7 @@ struct CHATcommand *CHATdecodeCommand(char *a_command, struct CHATcommand *cmd) 
         cmd->param = malloc(sizeof(char) * paramLen);
         bzero(cmd->param, paramLen);
         bzero(cmd->param, paramLen);
-        i = i + 3; // remove space -> urldecode(%20)
+        i = i + 3;  // remove space -> urldecode(%20)
         while (i < cmdLen) {
             cmd->param[b] = a_command[i];
             i++;
@@ -90,6 +90,7 @@ struct CHATcommand *CHATdecodeCommand(char *a_command, struct CHATcommand *cmd) 
     }
     printf("strlen: %d \n", strlen(command));
     strncpy(cmd->name, command, strlen(command));
+    cmd->commandId = -1;  // prevent conditional jump on uninitialized memory
     if (!(a_command[0] == '%' && a_command[1] == '2' && a_command[2] == '5')) {
         if (!strcmp(command, "login")) {
             cmd->commandId = 1;
@@ -111,7 +112,7 @@ int CHATisLogged ( char *a_name, int *a_soc ) {
     int loginPosition = -1, i;
     IPCp(GLOBALsemid, 0);
     for (i = 0; i < MAX_USERS; i++) {
-        if ((a_soc && (*SHM).tabUser[i].fd == (*a_soc)) || (a_name && !strcmp((*SHM).tabUser[i].nick, a_name)) ) {
+        if ((a_soc!=NULL && (*SHM).tabUser[i].fd == (*a_soc)) || (a_name!=NULL && !strcmp((*SHM).tabUser[i].nick, a_name)) ) {
             loginPosition = i;
             break;
         }
