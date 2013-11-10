@@ -350,6 +350,11 @@ body {
             float:right;
             text-align:right;
             .bubble {
+                -ms-word-break: break-all;
+                word-break: break-all;
+                -webkit-hyphens: auto;
+                -moz-hyphens: auto;
+                hyphens: auto;
                 min-width:35px;
                 margin-top: 6px;
                 background: #34495e;
