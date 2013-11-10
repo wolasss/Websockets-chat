@@ -88,7 +88,6 @@ struct CHATcommand *CHATdecodeCommand(char *a_command, struct CHATcommand *cmd) 
             b++;
         }
     }
-    printf("strlen: %d \n", strlen(command));
     strncpy(cmd->name, command, strlen(command));
     cmd->commandId = -1;  // prevent conditional jump on uninitialized memory
     if (!(a_command[0] == '%' && a_command[1] == '2' && a_command[2] == '5')) {
@@ -118,7 +117,6 @@ int CHATisLogged ( char *a_name, int *a_soc ) {
         }
     }
     IPCv(GLOBALsemid, 0);
-
     return loginPosition;
 }
 
@@ -141,19 +139,21 @@ char *CHATgetUserList (char *aout_list) {
 }
 
 void CHATsendUserList(int *a_soc) {
-    char *list;
-    char *reply;
+    char *list = NULL;
+    char *reply = NULL;
     int statusCode = 104;
     list = CHATgetUserList(list);
     reply = CHATcreateJSON(&statusCode, NULL, NULL, list, reply);
-    WEBSOCsendMessage(a_soc, reply);
+    if(!WEBSOCsendMessage(a_soc, reply)) {
+        //message cannot be sent
+    }
 
     free(list);
     free(reply);
 }
 
 void CHATsendMessage(int type, int *a_soc, char *a_sender, char *a_room, char *a_message) {
-    char *messageJSON;
+    char *messageJSON = NULL;
     int statusCode;
 
     if (type == 0) {
@@ -166,16 +166,20 @@ void CHATsendMessage(int type, int *a_soc, char *a_sender, char *a_room, char *a
         printf("\nprivate:%s\n", messageJSON);
     }
 
-    WEBSOCsendMessage(a_soc, messageJSON);
+    if(!WEBSOCsendMessage(a_soc, messageJSON)) {
+        // message cannot be sent
+    }
 
     free(messageJSON);
 }
 
 void CHATsendCtrlMessage(int *a_soc, char *a_room, char *a_message) {
-    char *messageJSON;
+    char *messageJSON = NULL;
     int statusCode = 195;
     messageJSON = CHATcreateJSON(&statusCode, NULL, a_room, a_message, messageJSON);
-    WEBSOCsendMessage(a_soc, messageJSON);
+    if(!WEBSOCsendMessage(a_soc, messageJSON)) {
+        //message cannot be sent
+    }
 
     free(messageJSON);
 }
@@ -318,10 +322,11 @@ int CHATfirstEmptySlot() {
 void CHATsendReply( int a_statusCode, char *a_message, int *a_soc ) {
     char *reply = NULL;
     reply = CHATcreateJSON(&a_statusCode, NULL, NULL, a_message, reply);
-    WEBSOCsendMessage(a_soc, reply);
-    if (reply) {
-        free(reply);
+    if(!WEBSOCsendMessage(a_soc, reply)) {
+        //message cannot be sent
     }
+    
+    free(reply);
 }
 
 int CHATgetActiveUsers(int *a_roomId, int *users) {

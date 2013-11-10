@@ -116,18 +116,23 @@ char *WEBSOCgetRequestKey(char *a_request, char *a_key) {
         a_key[i] = '\0';
         regfree(&r);
     } else {
-        bzero(a_key, 512);
+        free(a_key);
+        a_key = NULL;
     }
     regfree(&r);
     return a_key;
 }
 
-void WEBSOCsendMessage(int *a_soc, char *a_message) {
+int WEBSOCsendMessage(int *a_soc, char *a_message) {
+    int ret = 1;
     char *frame;
     unsigned long frameSize = 0;
     frame = WEBSOC_createFrame(a_message, frame, &frameSize);
-    SOCsendMessage(a_soc, frame, &frameSize);
+    if(!SOCsendMessage(a_soc, frame, &frameSize)) {
+        ret =0;
+    }
     free(frame);
+    return ret;
 }
 
 char *WEBSOCdecodeFrame(char *a_frame, char *decoded, unsigned long *a_frameLength) {
@@ -191,46 +196,33 @@ char *WEBSOCdecodeFrame(char *a_frame, char *decoded, unsigned long *a_frameLeng
 }
 
 int WEBSOChandshake(int soc) {
-    unsigned long len;
+    unsigned long len = 0;
     char *request = NULL,
           *reply = NULL,
            *key = NULL;
     int ret = 1;
 
     request = SOCreceiveMessage(&soc, request, &len);
-
-    if (DEBUG) {
-        printf("Request:\n%s\n", request);
-    }
-    if (request != NULL) {
+    if(len!=-1 && request!=NULL) {
+        if (request != NULL) {
         key = WEBSOCgetRequestKey(request, key);
-    } else {
-        ret = 0;
-    }
-
-    // TO DO: check if websocket protocol...
-    if (key != NULL) {
+        } else {
+            ret = 0;
+        }
+        if (key != NULL) {
         reply = WEBSOCcreateHandshakeResponse(key, reply);
-    } else {
-        ret = 0;
+        } else {
+            ret = 0;
+        }
+        if (reply != NULL) {
+            len = strlen(reply);
+            if(!SOCsendMessage(&soc, reply, &len)) {
+                perror("Error sending handshake reply.");
+            }
+        }
     }
-
-
-    if (DEBUG) {
-        printf("Reply:\n%s\n", reply);  // Handshake reply
-    }
-    if (reply != NULL) {
-        len = strlen(reply);
-        SOCsendMessage(&soc, reply, &len);
-    }
-    if (request != NULL) {
-        free(request);
-    }
-    if (reply != NULL) {
-        free(reply);
-    }
-    if (key != NULL) {
-        free(key);
-    }
+    free(request);
+    free(reply);
+    free(key);
     return ret;
 }

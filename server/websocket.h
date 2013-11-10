@@ -20,7 +20,7 @@ char* WEBSOCgenerateAcceptKey(char* key, char* res);
 char* WEBSOCgetRequestKey(char* a_request, char* key);
 char* WEBSOCdecodeFrame( char* a_frame, char* decoded, unsigned long * a_frameLength );
 
-void WEBSOCsendMessage( int * a_soc, char* a_message ); 
+int WEBSOCsendMessage( int * a_soc, char* a_message ); 
 
 
 #endif

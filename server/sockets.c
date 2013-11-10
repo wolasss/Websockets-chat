@@ -6,10 +6,14 @@
 #include <fcntl.h>
 #include "sockets.h"
 
-void SOCsendMessage(int *a_soc, char *a_message, unsigned long *a_length) {
-    if ( write(*a_soc, a_message, *a_length) < 0 ) {
+int SOCsendMessage(int *a_soc, char *a_message, unsigned long *a_length) {
+    int ret = 1;
+    if ( write(*a_soc, a_message, 
+        *a_length) < 0 ) {
         perror("Error sending a message: ");
+        ret = 0;
     }
+    return ret;
 }
 
 char *SOCreceiveMessage ( int *a_soc, char *aout_message, unsigned long *aout_size ) {
@@ -41,6 +45,8 @@ char *SOCreceiveMessage ( int *a_soc, char *aout_message, unsigned long *aout_si
     if (i_r == 0) {
         // client terminated a connection
         *aout_size = -1;
+        free(aout_message);
+        aout_message = NULL;
     } else {
         *aout_size = (long)i_msgSize - 1;
     }
