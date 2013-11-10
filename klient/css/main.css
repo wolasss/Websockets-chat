@@ -4615,7 +4615,7 @@ body {
   #board .room {
     margin: 0;
     padding: 0;
-    height: 400px;
+    height: 435px;
     padding-right: 20px;
     overflow-y: scroll;
     overflow: auto;

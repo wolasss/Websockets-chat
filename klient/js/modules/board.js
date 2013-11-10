@@ -49,6 +49,7 @@ var MODboard = function(sb){
 			} else {
 				sb.emit('PublicReadMessages', room);
 			}
+			sb.scrollTop(currentRoom, currentRoom.scrollHeight);
 		}
 	};
 	receivePrivMessage = function(data) {
@@ -63,8 +64,12 @@ var MODboard = function(sb){
 			var msgTemplate = '<li class="msgContainer clearfix"><div class="avatar '+additionalClass+'"><div class="nick">'+sender+'</div></div><div class="message '+additionalClass+'"><div class="bubble">'+message+'<div class="info">'+now.toString().match(/\d\d:\d\d:\d\d/)[0]+'</div></div></div></li>';
 			roomDOM = sb.find('.room_private_'+room);
             if(roomDOM.length!==0) {
-				sb.append(roomDOM, msgTemplate);
-				sb.scrollTop(roomDOM[0], roomDOM[0].scrollHeight);
+            	if((roomDOM[0].scrollTop + roomDOM[0].offsetHeight)>435 && (roomDOM[0].scrollTop + roomDOM[0].offsetHeight)<roomDOM[0].scrollHeight ) {
+            		sb.append(roomDOM[0], msgTemplate);
+            	} else {
+            		sb.append(roomDOM[0], msgTemplate);
+            		sb.scrollTop(roomDOM[0], roomDOM[0].scrollHeight);
+            	}
 				if( (!roomDOM[0].isEqualNode(currentRoom)) && (sender != username)) {
 					sb.emit('PrivateUnreadMessage', sender);
 				}
@@ -88,8 +93,12 @@ var MODboard = function(sb){
 			var msgTemplate = '<li class="msgContainer clearfix"><div class="avatar '+additionalClass+'"><div class="nick">'+sender+'</div></div><div class="message '+additionalClass+'"><div class="bubble">'+message+'<div class="info">'+now.toString().match(/\d\d:\d\d:\d\d/)[0]+'</div></div></div></li>';
 			roomDOM = sb.find('.room_'+room);
             if(roomDOM.length!==0) {
-				sb.append(roomDOM[0], msgTemplate);
-				sb.scrollTop(roomDOM[0], roomDOM[0].scrollHeight);
+            	if((roomDOM[0].scrollTop + roomDOM[0].offsetHeight)>435 && (roomDOM[0].scrollTop + roomDOM[0].offsetHeight)<roomDOM[0].scrollHeight ) {
+            		sb.append(roomDOM[0], msgTemplate);
+            	} else {
+            		sb.append(roomDOM[0], msgTemplate);
+            		sb.scrollTop(roomDOM[0], roomDOM[0].scrollHeight);
+            	}
 				if( (!roomDOM[0].isEqualNode(currentRoom)) && (sender != username)) {
 					sb.emit('PublicUnreadMessage', room);
 				}
