@@ -106,8 +106,9 @@ void acceptConnection( int *socketfd ) {
             logEvent(log);
             fflush(stdout);  // just in case
             if (!pthread_create(&client, &attr, handshake, arg_ptr)) {
-                pthread_detach(client);
+                
             }
+            pthread_detach(client);
         } else {
             perror("Accepting error: ");
             exit(0);
