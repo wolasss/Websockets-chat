@@ -40,7 +40,7 @@ var MODuserlist = function(sb){
 				addClass+="me";
 			}
 			var name = sb.escapeHTML(users[i]);
-			sb.append(list, "<li class=\"user "+addClass+" user_"+name+"\" username=\""+name+"\">"+name+"<span class=\"messages\"></span></li>");
+			sb.append(list, "<li class=\"user "+addClass+" user_"+name+"\" username=\""+name+"\"><span class=\"name\">"+name+"</span><span class=\"messages\"></span></li>");
 			addClass = '';
 		}
 	};

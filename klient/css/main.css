@@ -4821,7 +4821,8 @@ body {
   #rooms .room {
     background: url("../images/icons/png/room_small.png") no-repeat 10px center;
     vertical-align: top;
-    padding: 5px 35px;
+    width: 165px;
+    padding: 5px 0 5px 35px;
     font-size: 13px;
     cursor: pointer;
     -webkit-user-select: none;
@@ -4829,17 +4830,28 @@ body {
     user-select: none;
     overflow: hidden;
     text-overflow: ellipsis; }
-    /* line 471, ../scss/main.scss */
+    /* line 472, ../scss/main.scss */
     #rooms .room.active {
       background-color: #436483;
       -webkit-box-shadow: inset 0 0 10px #293d50;
       -moz-box-shadow: inset 0 0 10px #293d50;
       box-shadow: inset 0 0 10px #293d50; }
-  /* line 476, ../scss/main.scss */
+    /* line 476, ../scss/main.scss */
+    #rooms .room .name {
+      display: -moz-inline-stack;
+      display: inline-block;
+      vertical-align: middle;
+      *vertical-align: auto;
+      zoom: 1;
+      *display: inline;
+      width: 135px;
+      overflow: hidden;
+      text-overflow: ellipsis; }
+  /* line 483, ../scss/main.scss */
   #rooms .room:hover {
     background-color: #3498db; }
 
-/* line 481, ../scss/main.scss */
+/* line 488, ../scss/main.scss */
 #userlist .messages, #rooms .messages {
   position: relative;
   display: -moz-inline-stack;
@@ -4853,7 +4865,7 @@ body {
   width: 16px;
   height: 16px;
   pointer-events: none; }
-  /* line 489, ../scss/main.scss */
+  /* line 496, ../scss/main.scss */
   #userlist .messages span, #rooms .messages span {
     pointer-events: none;
     background: #c0392b;
@@ -4869,7 +4881,7 @@ body {
     -ms-animation: bounce 2s 1s 1 forwards, bounce2 2s 4s 1 forwards;
     animation: bounce 2s 1s 1 forwards, bounce2 2s 4s 1 forwards; }
 
-/* line 506, ../scss/main.scss */
+/* line 513, ../scss/main.scss */
 #userlist {
   background: #293d50;
   width: 200px;
@@ -4878,7 +4890,7 @@ body {
   border-radius: 6px;
   display: none;
   margin-bottom: 10px; }
-  /* line 514, ../scss/main.scss */
+  /* line 521, ../scss/main.scss */
   #userlist h4 {
     margin-top: 0;
     padding-top: 15px;
@@ -4886,17 +4898,18 @@ body {
     font-size: 14px;
     font-family: 'Lato';
     font-weight: 300; }
-  /* line 522, ../scss/main.scss */
+  /* line 529, ../scss/main.scss */
   #userlist .list {
     list-style: none;
     padding: 0;
     margin: 0;
     padding-bottom: 10px; }
-  /* line 529, ../scss/main.scss */
+  /* line 536, ../scss/main.scss */
   #userlist .user {
     background: url("../images/icons/png/silhouette_small.png") no-repeat 10px center;
     vertical-align: top;
-    padding: 5px 35px;
+    padding: 5px 0 5px 35px;
+    width: 165px;
     font-size: 13px;
     cursor: pointer;
     -webkit-user-select: none;
@@ -4904,33 +4917,44 @@ body {
     user-select: none;
     overflow: hidden;
     text-overflow: ellipsis; }
-    /* line 538, ../scss/main.scss */
+    /* line 546, ../scss/main.scss */
     #userlist .user.active {
       background-color: #436483;
       -webkit-box-shadow: inset 0 0 10px #293d50;
       -moz-box-shadow: inset 0 0 10px #293d50;
       box-shadow: inset 0 0 10px #293d50; }
-    /* line 542, ../scss/main.scss */
+    /* line 550, ../scss/main.scss */
     #userlist .user.me {
       cursor: default; }
-  /* line 546, ../scss/main.scss */
+    /* line 553, ../scss/main.scss */
+    #userlist .user .name {
+      display: -moz-inline-stack;
+      display: inline-block;
+      vertical-align: middle;
+      *vertical-align: auto;
+      zoom: 1;
+      *display: inline;
+      width: 135px;
+      overflow: hidden;
+      text-overflow: ellipsis; }
+  /* line 560, ../scss/main.scss */
   #userlist .user.fox {
     background: url("../images/icons/png/fox_small.png") no-repeat 10px center; }
-  /* line 549, ../scss/main.scss */
+  /* line 563, ../scss/main.scss */
   #userlist .user:hover {
     background-color: #3498db; }
 
-/* line 554, ../scss/main.scss */
+/* line 568, ../scss/main.scss */
 .aside {
   vertical-align: top;
   text-align: left;
   display: inline-block; }
 
-/* line 560, ../scss/main.scss */
+/* line 574, ../scss/main.scss */
 #logoutbutton {
   display: none;
   margin-left: 10px; }
-  /* line 563, ../scss/main.scss */
+  /* line 577, ../scss/main.scss */
   #logoutbutton .logout {
     font-size: 12px;
     padding: 6px 9px 7px; }
@@ -4985,464 +5009,464 @@ body {
 }
 */
 @media screen and (max-width: 768px) {
-  /* line 618, ../scss/main.scss */
+  /* line 632, ../scss/main.scss */
   #board {
     width: 244px; }
-    /* line 624, ../scss/main.scss */
+    /* line 638, ../scss/main.scss */
     #board .msgContainer .message {
       width: 169px; }
 
-  /* line 630, ../scss/main.scss */
+  /* line 644, ../scss/main.scss */
   #loginForm .error {
     margin-top: 10px; }
 
-  /* line 634, ../scss/main.scss */
+  /* line 648, ../scss/main.scss */
   .login-button {
     width: auto; }
 
-  /* line 637, ../scss/main.scss */
+  /* line 651, ../scss/main.scss */
   .chat-icon {
     width: 100%;
     float: none; }
-    /* line 640, ../scss/main.scss */
+    /* line 654, ../scss/main.scss */
     .chat-icon img {
       width: 85px;
       float: left;
       margin-right: 20px; }
 
-  /* line 646, ../scss/main.scss */
+  /* line 660, ../scss/main.scss */
   .chat-container {
     float: left;
     margin-top: 10px;
     margin-left: 0; }
-    /* line 650, ../scss/main.scss */
+    /* line 664, ../scss/main.scss */
     .chat-container:before {
       display: none; }
 
-  /* line 654, ../scss/main.scss */
+  /* line 668, ../scss/main.scss */
   .chat {
     height: auto;
     width: 75%;
     margin: 0 auto; }
-    /* line 655, ../scss/main.scss */
+    /* line 669, ../scss/main.scss */
     .chat .clearfix {
       height: auto; }
-    /* line 661, ../scss/main.scss */
+    /* line 675, ../scss/main.scss */
     .chat .form-group {
       width: 100%; }
-    /* line 665, ../scss/main.scss */
+    /* line 679, ../scss/main.scss */
     .chat .port .login-field-icon {
       right: auto; }
 
-  /* line 671, ../scss/main.scss */
+  /* line 685, ../scss/main.scss */
   #shouter .message-field {
     width: 90%; } }
 @media screen and (max-width: 580px) {
-  /* line 678, ../scss/main.scss */
+  /* line 692, ../scss/main.scss */
   #board {
     width: 100%; }
-    /* line 684, ../scss/main.scss */
+    /* line 698, ../scss/main.scss */
     #board .msgContainer .message {
       width: 65%; }
 
-  /* line 689, ../scss/main.scss */
+  /* line 703, ../scss/main.scss */
   .chat {
     padding: 25px 0;
     width: 90%; }
-    /* line 693, ../scss/main.scss */
+    /* line 707, ../scss/main.scss */
     .chat .chat-container-button-container .login-button {
       width: auto; }
 
-  /* line 698, ../scss/main.scss */
+  /* line 712, ../scss/main.scss */
   .chat-icon {
     width: 100%;
     float: none; }
-    /* line 701, ../scss/main.scss */
+    /* line 715, ../scss/main.scss */
     .chat-icon img {
       width: 85px;
       float: left;
       margin-right: 20px; }
 
-  /* line 707, ../scss/main.scss */
+  /* line 721, ../scss/main.scss */
   .chat-container {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     width: 100%;
     margin: 35px 0 15px 0; }
-    /* line 711, ../scss/main.scss */
+    /* line 725, ../scss/main.scss */
     .chat-container:before {
       display: none; }
 
-  /* line 716, ../scss/main.scss */
+  /* line 730, ../scss/main.scss */
   #loginForm .form-group {
     text-align: center;
     width: 100%; }
-  /* line 721, ../scss/main.scss */
+  /* line 735, ../scss/main.scss */
   #loginForm .port .login-field-icon {
     right: 13px; }
 
-  /* line 726, ../scss/main.scss */
+  /* line 740, ../scss/main.scss */
   .aside {
     width: 100%; }
 
-  /* line 729, ../scss/main.scss */
+  /* line 743, ../scss/main.scss */
   #userlist {
     width: 100%;
     margin-left: 0px;
     min-height: 0; }
 
-  /* line 736, ../scss/main.scss */
+  /* line 750, ../scss/main.scss */
   #rooms {
     width: 100%;
     margin-left: 0px;
     min-height: 0; }
 
-  /* line 743, ../scss/main.scss */
+  /* line 757, ../scss/main.scss */
   #logoutbutton {
     margin-left: 0px; } }
 @media screen and (max-width: 400px) {
-  /* line 749, ../scss/main.scss */
+  /* line 763, ../scss/main.scss */
   .chat-container {
     padding: 15px 15px 15px; }
 
-  /* line 753, ../scss/main.scss */
+  /* line 767, ../scss/main.scss */
   #loginForm .form-group {
     text-align: center;
     width: 100%; }
-  /* line 757, ../scss/main.scss */
+  /* line 771, ../scss/main.scss */
   #loginForm .login-field {
     width: 85%; }
-  /* line 760, ../scss/main.scss */
+  /* line 774, ../scss/main.scss */
   #loginForm .btn {
     width: 85%; }
-  /* line 764, ../scss/main.scss */
+  /* line 778, ../scss/main.scss */
   #loginForm .port .login-field-icon {
     right: 13px; } }
 @-webkit-keyframes bounce {
-  /* line 772, ../scss/main.scss */
+  /* line 786, ../scss/main.scss */
   0% {
     top: -10px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 776, ../scss/main.scss */
+  /* line 790, ../scss/main.scss */
   16% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 780, ../scss/main.scss */
+  /* line 794, ../scss/main.scss */
   32% {
     top: -5px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 784, ../scss/main.scss */
+  /* line 798, ../scss/main.scss */
   48% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 788, ../scss/main.scss */
+  /* line 802, ../scss/main.scss */
   62% {
     top: -4px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 792, ../scss/main.scss */
+  /* line 806, ../scss/main.scss */
   78% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 796, ../scss/main.scss */
+  /* line 810, ../scss/main.scss */
   90% {
     top: -2px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 800, ../scss/main.scss */
+  /* line 814, ../scss/main.scss */
   100% {
     top: 0;
     -webkit-animation-timing-function: ease-out; } }
 
 @-webkit-keyframes bounce2 {
-  /* line 807, ../scss/main.scss */
+  /* line 821, ../scss/main.scss */
   0% {
     top: -10px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 811, ../scss/main.scss */
+  /* line 825, ../scss/main.scss */
   16% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 815, ../scss/main.scss */
+  /* line 829, ../scss/main.scss */
   32% {
     top: -5px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 819, ../scss/main.scss */
+  /* line 833, ../scss/main.scss */
   48% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 823, ../scss/main.scss */
+  /* line 837, ../scss/main.scss */
   62% {
     top: -4px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 827, ../scss/main.scss */
+  /* line 841, ../scss/main.scss */
   78% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 831, ../scss/main.scss */
+  /* line 845, ../scss/main.scss */
   90% {
     top: -2px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 835, ../scss/main.scss */
+  /* line 849, ../scss/main.scss */
   100% {
     top: 0;
     -webkit-animation-timing-function: ease-out; } }
 
 @-moz-keyframes bounce {
-  /* line 842, ../scss/main.scss */
+  /* line 856, ../scss/main.scss */
   0% {
     top: -10px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 846, ../scss/main.scss */
+  /* line 860, ../scss/main.scss */
   16% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 850, ../scss/main.scss */
+  /* line 864, ../scss/main.scss */
   32% {
     top: -5px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 854, ../scss/main.scss */
+  /* line 868, ../scss/main.scss */
   48% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 858, ../scss/main.scss */
+  /* line 872, ../scss/main.scss */
   62% {
     top: -4px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 862, ../scss/main.scss */
+  /* line 876, ../scss/main.scss */
   78% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 866, ../scss/main.scss */
+  /* line 880, ../scss/main.scss */
   90% {
     top: -2px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 870, ../scss/main.scss */
+  /* line 884, ../scss/main.scss */
   100% {
     top: 0;
     -webkit-animation-timing-function: ease-out; } }
 
 @-ms-keyframes bounce {
-  /* line 877, ../scss/main.scss */
+  /* line 891, ../scss/main.scss */
   0% {
     top: -10px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 881, ../scss/main.scss */
+  /* line 895, ../scss/main.scss */
   16% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 885, ../scss/main.scss */
+  /* line 899, ../scss/main.scss */
   32% {
     top: -5px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 889, ../scss/main.scss */
+  /* line 903, ../scss/main.scss */
   48% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 893, ../scss/main.scss */
+  /* line 907, ../scss/main.scss */
   62% {
     top: -4px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 897, ../scss/main.scss */
+  /* line 911, ../scss/main.scss */
   78% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 901, ../scss/main.scss */
+  /* line 915, ../scss/main.scss */
   90% {
     top: -2px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 905, ../scss/main.scss */
+  /* line 919, ../scss/main.scss */
   100% {
     top: 0;
     -webkit-animation-timing-function: ease-out; } }
 
 @keyframes bounce {
-  /* line 912, ../scss/main.scss */
+  /* line 926, ../scss/main.scss */
   0% {
     top: -10px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 916, ../scss/main.scss */
+  /* line 930, ../scss/main.scss */
   16% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 920, ../scss/main.scss */
+  /* line 934, ../scss/main.scss */
   32% {
     top: -5px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 924, ../scss/main.scss */
+  /* line 938, ../scss/main.scss */
   48% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 928, ../scss/main.scss */
+  /* line 942, ../scss/main.scss */
   62% {
     top: -4px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 932, ../scss/main.scss */
+  /* line 946, ../scss/main.scss */
   78% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 936, ../scss/main.scss */
+  /* line 950, ../scss/main.scss */
   90% {
     top: -2px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 940, ../scss/main.scss */
+  /* line 954, ../scss/main.scss */
   100% {
     top: 0;
     -webkit-animation-timing-function: ease-out; } }
 
 @-moz-keyframes bounce2 {
-  /* line 948, ../scss/main.scss */
+  /* line 962, ../scss/main.scss */
   0% {
     top: -10px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 952, ../scss/main.scss */
+  /* line 966, ../scss/main.scss */
   16% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 956, ../scss/main.scss */
+  /* line 970, ../scss/main.scss */
   32% {
     top: -5px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 960, ../scss/main.scss */
+  /* line 974, ../scss/main.scss */
   48% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 964, ../scss/main.scss */
+  /* line 978, ../scss/main.scss */
   62% {
     top: -4px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 968, ../scss/main.scss */
+  /* line 982, ../scss/main.scss */
   78% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 972, ../scss/main.scss */
+  /* line 986, ../scss/main.scss */
   90% {
     top: -2px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 976, ../scss/main.scss */
+  /* line 990, ../scss/main.scss */
   100% {
     top: 0;
     -webkit-animation-timing-function: ease-out; } }
 
 @-ms-keyframes bounce2 {
-  /* line 983, ../scss/main.scss */
+  /* line 997, ../scss/main.scss */
   0% {
     top: -10px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 987, ../scss/main.scss */
+  /* line 1001, ../scss/main.scss */
   16% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 991, ../scss/main.scss */
+  /* line 1005, ../scss/main.scss */
   32% {
     top: -5px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 995, ../scss/main.scss */
+  /* line 1009, ../scss/main.scss */
   48% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 999, ../scss/main.scss */
+  /* line 1013, ../scss/main.scss */
   62% {
     top: -4px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 1003, ../scss/main.scss */
+  /* line 1017, ../scss/main.scss */
   78% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 1007, ../scss/main.scss */
+  /* line 1021, ../scss/main.scss */
   90% {
     top: -2px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 1011, ../scss/main.scss */
+  /* line 1025, ../scss/main.scss */
   100% {
     top: 0;
     -webkit-animation-timing-function: ease-out; } }
 
 @keyframes bounce2 {
-  /* line 1018, ../scss/main.scss */
+  /* line 1032, ../scss/main.scss */
   0% {
     top: -10px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 1022, ../scss/main.scss */
+  /* line 1036, ../scss/main.scss */
   16% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 1026, ../scss/main.scss */
+  /* line 1040, ../scss/main.scss */
   32% {
     top: -5px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 1030, ../scss/main.scss */
+  /* line 1044, ../scss/main.scss */
   48% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 1034, ../scss/main.scss */
+  /* line 1048, ../scss/main.scss */
   62% {
     top: -4px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 1038, ../scss/main.scss */
+  /* line 1052, ../scss/main.scss */
   78% {
     top: 0;
     -webkit-animation-timing-function: ease-out; }
 
-  /* line 1042, ../scss/main.scss */
+  /* line 1056, ../scss/main.scss */
   90% {
     top: -2px;
     -webkit-animation-timing-function: ease-in; }
 
-  /* line 1046, ../scss/main.scss */
+  /* line 1060, ../scss/main.scss */
   100% {
     top: 0;
     -webkit-animation-timing-function: ease-out; } }

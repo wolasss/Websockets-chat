@@ -29,13 +29,13 @@ var MODrooms = function(sb){
 	newPublicRoom = function(name) {
 		name = sb.escapeHTML(name);
 		if(sb.find('.room_'+name).length===0) {
-			var tpl = "<li class=\"room room_"+name+"\" roomname=\""+name+"\">"+name+"<span class=\"messages\"></span></li>";
+			var tpl = "<li class=\"room room_"+name+"\" roomname=\""+name+"\"><span class=\"name\">"+name+"</span><span class=\"messages\"></span></li>";
 			sb.append(rooms, tpl);		
 		}
 	};
 	toggle = function() {
 		sb.clear(rooms);
-		sb.append(rooms, '<li class="room room_main active" roomname="main">main<span class="messages"></span></li>');
+		sb.append(rooms, '<li class="room room_main active" roomname="main"><span class=\"name\">main</span><span class="messages"></span></li>');
 		currentRoom = sb.find('.room_main')[0];
 		sb.slideToggle();
 	};
