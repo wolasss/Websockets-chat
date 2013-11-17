@@ -13,7 +13,7 @@
 #define MASK_SIZE 4
 
 
-char *WEBSOC_createFrame(char *a_message, char *frame, unsigned long *aout_size) {
+char *WEBSOC_createFrame(char *a_message, char *frame, unsigned long long *aout_size) {
     unsigned long long l_msgLen = strlen(a_message),
                   l_frameSize = 0;
 
@@ -24,7 +24,6 @@ char *WEBSOC_createFrame(char *a_message, char *frame, unsigned long *aout_size)
 
     frame[0] = 129;  // type of message text - message
 
-    printf("\n\n\n\\n\n DEBUG SIZE: %d  \n\n\n\n", sizeof(l_msgLen));
     if (l_msgLen <= 125) {
         frame[1] = l_msgLen;
     } else if (l_msgLen > 125 && l_msgLen <= 65535) {
@@ -127,7 +126,7 @@ char *WEBSOCgetRequestKey(char *a_request, char *a_key) {
 int WEBSOCsendMessage(int *a_soc, char *a_message) {
     int ret = 1;
     char *frame;
-    unsigned long frameSize = 0;
+    unsigned long long frameSize = 0;
     frame = WEBSOC_createFrame(a_message, frame, &frameSize);
     if(!SOCsendMessage(a_soc, frame, &frameSize)) {
         ret =0;
@@ -136,7 +135,7 @@ int WEBSOCsendMessage(int *a_soc, char *a_message) {
     return ret;
 }
 
-char *WEBSOCdecodeFrame(char *a_frame, char *decoded, unsigned long *a_frameLength) {
+char *WEBSOCdecodeFrame(char *a_frame, char *decoded, unsigned long long *a_frameLength) {
     int closingFrame = 0;
 
     unsigned char length;
@@ -217,7 +216,7 @@ int WEBSOChandshake(int soc) {
             ret = 0;
         }
         if (reply != NULL) {
-            unsigned long len = strlen(reply);
+            unsigned long long len = strlen(reply);
             if(!SOCsendMessage(&soc, reply, &len)) {
                 perror("Error sending handshake reply.");
             }

@@ -30,7 +30,7 @@ char * SOCreceiveMessage( int * a_soc, int bytes, char * aout_message, unsigned 
     return aout_message;
 }
 
-int SOCsendMessage( int * a_soc, char * a_message, unsigned long * bytes ) {
+int SOCsendMessage( int * a_soc, char * a_message, unsigned long long * bytes ) {
     int ret = 1;
     if(DEBUG) printf("DEBUG: to write %d bytes.\n", (int)*bytes);
     if(a_message!=NULL) {
@@ -65,7 +65,7 @@ char *SOCreceiveRequest ( int *a_soc, char *aout_message, int a_bufSize ) {
     return aout_message;
 }
 
-char* SOCreceiveFrame ( int * a_soc, char* aout_message, unsigned long * aout_size ) {
+char* SOCreceiveFrame ( int * a_soc, char* aout_message, unsigned long long * aout_size ) {
     
     char *header = calloc(14, sizeof(char)),  // read header of the frame -> max 14 bytes -> 2 bytes + 8 bytes length + 4bytes mask.
          *firstByte = calloc(1, sizeof(char)), 

@@ -27,7 +27,7 @@ extern int GLOBALsemid;
 
 char *CHATcreateJSON ( int *a_statusCode, char *a_sender, char *a_room, char *a_message, char *aout_reply ) {
     aout_reply = malloc(sizeof(char) * 512);
-    long messageAloc = strlen(a_message) + 20;
+    unsigned long long messageAloc = strlen(a_message) + 20;
     char *statusJSON = malloc(sizeof(char) * 32),
           *senderJSON = malloc(sizeof(char) * 64),
            *roomJSON = malloc(sizeof(char) * 64),
