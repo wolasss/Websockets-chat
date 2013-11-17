@@ -24,9 +24,9 @@ touch Makefile
 clr_main=`basename $main | cut -d\. -f1` 
 main_gpp=`gcc -MM $main -g -Wall -pthread`
 
-objekty=`find . -name "*.c" -maxdepth 1 | grep -v "main" | sed "s/\.c/\.o/g" | tr '\n' ' ' `
-echo $objekty;
-echo -e "all: $projectname\n\n$projectname: $clr_main.o $objekty\n\tgcc $clr_main.o $objekty -o $projectname -pthread -g -lcrypto -Wall\n" > Makefile
+obiekty=`find . -name "*.c" -maxdepth 1 | grep -v "main" | sed "s/\.c/\.o/g" | tr '\n' ' ' `
+echo $obiekty;
+echo -e "all: $projectname\n\n$projectname: $clr_main.o $obiekty\n\tgcc $clr_main.o $obiekty -o $projectname -pthread -g -lcrypto -Wall\n" > Makefile
 
 elem_main=`gcc -MM $main -Wall`
 echo -e "$elem_main" >> Makefile

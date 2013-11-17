@@ -48,8 +48,11 @@ void handleClient( int *a_soc ) {
         frame = SOCreceiveFrame(a_soc, frame, &frameLength);
         if (frameLength != -1 && frame!=NULL) {
             message = WEBSOCdecodeFrame(frame, message, &frameLength);
+            //printf("[%s]\n", message);
             if (message) {
-                CHATparseMessage(message, a_soc);
+                unsigned long long len = strlen(message);
+                //printf("message length main: %d \n", (int)len);
+                CHATparseMessage(message, a_soc, len);
             } else {
                 // closing frame was sent
                 pos = CHATisLogged(NULL, a_soc);

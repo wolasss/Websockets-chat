@@ -142,16 +142,18 @@ char *WEBSOCdecodeFrame(char *a_frame, char *decoded, unsigned long long *a_fram
 
     unsigned int indexFirstMask = 2,
                  indexFirstData = 0,
-                 actualLength = 0,
                  j, k, test;
 
-
+    unsigned long long actualLength = 0;
     unsigned char mask[MASK_SIZE];
     bzero(mask, MASK_SIZE);
 
 
     if ((a_frame[0] & 128)) {
         // final frame
+        printf("FINAL FRAME\n\n");
+    } else {
+        printf("NOT A FINAL FRAME\n\n");
     }
     if ((a_frame[0] & 15) == 8) {
         closingFrame = 1;
@@ -173,7 +175,7 @@ char *WEBSOCdecodeFrame(char *a_frame, char *decoded, unsigned long long *a_fram
                 mask[k] = a_frame[indexFirstMask + k];
             }
         } else if (length == 127) {
-            actualLength =  ((unsigned long long)a_frame[0] << 56) + ((unsigned long long)a_frame[1] << 48) + ((unsigned long long)a_frame[2] << 40) + ((unsigned long long)a_frame[3] << 32) + ((unsigned long long)a_frame[4] << 24) + ((unsigned long long)a_frame[5] << 16) + ((unsigned long long)a_frame[6] << 8) + (unsigned long long)a_frame[7];
+            actualLength = ((unsigned long long)a_frame[2] << 56) + ((unsigned long long)a_frame[3] << 48) + ((unsigned long long)a_frame[4] << 40) + ((unsigned long long)a_frame[5] << 32) + ((unsigned long long)a_frame[6] << 24) + ((unsigned long long)a_frame[7] << 16) + ((unsigned long long)a_frame[8] << 8) + (unsigned char)a_frame[9];
             indexFirstMask = 10;
             for (k = 0; k < MASK_SIZE; k++) {
                 mask[k] = a_frame[indexFirstMask + k];
@@ -184,6 +186,11 @@ char *WEBSOCdecodeFrame(char *a_frame, char *decoded, unsigned long long *a_fram
         }
 
         indexFirstData = indexFirstMask + MASK_SIZE;
+
+        printf("DEBUG actual Length : %d\n", actualLength);
+        printf("DEBUG index first data : %d\n", indexFirstData);
+        printf("DEBUG frame size : %d\n", *a_frameLength);
+
         if ((actualLength + indexFirstData) != (*a_frameLength)) {
             perror("Bad frame");
         }
@@ -194,7 +201,6 @@ char *WEBSOCdecodeFrame(char *a_frame, char *decoded, unsigned long long *a_fram
         }
         decoded[j] = '\0';
     }
-
     return decoded;
 }
 

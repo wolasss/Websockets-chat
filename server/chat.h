@@ -39,7 +39,7 @@ void CHATsendReply( int a_statusCode, char *a_message, int *a_soc );
 void CHATassignUser ( int *a_pos, int *a_fd, char *a_nick );
 void CHATloginUser(struct CHATcommand *cmd, int *a_soc);
 void CHATexecuteCommand(struct CHATcommand *cmd, int *a_soc);
-void CHATparseMessage(char *a_message, int *a_soc);
+void CHATparseMessage(char *a_message, int *a_soc, int a_len);
 void CHATjoinToRoom(struct CHATcommand *cmd, int *a_soc);
 void CHATuserAddRoom( int *a_pos , int *a_roomPos );
 

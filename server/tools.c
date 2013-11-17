@@ -13,7 +13,6 @@
 #define MAX_ERROR_MSG 0x1000
 #define MASK_SIZE 4
 
-
 char *timestamp() {
     time_t ltime; /* calendar time */
     ltime = time(NULL); /* get current cal time */

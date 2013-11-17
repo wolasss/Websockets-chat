@@ -6,6 +6,17 @@
 #include <fcntl.h>
 #include "sockets.h"
 
+#define BYTETOBINARYPATTERN "%d%d%d%d%d%d%d%d\n"
+#define BYTETOBINARY(byte)  \
+  (byte & 0x80 ? 1 : 0), \
+  (byte & 0x40 ? 1 : 0), \
+  (byte & 0x20 ? 1 : 0), \
+  (byte & 0x10 ? 1 : 0), \
+  (byte & 0x08 ? 1 : 0), \
+  (byte & 0x04 ? 1 : 0), \
+  (byte & 0x02 ? 1 : 0), \
+  (byte & 0x01 ? 1 : 0)
+
 #define DEBUG 0
 
 char *SOCreceiveMessage( int *a_soc, int a_bytes, char *aout_message, unsigned int *error) {
@@ -107,8 +118,13 @@ char *SOCreceiveFrame ( int *a_soc, char *aout_message, unsigned long long *aout
                 // length is on eight next bytes.
                 char *temp = calloc(8, sizeof(char));
                 temp = SOCreceiveMessage(a_soc, 8, temp, &error);
+                int i = 0;
+                for (i = 0; i < 8; ++i)
+                {
+                    printf(BYTETOBINARYPATTERN, BYTETOBINARY(temp[i]));
+                }
                 memcpy(header + currentPosition, temp, 8);
-                length = (((unsigned long long)temp[0]) << 56) + (((unsigned long long)temp[1]) << 48) + (((unsigned long long)temp[2]) << 40) + (((unsigned long long)temp[3] << 32)) + (((unsigned long long)temp[4]) << 24) + (((unsigned long long)temp[5]) << 16) + (((unsigned long long)temp[6]) << 8) + (unsigned long long)temp[7];
+                length = (((unsigned long long)temp[0]) << 56) + (((unsigned long long)temp[1]) << 48) + (((unsigned long long)temp[2]) << 40) + (((unsigned long long)temp[3] << 32)) + (((unsigned long long)temp[4]) << 24) + (((unsigned long long)temp[5]) << 16) + (((unsigned long long)temp[6]) << 8) + ((unsigned char)temp[7]);
                 free(temp);
                 frameSize += 8;
                 currentPosition += 8;
@@ -116,7 +132,7 @@ char *SOCreceiveFrame ( int *a_soc, char *aout_message, unsigned long long *aout
             } else {
                 error = 1;
             }
-            if(DEBUG) printf("DEBUG: length of message: %d\n", (int)length);
+            printf("DEBUG: length of message: %d\n", (int)length);
             mask = SOCreceiveMessage(a_soc, 4, mask, &error);
             if (!error) {
                 memcpy(header + currentPosition, mask, 4);

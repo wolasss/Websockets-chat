@@ -26,18 +26,12 @@ extern struct Shared *SHM;
 extern int GLOBALsemid;
 
 char *CHATcreateJSON ( int *a_statusCode, char *a_sender, char *a_room, char *a_message, char *aout_reply ) {
-    aout_reply = malloc(sizeof(char) * 512);
     unsigned long long messageAloc = strlen(a_message) + 20;
-    char *statusJSON = malloc(sizeof(char) * 32),
-          *senderJSON = malloc(sizeof(char) * 64),
-           *roomJSON = malloc(sizeof(char) * 64),
-            *messageJSON = malloc(sizeof(char) * messageAloc);
-
-    bzero(statusJSON, 32);
-    bzero(senderJSON, 64);
-    bzero(roomJSON, 64);
-    bzero(aout_reply, 512);
-    bzero(messageJSON, messageAloc);
+    aout_reply = calloc(messageAloc+512,sizeof(char));
+    char *statusJSON = calloc(32,sizeof(char)),
+         *senderJSON = calloc(64,sizeof(char)),
+         *roomJSON = calloc(64,sizeof(char)),
+         *messageJSON = calloc(messageAloc,sizeof(char));
 
     snprintf(statusJSON, 32, " \"status\": %d,", *a_statusCode);
     if (a_sender) {
@@ -52,7 +46,7 @@ char *CHATcreateJSON ( int *a_statusCode, char *a_sender, char *a_room, char *a_
         snprintf(messageJSON, messageAloc, " \"message\": \"%s\"", a_message);
     }
 
-    snprintf(aout_reply, 512, "{ %s %s %s %s }", statusJSON, senderJSON, roomJSON, messageJSON);
+    snprintf(aout_reply, messageAloc+512, "{ %s %s %s %s }", statusJSON, senderJSON, roomJSON, messageJSON);
 
     free(statusJSON);
     free(senderJSON);
@@ -77,6 +71,7 @@ struct CHATcommand *CHATdecodeCommand(char *a_command, struct CHATcommand *cmd) 
     bzero(cmd->name, i - 2);
 
     paramLen = cmdLen - i + 1;
+    printf("param length: %d\n", paramLen);
     if (paramLen >= 0) {
         cmd->param = malloc(sizeof(char) * paramLen);
         bzero(cmd->param, paramLen);
@@ -159,7 +154,7 @@ void CHATsendMessage(int type, int *a_soc, char *a_sender, char *a_room, char *a
     if (type == 0) {
         statusCode = 198;
         messageJSON = CHATcreateJSON(&statusCode, a_sender, a_room, a_message, messageJSON);
-        printf("\npublic:%s\n", messageJSON);
+        //printf("\npublic:%s\n", messageJSON);
     } else {
         statusCode = 199;
         messageJSON = CHATcreateJSON(&statusCode, a_sender, a_room, a_message, messageJSON);
@@ -632,7 +627,7 @@ void CHATsendPrivate (int *a_sender, int *a_receiver, char *a_message) {
     free(nick_r);
 }
 
-void CHATparseMessage(char *a_message, int *a_soc) {
+void CHATparseMessage(char *a_message, int *a_soc, int a_len) {
     struct CHATcommand *cmd;
     int allocated = 1;
     if (strlen(a_message) >= 3) {
