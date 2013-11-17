@@ -44,7 +44,7 @@ void handleClient( int *a_soc ) {
     int pos;
     while (1) {
         //bzero(message, messageLength); no need to do this cause message is freed.
-        frame = SOCreceiveMessage(a_soc, frame, &frameLength);
+        frame = SOCreceiveFrame(a_soc, frame, &frameLength);
         if (frameLength != -1 && frame!=NULL) {
             message = WEBSOCdecodeFrame(frame, message, &frameLength);
             if (message) {
