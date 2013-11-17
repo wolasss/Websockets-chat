@@ -111,7 +111,7 @@ int CHATisLogged ( char *a_name, int *a_soc ) {
     int loginPosition = -1, i;
     IPCp(GLOBALsemid, 0);
     for (i = 0; i < MAX_USERS; i++) {
-        if ((a_soc!=NULL && (*SHM).tabUser[i].fd == (*a_soc)) || (a_name!=NULL && !strcmp((*SHM).tabUser[i].nick, a_name)) ) {
+        if ((a_soc != NULL && (*SHM).tabUser[i].fd == (*a_soc)) || (a_name != NULL && !strcmp((*SHM).tabUser[i].nick, a_name)) ) {
             loginPosition = i;
             break;
         }
@@ -144,7 +144,7 @@ void CHATsendUserList(int *a_soc) {
     int statusCode = 104;
     list = CHATgetUserList(list);
     reply = CHATcreateJSON(&statusCode, NULL, NULL, list, reply);
-    if(!WEBSOCsendMessage(a_soc, reply)) {
+    if (!WEBSOCsendMessage(a_soc, reply)) {
         //message cannot be sent
     }
 
@@ -166,7 +166,7 @@ void CHATsendMessage(int type, int *a_soc, char *a_sender, char *a_room, char *a
         printf("\nprivate:%s\n", messageJSON);
     }
 
-    if(!WEBSOCsendMessage(a_soc, messageJSON)) {
+    if (!WEBSOCsendMessage(a_soc, messageJSON)) {
         // message cannot be sent
     }
 
@@ -177,7 +177,7 @@ void CHATsendCtrlMessage(int *a_soc, char *a_room, char *a_message) {
     char *messageJSON = NULL;
     int statusCode = 195;
     messageJSON = CHATcreateJSON(&statusCode, NULL, a_room, a_message, messageJSON);
-    if(!WEBSOCsendMessage(a_soc, messageJSON)) {
+    if (!WEBSOCsendMessage(a_soc, messageJSON)) {
         //message cannot be sent
     }
 
@@ -322,10 +322,10 @@ int CHATfirstEmptySlot() {
 void CHATsendReply( int a_statusCode, char *a_message, int *a_soc ) {
     char *reply = NULL;
     reply = CHATcreateJSON(&a_statusCode, NULL, NULL, a_message, reply);
-    if(!WEBSOCsendMessage(a_soc, reply)) {
+    if (!WEBSOCsendMessage(a_soc, reply)) {
         //message cannot be sent
     }
-    
+
     free(reply);
 }
 
