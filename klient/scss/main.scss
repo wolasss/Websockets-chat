@@ -479,7 +479,7 @@ body {
         .name {
             pointer-events: none;
             @include inline-block;
-            width: 135px;
+            max-width: 135px;
             overflow: hidden;
             text-overflow: ellipsis;
         }
@@ -557,13 +557,14 @@ body {
         .name {
             pointer-events: none;
             @include inline-block;
-            width: 135px;
+            max-width: 135px;
             overflow: hidden;
             text-overflow: ellipsis;
         }
     }
     .user.fox {
-        background: url('../images/icons/png/fox_small.png') no-repeat 10px center;
+        background-image: url('../images/icons/png/fox_small.png');
+        background-repeat:no-repeat;
     }
     .user:hover {
         background-color: #3498db;
