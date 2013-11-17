@@ -34,7 +34,9 @@ void logEvent(char *a_event) {
     snprintf(sz_buf, sizeof sz_buf, "%s - %s \n", timestamp(), a_event);
     IPCp(GLOBALsemid, 2);
     fd_logfile = open("/tmp/chat.log", O_WRONLY | O_CREAT | O_APPEND, 0666);
-    write(fd_logfile, sz_buf, 512);
+    if(fd_logfile>=0) {
+        write(fd_logfile, sz_buf, 512);
+    }
     IPCv(GLOBALsemid, 2);
 }
 
@@ -82,6 +84,7 @@ void *handshake ( void *clisoc ) {
     if ((WEBSOChandshake(a_soc)) > 0) {
         handleClient(&a_soc);
     } else {
+        logEvent("Handshake failed.");
         perror("Handshake failed.");
     }
     close(a_soc);
@@ -91,7 +94,7 @@ void *handshake ( void *clisoc ) {
 void acceptConnection( int *socketfd ) {
     struct sockaddr_in client_addr;
     socklen_t clilen = sizeof(client_addr);
-    char log[128];
+    
     while (1) {
         int clisoc;
         int *arg_ptr = &clisoc;
@@ -101,17 +104,19 @@ void acceptConnection( int *socketfd ) {
             pthread_attr_t attr;
             pthread_attr_init(&attr);
             pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-            bzero(log, 128);
-            printf("Connected: %s SOCKETFFD: %d\n", inet_ntoa(client_addr.sin_addr), clisoc);
+            char log = calloc(128, sizeof(char));
+            if(DEBUG) printf("Connected: %s SOCKETFFD: %d\n", inet_ntoa(client_addr.sin_addr), clisoc);
             snprintf(log, sizeof log, "Connected: %s \n", inet_ntoa(client_addr.sin_addr));
             logEvent(log);
+            free(log);
             fflush(stdout);  // just in case
             if (!pthread_create(&client, &attr, handshake, arg_ptr)) {
-                
+                perror("Error - creating thread");
             }
             pthread_detach(client);
         } else {
             perror("Accepting error: ");
+            logEvent("Accepting error.");
             exit(0);
         } //end if(clisoc)
     }
@@ -155,14 +160,17 @@ int main( int argc, char *argv[] ) {
                 acceptConnection(&socketfd);
             } else {
                 perror("Listening error: ");
+                logEvent("Listening error. ");
                 exit(0);
             }
         } else {
             perror("Binding error: ");
+            logEvent("Binding error.");
             exit(0);
         }
     } else {
         perror("Error creating a socket: ");
+        logEvent("Error creating a socket:");
         exit(0);
     }
     SHMdestroy();
