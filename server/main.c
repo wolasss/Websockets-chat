@@ -104,7 +104,7 @@ void acceptConnection( int *socketfd ) {
             pthread_attr_t attr;
             pthread_attr_init(&attr);
             pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-            char log = calloc(128, sizeof(char));
+            char * log = calloc(128, sizeof(char));
             if(DEBUG) printf("Connected: %s SOCKETFFD: %d\n", inet_ntoa(client_addr.sin_addr), clisoc);
             snprintf(log, sizeof log, "Connected: %s \n", inet_ntoa(client_addr.sin_addr));
             logEvent(log);

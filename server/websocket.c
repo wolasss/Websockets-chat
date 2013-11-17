@@ -173,9 +173,12 @@ char *WEBSOCdecodeFrame(char *a_frame, char *decoded, unsigned long long *a_fram
                 mask[k] = a_frame[indexFirstMask + k];
             }
         } else if (length == 127) {
-            // not supported
+            actualLength =  ((unsigned long long)a_frame[0] << 56) + ((unsigned long long)a_frame[1] << 48) + ((unsigned long long)a_frame[2] << 40) + ((unsigned long long)a_frame[3] << 32) + ((unsigned long long)a_frame[4] << 24) + ((unsigned long long)a_frame[5] << 16) + ((unsigned long long)a_frame[6] << 8) + (unsigned long long)a_frame[7];
+            indexFirstMask = 10;
+            for (k = 0; k < MASK_SIZE; k++) {
+                mask[k] = a_frame[indexFirstMask + k];
+            }
         } else {
-            // throw error
             perror("Bad frame length");
             return NULL;
         }
