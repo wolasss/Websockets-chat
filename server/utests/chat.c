@@ -29,82 +29,74 @@ struct CHATcommand {
     char * param;
 };
 
-struct CHATcommand * CHATdecodeCommand(char* a_command, struct CHATcommand *cmd) {
+struct CHATcommand *CHATdecodeCommand(char *a_command, struct CHATcommand *cmd) {
     cmd = (struct CHATcommand *) malloc(sizeof(struct CHATcommand));
     cmd->name = NULL;
     cmd->param = NULL;
 
-    int paramLen, i=3, cmdLen = strlen(a_command), k=0;
-    char command[16];
-    bzero(command,16);
-    while(i<=cmdLen-1 && !(i<cmdLen-1 && a_command[i]=='%' && (i+1<cmdLen-1 && a_command[i+1]=='2') && (i+2<cmdLen-1 && a_command[i+2]=='0') ) && k<=15) {
-            command[k]=a_command[i];
-            i++; k++;
+    int paramLen, i = 3, b = 0, cmdLen = strlen(a_command), k = 0;
+    char command[128];
+    bzero(command, 128);
+    while (i <= cmdLen - 1 && !(i < cmdLen - 1 && a_command[i] == '%' && (i + 1 < cmdLen - 1 && a_command[i + 1] == '2') && (i + 2 < cmdLen - 1 && a_command[i + 2] == '0') ) && k <= 128) {
+        command[k] = a_command[i];
+        i++; k++;
     }
-    cmd->name = malloc(sizeof(char)*(i-2));
-    bzero(cmd->name, i-2);
+    cmd->name = malloc(sizeof(char) * (i - 2));
+    bzero(cmd->name, i - 2);
 
-    paramLen = cmdLen-i+1;
-    if(paramLen>=0) {
-        int b=0;
-        cmd->param = malloc(sizeof(char)*paramLen);
+    paramLen = cmdLen - i + 1;
+    if (paramLen >= 0) {
+        cmd->param = malloc(sizeof(char) * paramLen);
         bzero(cmd->param, paramLen);
         bzero(cmd->param, paramLen);
-        i=i+3; // remove space -> urldecode(%20)
-        while(i<cmdLen) {
-                cmd->param[b]=a_command[i];
-                i++; 
-                b++;
+        i = i + 3;  // remove space -> urldecode(%20)
+        while (i < cmdLen) {
+            cmd->param[b] = a_command[i];
+            i++;
+            b++;
         }
     }
     strncpy(cmd->name, command, strlen(command));
-    if(!(a_command[0]=='%' && a_command[1]=='2' && a_command[2]=='5')) {
-        if(!strcmp(command, "login")) {
+    cmd->commandId = -1;  // prevent conditional jump on uninitialized memory
+    if (!(a_command[0] == '%' && a_command[1] == '2' && a_command[2] == '5')) {
+        if (!strcmp(command, "login")) {
             cmd->commandId = 1;
-        } else if(!strcmp(command, "help")) {
+        } else if (!strcmp(command, "help")) {
             cmd->commandId = 2;
-        } else if(!strcmp(command, "join")) {
+        } else if (!strcmp(command, "join")) {
             cmd->commandId = 3;
-        } else if(!strcmp(command, "users")) {
+        } else if (!strcmp(command, "users")) {
             cmd->commandId = 4;
         } else if (!strcmp(command, "leave")) {
             cmd->commandId = 5;
         }
     }
-    
+
     return cmd;
 }
 
+char *CHATcreateJSON ( int *a_statusCode, char *a_sender, char *a_room, char *a_message, char *aout_reply ) {
+    unsigned long long messageAloc = strlen(a_message) + 20;
+    aout_reply = calloc(messageAloc+512,sizeof(char));
+    char *statusJSON = calloc(32,sizeof(char)),
+         *senderJSON = calloc(64,sizeof(char)),
+         *roomJSON = calloc(64,sizeof(char)),
+         *messageJSON = calloc(messageAloc,sizeof(char));
 
-char * createJSON ( int * a_statusCode, char* a_sender, char* a_room, char* a_message, char* aout_reply ) {
-    aout_reply = malloc(512);
-    long messageAloc = strlen(a_message)+20;
-    char * statusJSON = malloc(32),
-            *senderJSON = malloc(64),
-            *roomJSON = malloc(64),
-            *messageJSON = malloc(messageAloc);
-
-    bzero(statusJSON, 32);
-    bzero(senderJSON, 64);
-    bzero(roomJSON, 64);
-    bzero(aout_reply,512);
-    bzero(messageJSON, messageAloc);
-
-    snprintf(statusJSON, 32, "\"status\": %d,", *a_statusCode);
-    if(a_sender) {
-        snprintf(senderJSON, 64, "\"sender\": \"%s\",", a_sender);
+    snprintf(statusJSON, 32, " \"status\": %d,", *a_statusCode);
+    if (a_sender) {
+        snprintf(senderJSON, 64, " \"sender\": \"%s\",", a_sender);
     }
-    if(a_room) {
-        snprintf(roomJSON, 64, "\"room\": \"%s\",", a_room);
+    if (a_room) {
+        snprintf(roomJSON, 64, " \"room\": \"%s\",", a_room);
     }
-    if(a_message[0]=='[') {
-        snprintf(messageJSON, messageAloc, "\"message\": %s", a_message);
+    if (a_message[0] == '[') {
+        snprintf(messageJSON, messageAloc, " \"message\": %s", a_message);
     } else {
-        snprintf(messageJSON, messageAloc, "\"message\": \"%s\"", a_message);
+        snprintf(messageJSON, messageAloc, " \"message\": \"%s\"", a_message);
     }
 
-    snprintf(aout_reply, 512, "{ %s %s %s %s }", statusJSON, senderJSON, roomJSON, messageJSON);
-    
+    snprintf(aout_reply, messageAloc+512, "{ %s %s %s %s }", statusJSON, senderJSON, roomJSON, messageJSON);
 
     free(statusJSON);
     free(senderJSON);
@@ -112,7 +104,6 @@ char * createJSON ( int * a_statusCode, char* a_sender, char* a_room, char* a_me
     free(messageJSON);
     return aout_reply;
 }
-
 
 static char * test_1() {
     struct CHATcommand * test;
@@ -157,36 +148,36 @@ static char * test_9() {
 static char * test_4() {
     char * test = NULL;
     int status = 100;
-    test = createJSON(&status, "trololo", "room1", "trolololo lololol olololo", test);
+    test = CHATcreateJSON(&status, "trololo", "room1", "trolololo lololol olololo", test);
     printf(": %s\n", test);
-    mu_assert("error, json 1", !strcmp(test, "{ \"status\": 100, \"sender\": \"trololo\", \"room\": \"room1\", \"message\": \"trolololo lololol olololo\" }"));
+    mu_assert("error, json 1", !strcmp(test, "{  \"status\": 100,  \"sender\": \"trololo\",  \"room\": \"room1\",  \"message\": \"trolololo lololol olololo\" }"));
     return 0;
 }
 
 static char * test_5() {
     char * test = NULL;
     int status = 100;
-    test = createJSON(&status, "trololo", NULL, "trolololo lololol olololo", test);
+    test = CHATcreateJSON(&status, "trololo", NULL, "trolololo lololol olololo", test);
     printf(": %s\n", test);
-    mu_assert("error, json 2", !strcmp(test, "{ \"status\": 100, \"sender\": \"trololo\",  \"message\": \"trolololo lololol olololo\" }"));
+    mu_assert("error, json 2", !strcmp(test, "{  \"status\": 100,  \"sender\": \"trololo\",   \"message\": \"trolololo lololol olololo\" }"));
     return 0;
 }
 
 static char * test_6() {
     char * test = NULL;
     int status = 100;
-    test = createJSON(&status, NULL, NULL, "trolololo lololol olololo", test);
+    test = CHATcreateJSON(&status, NULL, NULL, "trolololo lololol olololo", test);
     printf(": %s\n", test);
-    mu_assert("error, json 3", !strcmp(test, "{ \"status\": 100,   \"message\": \"trolololo lololol olololo\" }"));
+    mu_assert("error, json 3", !strcmp(test, "{  \"status\": 100,    \"message\": \"trolololo lololol olololo\" }"));
     return 0;
 }
 
 static char * test_7() {
     char * test = NULL;
     int status = 100;
-    test = createJSON(&status, NULL, NULL, "['trolololo', 'lololol', 'olololo']", test);
+    test = CHATcreateJSON(&status, NULL, NULL, "['trolololo', 'lololol', 'olololo']", test);
     printf(": %s\n", test);
-    mu_assert("error, json 4 array", !strcmp(test, "{ \"status\": 100,   \"message\": ['trolololo', 'lololol', 'olololo'] }"));
+    mu_assert("error, json 4 array", !strcmp(test, "{  \"status\": 100,    \"message\": ['trolololo', 'lololol', 'olololo'] }"));
     return 0;
 }
 
