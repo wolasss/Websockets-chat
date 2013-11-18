@@ -251,7 +251,6 @@ void CHATsendCtrlMessageToAll (int *a_roomId , char *a_roomName, char *a_message
     int users[MAX_USERS], i = 0, k = 0;
     k = CHATgetActiveUsers(a_roomId, users);
 
-    printf("do ilu wysle wiadomosc kontrolna: %d\n", k);
     for (i = 0; i < k; i++) {
         CHATsendCtrlMessage(&(users[i]), a_roomName, a_message);
     }
