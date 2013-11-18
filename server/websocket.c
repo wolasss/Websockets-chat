@@ -151,7 +151,6 @@ char *WEBSOCdecodeFrame(char *a_frame, char *decoded, unsigned long long *a_fram
 
     if ((a_frame[0] & 128)) {
         // final frame
-        printf("FINAL FRAME\n\n");
     } else {
         printf("NOT A FINAL FRAME\n\n");
     }
@@ -186,10 +185,6 @@ char *WEBSOCdecodeFrame(char *a_frame, char *decoded, unsigned long long *a_fram
         }
 
         indexFirstData = indexFirstMask + MASK_SIZE;
-
-        printf("DEBUG actual Length : %d\n", actualLength);
-        printf("DEBUG index first data : %d\n", indexFirstData);
-        printf("DEBUG frame size : %d\n", *a_frameLength);
 
         if ((actualLength + indexFirstData) != (*a_frameLength)) {
             perror("Bad frame");

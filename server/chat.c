@@ -71,7 +71,6 @@ struct CHATcommand *CHATdecodeCommand(char *a_command, struct CHATcommand *cmd) 
     bzero(cmd->name, i - 2);
 
     paramLen = cmdLen - i + 1;
-    printf("param length: %d\n", paramLen);
     if (paramLen >= 0) {
         cmd->param = malloc(sizeof(char) * paramLen);
         bzero(cmd->param, paramLen);
@@ -154,7 +153,7 @@ void CHATsendMessage(int type, int *a_soc, char *a_sender, char *a_room, char *a
     if (type == 0) {
         statusCode = 198;
         messageJSON = CHATcreateJSON(&statusCode, a_sender, a_room, a_message, messageJSON);
-        //printf("\npublic:%s\n", messageJSON);
+        printf("\npublic:%s\n", messageJSON);
     } else {
         statusCode = 199;
         messageJSON = CHATcreateJSON(&statusCode, a_sender, a_room, a_message, messageJSON);

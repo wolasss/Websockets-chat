@@ -18,10 +18,9 @@
 
 struct Shared *SHM = NULL;
 int GLOBALsemid;
-int forceQuit = 0;
 
 void forceQuit(int a_sig) {
-    forceQuit = 1;
+    SHMdestroy();
 }
 
 void logEvent(char *a_event) {
@@ -88,7 +87,7 @@ void *handshake ( void *clisoc ) {
         perror("Handshake failed.");
     }
     close(a_soc);
-    pthread_exit();
+    pthread_exit(NULL);
     return NULL;
 }
 

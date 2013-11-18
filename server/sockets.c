@@ -132,7 +132,6 @@ char *SOCreceiveFrame ( int *a_soc, char *aout_message, unsigned long long *aout
             } else {
                 error = 1;
             }
-            printf("DEBUG: length of message: %d\n", (int)length);
             error = 0;
             mask = SOCreceiveMessage(a_soc, 4, mask, &error);
             if (!error) {
@@ -142,7 +141,6 @@ char *SOCreceiveFrame ( int *a_soc, char *aout_message, unsigned long long *aout
                 frameSize += length;
 
                 aout_message = calloc(frameSize, sizeof(char));
-                printf("current pos: %d \n", currentPosition);
                 memcpy(aout_message, header, currentPosition);
                 char *frameMessage = aout_message + currentPosition;
                 if (length > 0) {
