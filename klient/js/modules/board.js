@@ -8,7 +8,7 @@ var MODboard = function(sb){
         sb.clear(container);
         sb.append(container, mainRoom);
         currentRoom = sb.find('.room_main')[0];
-        receiveNotification({ room:'__CURRENT__', message: '<strong>Welcome to Websockets chat!</strong><br>Now, you are in the main room. If you need any help, just type: /help' });
+        receiveNotification({ status: 195, room:'__CURRENT__', message: '<strong>Welcome to Websockets chat!</strong><br>Now, you are in the main room. If you need any help, just type: /help' });
         username = data;
         sb.addClass(sb.CSSchat, 'expanded');
         setTimeout(sb.fadeToggleModule,600);
@@ -121,7 +121,7 @@ var MODboard = function(sb){
                 room = currentRoom;
             }
         }
-        //if response show only error messages
+        //if response, or contorl message show only error messages
         if( data.status>=500 || data.status==195) {
             sb.append(room, msgTemplate);
             sb.scrollTop(room, room.scrollHeight);
