@@ -110,7 +110,7 @@ char *SOCreceiveFrame ( int *a_soc, char *aout_message, unsigned long long *aout
                 char *temp = calloc(2, sizeof(char));
                 temp = SOCreceiveMessage(a_soc, 2, temp, &error);
                 memcpy(header + currentPosition, temp, 2);
-                length = ((unsigned char)temp[0] << 8) + (unsigned char)temp[1];
+                length = ((unsigned long long)(unsigned char)temp[0] << 8) + (unsigned long long)(unsigned char)temp[1];
                 free(temp);
                 frameSize += 2;
                 currentPosition += 2;
@@ -124,7 +124,7 @@ char *SOCreceiveFrame ( int *a_soc, char *aout_message, unsigned long long *aout
                     printf(BYTETOBINARYPATTERN, BYTETOBINARY(temp[i]));
                 }
                 memcpy(header + currentPosition, temp, 8);
-                length = (((unsigned long long)temp[0]) << 56) + (((unsigned long long)temp[1]) << 48) + (((unsigned long long)temp[2]) << 40) + (((unsigned long long)temp[3] << 32)) + (((unsigned long long)temp[4]) << 24) + (((unsigned long long)temp[5]) << 16) + (((unsigned long long)temp[6]) << 8) + ((unsigned char)temp[7]);
+                length = (((unsigned long long)(unsigned char)temp[0]) << 56) + (((unsigned long long)(unsigned char)temp[1]) << 48) + (((unsigned long long)(unsigned char)temp[2]) << 40) + (((unsigned long long)(unsigned char)temp[3] << 32)) + (((unsigned long long)(unsigned char)temp[4]) << 24) + (((unsigned long long)(unsigned char)temp[5]) << 16) + (((unsigned long long)(unsigned char)temp[6]) << 8) + ((unsigned char)temp[7]);
                 free(temp);
                 frameSize += 8;
                 currentPosition += 8;
@@ -133,6 +133,7 @@ char *SOCreceiveFrame ( int *a_soc, char *aout_message, unsigned long long *aout
                 error = 1;
             }
             printf("DEBUG: length of message: %d\n", (int)length);
+            error = 0;
             mask = SOCreceiveMessage(a_soc, 4, mask, &error);
             if (!error) {
                 memcpy(header + currentPosition, mask, 4);
@@ -141,7 +142,8 @@ char *SOCreceiveFrame ( int *a_soc, char *aout_message, unsigned long long *aout
                 frameSize += length;
 
                 aout_message = calloc(frameSize, sizeof(char));
-                memcpy(aout_message, header, currentPosition + 1);
+                printf("current pos: %d \n", currentPosition);
+                memcpy(aout_message, header, currentPosition);
                 char *frameMessage = aout_message + currentPosition;
                 if (length > 0) {
                     frameMessage = SOCreceiveMessage(a_soc, length, aout_message + currentPosition, &error);

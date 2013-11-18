@@ -18,13 +18,10 @@
 
 struct Shared *SHM = NULL;
 int GLOBALsemid;
+int forceQuit = 0;
 
 void forceQuit(int a_sig) {
-    SHMdestroy();
-}
-
-void killChildProcess(int a_sig) {
-    wait(NULL);
+    forceQuit = 1;
 }
 
 void logEvent(char *a_event) {
@@ -91,6 +88,7 @@ void *handshake ( void *clisoc ) {
         perror("Handshake failed.");
     }
     close(a_soc);
+    pthread_exit();
     return NULL;
 }
 
@@ -113,7 +111,7 @@ void acceptConnection( int *socketfd ) {
             logEvent(log);
             free(log);
             fflush(stdout);  // just in case
-            if (!pthread_create(&client, &attr, handshake, arg_ptr)) {
+            if (pthread_create(&client, &attr, handshake, arg_ptr)==-1) {
                 perror("Error - creating thread");
             }
             pthread_detach(client);
@@ -132,7 +130,6 @@ int main( int argc, char *argv[] ) {
 
     srand(time(NULL));
     signal(SIGINT, forceQuit);
-    signal(SIGCHLD, killChildProcess);
 
     int socketfd = socket(PF_INET, SOCK_STREAM, 0), // SCKDGRAM - UDP, STREAM - TCP
         port;

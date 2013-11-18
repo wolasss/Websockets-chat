@@ -169,13 +169,13 @@ char *WEBSOCdecodeFrame(char *a_frame, char *decoded, unsigned long long *a_fram
             }
         } else if (length == 126) {
             // length is on 2bytes
-            actualLength = (a_frame[2] << 8) + a_frame[3];
+            actualLength = ((unsigned long long)(unsigned char)a_frame[2] << 8) + (unsigned long long)(unsigned char)a_frame[3];
             indexFirstMask = 4;
             for (k = 0; k < MASK_SIZE; k++) {
                 mask[k] = a_frame[indexFirstMask + k];
             }
         } else if (length == 127) {
-            actualLength = ((unsigned long long)a_frame[2] << 56) + ((unsigned long long)a_frame[3] << 48) + ((unsigned long long)a_frame[4] << 40) + ((unsigned long long)a_frame[5] << 32) + ((unsigned long long)a_frame[6] << 24) + ((unsigned long long)a_frame[7] << 16) + ((unsigned long long)a_frame[8] << 8) + (unsigned char)a_frame[9];
+            actualLength = ((unsigned long long)(unsigned char)a_frame[2] << 56) + ((unsigned long long)(unsigned char)a_frame[3] << 48) + ((unsigned long long)(unsigned char)a_frame[4] << 40) + ((unsigned long long)(unsigned char)a_frame[5] << 32) + ((unsigned long long)(unsigned char)a_frame[6] << 24) + ((unsigned long long)(unsigned char)a_frame[7] << 16) + ((unsigned long long)(unsigned char)a_frame[8] << 8) + (unsigned char)(unsigned char)a_frame[9];
             indexFirstMask = 10;
             for (k = 0; k < MASK_SIZE; k++) {
                 mask[k] = a_frame[indexFirstMask + k];
