@@ -15,6 +15,8 @@
 #include "tools.h"
 #include "ipc_shared.h"
 
+#define DEBUG 0
+
 #define SEM_USERS 0
 #define SEM_ROOMS 1
 #define SEM_LOGFILE 2
@@ -153,11 +155,11 @@ void CHATsendMessage(int type, int *a_soc, char *a_sender, char *a_room, char *a
     if (type == 0) {
         statusCode = 198;
         messageJSON = CHATcreateJSON(&statusCode, a_sender, a_room, a_message, messageJSON);
-        printf("\npublic:%s\n", messageJSON);
+        if(DEBUG) printf("\npublic:%s\n", messageJSON);
     } else {
         statusCode = 199;
         messageJSON = CHATcreateJSON(&statusCode, a_sender, a_room, a_message, messageJSON);
-        printf("\nprivate:%s\n", messageJSON);
+        if(DEBUG) printf("\nprivate:%s\n", messageJSON);
     }
 
     if (!WEBSOCsendMessage(a_soc, messageJSON)) {
@@ -274,7 +276,6 @@ void CHATremoveUser ( char *a_name, int *a_soc, int *a_pos ) {
         IPCv(GLOBALsemid, 0);
     }
     //send to all new list of users
-    printf("sending to all \n");
     snprintf(controlMessage, 128, "User %s has logged out.", room.param);
     CHATsendCtrlMessageToAll(&mainRoom, room.name, controlMessage);
     CHATsendUserListToAll();
@@ -294,7 +295,6 @@ void CHATassignUser ( int *a_pos, int *a_fd, char *a_nick ) {
     (*SHM).tabUser[*a_pos].activeRooms[0] = 0;
     for (i = 0; i < MAX_ROOMS; i++) {
         (*SHM).tabUser[*a_pos].activeRooms[i] = -1;
-        //implicitly assign user to main Room (0), because we starting from i=1
     }
     IPCv(GLOBALsemid, 0);
 }
@@ -390,9 +390,8 @@ void CHATloginUser(struct CHATcommand *cmd, int *a_soc) {
             //add to main room
             CHATjoinToRoom(&room, a_soc);
             CHATsendReply(101, cmd->param, a_soc);
-            //TODO send new user lists.
             CHATsendUserListToAll();
-            DEBUGprintUsers();
+            if(DEBUG) DEBUGprintUsers();
         } else {
             CHATsendReply(502, "There are no empty slots available. Try again later.", a_soc);
         }
@@ -553,13 +552,11 @@ void CHATjoinToRoom(struct CHATcommand *cmd, int *a_soc) {
     int pos = CHATisLogged(NULL, a_soc);
     if (pos >= 0) {
         if (roomPos >= 0) {
-            printf("Room istnieje i dodaje\n");
             if (!(CHATalreadyInRoom(roomPos + 1, &pos) >= 0)) {
                 if (CHATassignToRoom(roomPos, a_soc)) {
                     CHATuserAddRoom(&pos, &roomPos);
-                    printf("chat add to room: %d\n", roomPos);
                     CHATsendReply(103, cmd->param, a_soc);
-                    DEBUGprintRoom(0);
+                    if(DEBUG) DEBUGprintRoom(0);
                 } else {
                     CHATsendReply(503, "Room is full.", a_soc);
                 }
@@ -567,12 +564,11 @@ void CHATjoinToRoom(struct CHATcommand *cmd, int *a_soc) {
                 CHATsendReply(503, "You are already in that room.", a_soc);
             }
         } else {
-            //tworzymy room
+            // creating room
             roomPos = CHATcreateRoom(cmd->param, a_soc);
             if (roomPos < 0) {
                 CHATsendReply(503, "You cannot join the room. Reached maximum number of rooms.", a_soc);
             } else {
-                printf("Room nie istnial ale juz istnieje i dodaje\n");
                 CHATuserAddRoom(&pos, &roomPos);
                 CHATsendReply(103, cmd->param, a_soc);
             }
@@ -641,7 +637,6 @@ void CHATparseMessage(char *a_message, int *a_soc, int a_len) {
         } else if (a_message[0] == '%' && a_message[1] == '4' && a_message[2] == '0') {
             //%40 - urldecode(@)
             cmd = CHATdecodeCommand(a_message, cmd);
-            printf("priv do: %s\n", cmd->name);
             int idSender = CHATisLogged(NULL, a_soc);
             int idReceiver = CHATisLogged(cmd->name, NULL);
             if (idReceiver >= 0) {

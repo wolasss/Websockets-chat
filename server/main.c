@@ -21,6 +21,7 @@ int GLOBALsemid;
 
 void forceQuit(int a_sig) {
     SHMdestroy();
+    exit(1);
 }
 
 void logEvent(char *a_event) {
@@ -41,13 +42,11 @@ void handleClient( int *a_soc ) {
     unsigned long long frameLength = 0;
     int pos;
     while (1) {
-        frame = SOCreceiveFrame(a_soc, frame, &frameLength);
+        frame = WEBSOCreceiveFrame(a_soc, frame, &frameLength);
         if (frameLength != -1 && frame!=NULL) {
             message = WEBSOCdecodeFrame(frame, message, &frameLength);
-            //printf("[%s]\n", message);
             if (message) {
                 unsigned long long len = strlen(message);
-                //printf("message length main: %d \n", (int)len);
                 CHATparseMessage(message, a_soc, len);
             } else {
                 // closing frame was sent
@@ -58,7 +57,7 @@ void handleClient( int *a_soc ) {
                 break;
             }
         } else {
-            // klient przerwal polaczenie
+            // client terminated connection
             pos = CHATisLogged(NULL, a_soc);
             if(pos>=0) {
                 CHATremoveUser(NULL, a_soc, &pos);
