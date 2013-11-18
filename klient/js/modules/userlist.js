@@ -8,7 +8,6 @@ var MODuserlist = function(sb){
 		sb.slideToggle();
 	};
 	privateMessage = function(e) {
-		console.log(e);
 		if( sb.is(e.originalEvent.target, 'li') ) {
 			var t = e.originalEvent.target;
 			if(t.isEqualNode(currentRoom)) {
