@@ -12,6 +12,9 @@ var MODshouter = function(sb){
 
 		if(input.value.match(/^\/\w+/)) {
 			//command
+			if(input.value.match(/\/join\s\w+\s/)) {
+				console.log("nieprawidlowa nazwa pokoju");
+			}
 			message = input.value;
 		} else if(input.value[0]=='@') {
 			//private

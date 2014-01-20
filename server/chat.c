@@ -392,7 +392,7 @@ void CHATloginUser(struct CHATcommand *cmd, int *a_soc) {
             CHATsendUserListToAll();
             if(DEBUG) DEBUGprintUsers();
         } else {
-            CHATsendReply(502, "There are no empty slots available. Try again later.", a_soc);
+            CHATsendReply(501, "There are no empty slots available. Try again later.", a_soc);
         }
     }
     free(room.param);
