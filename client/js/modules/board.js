@@ -1,7 +1,6 @@
 var MODboard = function(sb){
-
     "use strict";
-    var container, show, receiveMessage, hide, username, leaveRoom, switchRoom, receiveNotification, newPrivateRoom, currentRoom, receivePrivMessage, newPublicRoom;
+    var roomTemplate, container, show, receiveMessage, hide, username, leaveRoom, switchRoom, receiveNotification, newPrivateRoom, currentRoom, receivePrivMessage, newPublicRoom;
 
     show = function(data) {
         var mainRoom = '<ul class=\"room room_main active\"></ul>';
@@ -130,6 +129,7 @@ var MODboard = function(sb){
     return {
         init: function() {
             container = sb.module()[0];
+            roomTemplate = sb.find('#room-template')[0];
             sb.on('loggedIn', show);
             sb.on('loggedOut', hide);
             sb.on('newPrivateRoom', newPrivateRoom);

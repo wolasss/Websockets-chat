@@ -101,6 +101,7 @@ var sandbox = function(core, instanceId, options, moduleId) {
     return $(DOMid).slideToggle(cb);
   };
   this.id = instanceId;
+  this.templates = Handlebars;
   
   return this;
 };
