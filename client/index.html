@@ -123,6 +123,15 @@
                 <span class="notification"></span>
             </li>
         </script>
+    
+        <script id="user-list-template" type="text/x-handlebars-template">
+            {{#each this}}
+                <li class="user user_{{name}} {{additionalClass}}" username="{{name}}">
+                    <span class="name">{{name}}</span>
+                    <span class="notification"></span>
+                </li>
+            {{/each}}
+        </script>
 
         <a href="//github.com/wolasss"><img style="position: absolute; top: 0; right: 0; border: 0;" src="//s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>

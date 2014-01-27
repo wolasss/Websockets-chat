@@ -1,7 +1,7 @@
 var MODrooms = function(sb){
 	"use strict";
 
-	var rooms, roomListTemplate, newPrivateRoom, switchRoom, currentRoom, newPublicRoom, toggle, notification, clearNotification, leaveRoom;
+	var rooms, roomListTemplate, generateRoom, newPrivateRoom, switchRoom, currentRoom, newPublicRoom, toggle, notification, clearNotification, leaveRoom;
 
 	switchRoom = function(e) {
 		var data={}, t, name;
@@ -26,6 +26,7 @@ var MODrooms = function(sb){
 		data.name = name;
 		sb.emit('switchRoom', data);
 	};
+
 	generateRoom = function(name, addClass) {
 		var room;
 
@@ -36,6 +37,7 @@ var MODrooms = function(sb){
 
 		return room;
 	};
+
 	newPublicRoom = function(name) {
 		name = sb.escapeHTML(name);
 		if(sb.find('.room_'+name).length===0) {
@@ -43,12 +45,14 @@ var MODrooms = function(sb){
 			sb.append(rooms, room);		
 		}
 	};
+
 	toggle = function() {
 		sb.clear(rooms);
 		sb.append(rooms, generateRoom('main', 'active'));
 		currentRoom = sb.find('.room_main')[0];
 		sb.slideToggle();
 	};
+
 	notification = function(room) {
 		var item = sb.find('.room_'+room);
 		if(item.length!==0) {
@@ -61,18 +65,21 @@ var MODrooms = function(sb){
 		sb.clear(messagesContainer);
 		sb.append(messagesContainer, '<span>'+count+'</span>');
 	};
+
 	clearNotification = function(room) {
 		var messagesContainer = sb.find('.room_'+room+' .messages')[0];
 		if(messagesContainer) {
 			sb.clear(messagesContainer);
 		}
 	};
+
 	leaveRoom = function(name) {
 		var room = sb.find('.room_'+name);
 		if(room.length!==0) {
 			sb.remove(room[0]);
 		}
 	};
+
 	return {
 	    init: function() {
 			rooms = sb.find(sb.CSSrooms)[0];

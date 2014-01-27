@@ -31,6 +31,7 @@ var MODshouter = function(sb){
 	};
 	reactor = function(e) {
 		if(e.which === 13) {
+			//enter key
 			send();
 		}
 	};

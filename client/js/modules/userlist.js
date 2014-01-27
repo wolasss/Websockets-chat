@@ -1,7 +1,7 @@
 var MODuserlist = function(sb){
 	"use strict";
 
-	var list, reactor, showList, toggle, username, privateMessage, notification, clearNotification, currentRoom;
+	var list, generateUserList, userListTemplate, reactor, showList, toggle, username, privateMessage, notification, clearNotification, currentRoom;
 
 	toggle = function(data) {
 		if(!username) username = data;
@@ -27,22 +27,30 @@ var MODuserlist = function(sb){
 			}
 		}
 	};
+	generateUserList = function(name, addClass) {
+		var user;
+
+		user = userListTemplate({
+			name: name,
+			additionalClass: (addClass ? addClass : '')
+		});
+
+		return user;
+	}
 	showList = function(users) {
 		sb.clear(list);
-		var addClass = '';
+		//dodac escape html na usernamach.
+
 		for(var i=0, len=users.length; i<len; i++){
 			//easter egg
-			addClass='';
-			if(users[i]==="thefox") {
-				addClass+="fox ";
-			}
-			if(users[i]===username) {
-				addClass+="me";
-			}
+			
 			var name = sb.escapeHTML(users[i]);
-			sb.append(list, "<li class=\"user "+addClass+" user_"+name+"\" username=\""+name+"\"><span class=\"name\">"+name+"</span><span class=\"messages\"></span></li>");
+
+			
 			addClass = '';
 		}
+		sb.append(list, userListTemplate(name));
+		//to powinno byc inaczej zrobione trzeba dodac jeszcze obiekt z tymi userami... za kazdym razem gdy odbierana jest wiadomosc z serwera 
 	};
 	reactor = function(data) {
 		if(data.status==104) {
@@ -70,6 +78,8 @@ var MODuserlist = function(sb){
 	return {
 	    init: function() {
 			list = sb.find(sb.CSSuserList)[0];
+			userListTemplate = sb.templates.compile(sb.find('#user-list-template')[0].innerHTML);
+
 			currentRoom = null;
 			sb.on('loggedIn', toggle);
 			sb.on('loggedOut', toggle);
