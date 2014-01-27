@@ -1,9 +1,10 @@
 var MODboard = function(sb){
     "use strict";
-    var roomTemplate, container, show, receiveMessage, hide, username, leaveRoom, switchRoom, receiveNotification, newPrivateRoom, currentRoom, receivePrivMessage, newPublicRoom;
+    var roomTemplate, container, show, generateAdditionalClass, generateMessage, receivePublicMessage, hide, username, leaveRoom, switchRoom, receiveNotification, newPrivateRoom, currentRoom, receivePrivMessage, newPublicRoom;
 
     show = function(data) {
-        var mainRoom = '<ul class=\"room room_main active\"></ul>';
+        var mainRoom = roomTemplate({ class: 'room room_main active'});
+
         sb.clear(container);
         sb.append(container, mainRoom);
         currentRoom = sb.find('.room_main')[0];
@@ -19,15 +20,15 @@ var MODboard = function(sb){
     newPrivateRoom = function(user) {
         user = sb.escapeHTML(user);
         if(sb.find('.room_private_'+user).length===0) {
-            var tpl = "<ul class=\"room room_private_"+user+"\"></ul>";
-            sb.append(container, tpl);
+            var privateTemplate = roomTemplate({ class: 'room room_private_'+user+'' });
+            sb.append(container, privateTemplate);
         }
     };
     newPublicRoom = function(name) {
         name = sb.escapeHTML(name);
         if(sb.find('.room_'+name).length===0) {
-            var tpl = "<ul class=\"room room_"+name+"\"></ul>";
-            sb.append(container, tpl);
+            var publicRoom = roomTemplate({ class: 'room room_'+name+'' });
+            sb.append(container, publicRoom);
         }
     };
     leaveRoom = function(name) {
@@ -51,63 +52,91 @@ var MODboard = function(sb){
             sb.scrollTop(currentRoom, currentRoom.scrollHeight);
         }
     };
-    receivePrivMessage = function(data) {
-        var message = sb.escapeHTML(data.message),
-            roomDOM,
-            room = data.room,
-            sender = sb.escapeHTML(data.sender),
-            now = new Date(),
+    generateAdditionalClass = function() {
+        var addClass = '';
+
+        if(username === sender) { 
+            addClass+='mine'; 
+        }
+        if(data.sender === "thefox") { 
+            addClass+=' fox'; 
+        }
+        return addClass;
+    };
+    generateMessage = function(data) {
+        
+        var now = new Date(),
             additionalClass = '';
-            if(username === sender) { additionalClass+='mine'; }
-            if(data.sender === "thefox") { additionalClass+=' fox'; }
-            var msgTemplate = '<li class="msgContainer clearfix"><div class="avatar '+additionalClass+'"><div class="nick">'+sender+'</div></div><div class="message '+additionalClass+'"><div class="bubble">'+message+'<div class="info">'+now.toString().match(/\d\d:\d\d:\d\d/)[0]+'</div></div></div></li>';
-            roomDOM = sb.find('.room_private_'+room);
-            if(roomDOM.length!==0) {
-                if((roomDOM[0].scrollTop + roomDOM[0].offsetHeight)>435 && (roomDOM[0].scrollTop + roomDOM[0].offsetHeight)<roomDOM[0].scrollHeight ) {
-                    sb.append(roomDOM[0], msgTemplate);
-                } else {
-                    sb.append(roomDOM[0], msgTemplate);
-                    sb.scrollTop(roomDOM[0], roomDOM[0].scrollHeight);
-                }
-                if( (!roomDOM[0].isEqualNode(currentRoom)) && (sender != username)) {
-                    sb.emit('PrivateUnreadMessage', sender);
-                }
+
+        var message = messageTemplate({
+            additionalClass: generateAdditionalClass(),
+            sender: sb.escapeHTML(data.sender),
+            message: sb.escapeHTML(data.message),
+            date: now.toString().match(/\d\d:\d\d:\d\d/)[0]
+        });
+
+        return message;
+    };
+    generateNotification = function(message) {
+        var now = new Date(),
+            additionalClass = '';
+
+        var notification = notificationTemplate({
+            additionalClass: generateAdditionalClass(),
+            message: message,
+            date: now.toString().match(/\d\d:\d\d:\d\d/)[0]
+        });
+
+        return notification;
+    };
+    receivePrivMessage = function(data) {
+        var roomDOM,
+            room = data.room,
+            msg = generateMessage(data);
+
+        roomDOM = sb.find('.room_private_'+room);
+        if(roomDOM.length!==0) {
+            if((roomDOM[0].scrollTop + roomDOM[0].offsetHeight)>435 && (roomDOM[0].scrollTop + roomDOM[0].offsetHeight)<roomDOM[0].scrollHeight ) {
+                sb.append(roomDOM[0], msg);
             } else {
-                newPrivateRoom(data.room);
-                roomDOM = sb.find('.room_private_'+room);
-                sb.append(roomDOM, msgTemplate);
-                sb.scrollTop(roomDOM, roomDOM.scrollHeight);
+                sb.append(roomDOM[0], msg);
+                sb.scrollTop(roomDOM[0], roomDOM[0].scrollHeight);
+            }
+            if( (!roomDOM[0].isEqualNode(currentRoom)) && (sender != username)) {
                 sb.emit('PrivateUnreadMessage', sender);
             }
+        } else {
+            newPrivateRoom(data.room);
+            roomDOM = sb.find('.room_private_'+room);
+            sb.append(roomDOM, msg);
+            sb.scrollTop(roomDOM, roomDOM.scrollHeight);
+            sb.emit('PrivateUnreadMessage', sender);
+        }
     };
-    receiveMessage = function(data) {
-        var message = sb.escapeHTML(data.message),
-            roomDOM,
+    receivePublicMessage = function(data) {
+        var roomDOM,
             room = data.room,
-            sender = sb.escapeHTML(data.sender),
-            now = new Date(),
-            additionalClass = '';
-            if(username === sender) { additionalClass+='mine'; }
-            if(data.sender === "thefox") { additionalClass+=' fox'; }
-            var msgTemplate = '<li class="msgContainer clearfix"><div class="avatar '+additionalClass+'"><div class="nick">'+sender+'</div></div><div class="message '+additionalClass+'"><div class="bubble">'+message+'<div class="info">'+now.toString().match(/\d\d:\d\d:\d\d/)[0]+'</div></div></div></li>';
-            roomDOM = sb.find('.room_'+room);
-            if(roomDOM.length!==0) {
-                if((roomDOM[0].scrollTop + roomDOM[0].offsetHeight)>435 && (roomDOM[0].scrollTop + roomDOM[0].offsetHeight)<roomDOM[0].scrollHeight ) {
-                    sb.append(roomDOM[0], msgTemplate);
-                } else {
-                    sb.append(roomDOM[0], msgTemplate);
-                    sb.scrollTop(roomDOM[0], roomDOM[0].scrollHeight);
-                }
-                if( (!roomDOM[0].isEqualNode(currentRoom)) && (sender != username)) {
-                    sb.emit('PublicUnreadMessage', room);
-                }
+            msg = generateMessage(data);
+
+        roomDOM = sb.find('.room_'+room);
+        if(roomDOM.length!==0) {
+            if((roomDOM[0].scrollTop + roomDOM[0].offsetHeight)>435 && (roomDOM[0].scrollTop + roomDOM[0].offsetHeight)<roomDOM[0].scrollHeight ) {
+                sb.append(roomDOM[0], msg);
+            } else {
+                sb.append(roomDOM[0], msg);
+                sb.scrollTop(roomDOM[0], roomDOM[0].scrollHeight);
             }
+            if( (!roomDOM[0].isEqualNode(currentRoom)) && (sender != username)) {
+                sb.emit('PublicUnreadMessage', room);
+            }
+        }
     };
     receiveNotification = function(data){
         var message = data.message,
-        room = data.room,
-        now = new Date(),
-        msgTemplate = '<li class="controlMessage clearfix"><span class="prompt">>>>>  </span><span class="message">'+message+'</span><div class="date">['+now.toString().match(/\d\d:\d\d:\d\d/)[0]+']</div></li>';
+        room = data.room;
+
+        var notification = generateNotification(message);
+
         if(room==="__CURRENT__") {
             if(currentRoom) {
                 room = currentRoom;
@@ -122,21 +151,24 @@ var MODboard = function(sb){
         }
         //if response, or contorl message show only error messages
         if( data.status>=500 || data.status==195) {
-            sb.append(room, msgTemplate);
+            sb.append(room, notification);
             sb.scrollTop(room, room.scrollHeight);
         }
     };
     return {
         init: function() {
             container = sb.module()[0];
-            roomTemplate = sb.find('#room-template')[0];
+            roomTemplate = sb.templates.compile(sb.find('#room-template')[0].innerHTML);
+            messageTemplate = sb.templates.compile(sb.find('#message-template')[0].innerHTML);
+            notificationTemplate = sb.templates.compile(sb.find('#notification-template')[0].innerHTML);
+
             sb.on('loggedIn', show);
             sb.on('loggedOut', hide);
             sb.on('newPrivateRoom', newPrivateRoom);
             sb.on('WSnewPublicRoom', newPublicRoom);
             sb.on('switchRoom', switchRoom);
             sb.on('WSleftRoom', leaveRoom);
-            sb.on('WSreceivedMessage', receiveMessage);
+            sb.on('WSreceivedMessage', receivePublicMessage);
             sb.on('WSreceivedPrivMessage', receivePrivMessage);
             sb.on('WSreceivedNotification', receiveNotification);
             sb.on('WSresponse', receiveNotification);

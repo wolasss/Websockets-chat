@@ -89,12 +89,34 @@
 
             </div>
 
-        <script id="entry-template" type="text/x-handlebars-template">
+        <script id="room-template" type="text/x-handlebars-template">
           <ul class="{{class}}">
             
           </ul>
         </script>
+        
+        <script id="message-template" type="text/x-handlebars-template">
+          <li class="msgContainer clearfix">
+            <div class="avatar {{additionalClass}}">
+                <div class="nick">{{sender}}</div>
+            </div>
+            <div class="message {{additionalClass}}">
+                <div class="bubble">
+                    {{message}}
+                    <div class="info">{{date}}</div>
+                </div>
+            </div>
+          </li>
+        </script>
 
+        <script id="notification-template" type="text/x-handlebars-template">
+            <li class="controlMessage clearfix">
+                <span class="prompt">>>>>   </span>
+                <span class="message">{{message}}</span>
+                <div class="date">{{date}}</div>
+            </li>
+        </script>
+        
         <a href="//github.com/wolasss"><img style="position: absolute; top: 0; right: 0; border: 0;" src="//s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
