@@ -1,7 +1,7 @@
 var MODrooms = function(sb){
 	"use strict";
 
-	var rooms, newPrivateRoom, switchRoom, currentRoom, newPublicRoom, toggle, notification, clearNotification, leaveRoom;
+	var rooms, roomListTemplate, newPrivateRoom, switchRoom, currentRoom, newPublicRoom, toggle, notification, clearNotification, leaveRoom;
 
 	switchRoom = function(e) {
 		var data={}, t, name;
@@ -26,16 +26,26 @@ var MODrooms = function(sb){
 		data.name = name;
 		sb.emit('switchRoom', data);
 	};
+	generateRoom = function(name, addClass) {
+		var room;
+
+		room = roomListTemplate({
+			name: name,
+			additionalClass: (addClass ? addClass : '')
+		});
+
+		return room;
+	};
 	newPublicRoom = function(name) {
 		name = sb.escapeHTML(name);
 		if(sb.find('.room_'+name).length===0) {
-			var tpl = "<li class=\"room room_"+name+"\" roomname=\""+name+"\"><span class=\"name\">"+name+"</span><span class=\"messages\"></span></li>";
-			sb.append(rooms, tpl);		
+			var room = generateRoom(name);
+			sb.append(rooms, room);		
 		}
 	};
 	toggle = function() {
 		sb.clear(rooms);
-		sb.append(rooms, '<li class="room room_main active" roomname="main"><span class=\"name\">main</span><span class="messages"></span></li>');
+		sb.append(rooms, generateRoom('main', 'active'));
 		currentRoom = sb.find('.room_main')[0];
 		sb.slideToggle();
 	};
@@ -66,7 +76,8 @@ var MODrooms = function(sb){
 	return {
 	    init: function() {
 			rooms = sb.find(sb.CSSrooms)[0];
-			
+			roomListTemplate = sb.templates.compile(sb.find('#room-list-template')[0].innerHTML);
+
 			sb.addEvent(rooms, 'click', switchRoom);
 			
 			sb.on('currentRoomChangedPrivate', function(){
