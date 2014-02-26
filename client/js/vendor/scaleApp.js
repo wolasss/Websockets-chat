@@ -60,6 +60,7 @@ Copyright (c) 2011-2013 Markus Kohlhase <mail@markus-kohlhase.de>
           return t(next);
         } catch (_error) {
           e = _error;
+          console.log(e);
           return next(e);
         }
       })(t, i));
@@ -108,6 +109,7 @@ Copyright (c) 2011-2013 Markus Kohlhase <mail@markus-kohlhase.de>
           return tasks[i](next);
         } catch (_error) {
           e = _error;
+          console.log(e);
           return next(e);
         }
       }
@@ -287,6 +289,7 @@ Copyright (c) 2011-2013 Markus Kohlhase <mail@markus-kohlhase.de>
                 }
               } catch (_error) {
                 e = _error;
+                console.log(e)
                 return next(e);
               }
             };
@@ -459,6 +462,7 @@ Copyright (c) 2011-2013 Markus Kohlhase <mail@markus-kohlhase.de>
           }
         } catch (_error) {
           e = _error;
+          console.log(e);
           return _this._startFail(e, cb);
         }
       };

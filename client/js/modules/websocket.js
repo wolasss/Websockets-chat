@@ -50,6 +50,10 @@ var MODwebsocket = function(sb){
 			} else if(message.status==199) { 
 				sb.emit('WSreceivedPrivMessage', message);
 			} else if(message.status==195) {
+				if(!message.title) {
+					message.title=message.message;
+					message.message='';
+				}
 				sb.emit('WSreceivedNotification', message);
 			} else if(message.status==103) {
 				sb.emit('WSnewPublicRoom', message.message);

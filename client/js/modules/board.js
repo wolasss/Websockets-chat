@@ -1,14 +1,16 @@
 var MODboard = function(sb){
     "use strict";
-    var roomTemplate, container, show, generateAdditionalClass, generateMessage, receivePublicMessage, hide, username, leaveRoom, switchRoom, receiveNotification, newPrivateRoom, currentRoom, receivePrivMessage, newPublicRoom;
+    var roomTemplate, messageTemplate, notificationTemplate, container, show, generateAdditionalClass, generateNotification, generateMessage, receivePublicMessage, hide, username, leaveRoom, switchRoom, receiveNotification, newPrivateRoom, currentRoom, receivePrivMessage, newPublicRoom;
 
     show = function(data) {
+        console.log('show');
+
         var mainRoom = roomTemplate({ class: 'room room_main active'});
 
         sb.clear(container);
         sb.append(container, mainRoom);
         currentRoom = sb.find('.room_main')[0];
-        receiveNotification({ status: 195, room:'__CURRENT__', message: '<strong>Welcome to Websockets chat!</strong><br>Now, you are in the main room. If you need any help, just type: /help' });
+        receiveNotification({ status: 195, room:'__CURRENT__', title: 'Welcome to Websockets chat!', message: 'Now, you are in the main room. If you need any help, just type: /help' });
         username = data;
         sb.addClass(sb.CSSchat, 'expanded');
         setTimeout(sb.fadeToggleModule,600);
@@ -52,40 +54,55 @@ var MODboard = function(sb){
             sb.scrollTop(currentRoom, currentRoom.scrollHeight);
         }
     };
-    generateAdditionalClass = function() {
+    generateAdditionalClass = function(data) {
         var addClass = '';
 
-        if(username === sender) { 
-            addClass+='mine'; 
+        if(data) {
+            if(username === data.sender) { 
+                addClass+='mine'; 
+            }
+            if(data.sender === "thefox") { 
+                addClass+=' fox'; 
+            }
         }
-        if(data.sender === "thefox") { 
-            addClass+=' fox'; 
-        }
+        
         return addClass;
     };
     generateMessage = function(data) {
         
         var now = new Date(),
-            additionalClass = '';
-
-        var message = messageTemplate({
-            additionalClass: generateAdditionalClass(),
-            sender: sb.escapeHTML(data.sender),
-            message: sb.escapeHTML(data.message),
-            date: now.toString().match(/\d\d:\d\d:\d\d/)[0]
-        });
+            additionalClass = '',
+            message;
+        console.log(messageTemplate)
+        if(messageTemplate) {
+            message = messageTemplate({
+                additionalClass: generateAdditionalClass(data),
+                sender: sb.escapeHTML(data.sender),
+                message: sb.escapeHTML(data.message),
+                date: now.toString().match(/\d\d:\d\d:\d\d/)[0]
+            });
+        } else {
+            message = null;
+        }
+        
 
         return message;
     };
-    generateNotification = function(message) {
+    generateNotification = function(message, title) {
         var now = new Date(),
-            additionalClass = '';
+            additionalClass = '',
+            notification;
 
-        var notification = notificationTemplate({
-            additionalClass: generateAdditionalClass(),
-            message: message,
-            date: now.toString().match(/\d\d:\d\d:\d\d/)[0]
-        });
+        if(notificationTemplate) {
+            notification = notificationTemplate({
+                additionalClass: generateAdditionalClass(),
+                message: message,
+                title: title,
+                date: now.toString().match(/\d\d:\d\d:\d\d/)[0]
+            });
+        } else {
+            notification = null;
+        }
 
         return notification;
     };
@@ -132,11 +149,12 @@ var MODboard = function(sb){
         }
     };
     receiveNotification = function(data){
+        console.log(1);
         var message = data.message,
         room = data.room;
 
-        var notification = generateNotification(message);
-
+        var notification = generateNotification(message, data.title);
+        console.log('not:', notification)
         if(room==="__CURRENT__") {
             if(currentRoom) {
                 room = currentRoom;
@@ -150,6 +168,7 @@ var MODboard = function(sb){
             }
         }
         //if response, or contorl message show only error messages
+        console.log('notify:', notification);
         if( data.status>=500 || data.status==195) {
             sb.append(room, notification);
             sb.scrollTop(room, room.scrollHeight);
@@ -158,10 +177,9 @@ var MODboard = function(sb){
     return {
         init: function() {
             container = sb.module()[0];
-            roomTemplate = sb.templates.compile(sb.find('#room-template')[0].innerHTML);
-            messageTemplate = sb.templates.compile(sb.find('#message-template')[0].innerHTML);
-            notificationTemplate = sb.templates.compile(sb.find('#notification-template')[0].innerHTML);
-
+            roomTemplate = sb.templates.compile(sb.findTemplate('room-template'));
+            messageTemplate = sb.templates.compile(sb.findTemplate('message-template'));
+            notificationTemplate = sb.templates.compile(sb.findTemplate('notification-template'));
             sb.on('loggedIn', show);
             sb.on('loggedOut', hide);
             sb.on('newPrivateRoom', newPrivateRoom);

@@ -13,6 +13,7 @@ var sandbox = function(core, instanceId, options, moduleId) {
     "'": '&#39;',
     "/": '&#x2F;'
   };
+
   //selectors
   this.CSSloginButton = '.login-button';
   this.CSSusernameField = '.nick-field';
@@ -100,6 +101,14 @@ var sandbox = function(core, instanceId, options, moduleId) {
   this.slideToggle = function(cb) {
     return $(DOMid).slideToggle(cb);
   };
+  this.findTemplate = function(tpl) {
+    var tpl = $('#'+tpl)[0].innerHTML;
+    if(tpl) { 
+      return tpl;
+    } else {
+      return null;
+    }
+  }
   this.id = instanceId;
   this.templates = Handlebars;
   
