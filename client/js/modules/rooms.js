@@ -58,8 +58,8 @@ var MODrooms = function(sb){
 		if(item.length!==0) {
 			item = item[0];
 		}
-		var messagesContainer = sb.find('.room_'+room+' .messages')[0];
-		var messages = sb.find('.room_'+room+' .messages > span')[0];
+		var messagesContainer = sb.find('.room_'+room+' .notification')[0];
+		var messages = sb.find('.room_'+room+' .notification > span')[0];
 		var count = (messages) ? parseInt(messages.innerHTML,10) : 0;
 		count++;
 		sb.clear(messagesContainer);
@@ -67,7 +67,7 @@ var MODrooms = function(sb){
 	};
 
 	clearNotification = function(room) {
-		var messagesContainer = sb.find('.room_'+room+' .messages')[0];
+		var messagesContainer = sb.find('.room_'+room+' .notification')[0];
 		if(messagesContainer) {
 			sb.clear(messagesContainer);
 		}
@@ -83,7 +83,7 @@ var MODrooms = function(sb){
 	return {
 	    init: function() {
 			rooms = sb.find(sb.CSSrooms)[0];
-			roomListTemplate = sb.templates.compile(sb.find('#room-list-template')[0].innerHTML);
+			roomListTemplate = sb.templates.compile(sb.findTemplate('room-list-template'));
 
 			sb.addEvent(rooms, 'click', switchRoom);
 			

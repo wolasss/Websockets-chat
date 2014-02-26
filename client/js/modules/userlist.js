@@ -1,7 +1,7 @@
 var MODuserlist = function(sb){
 	"use strict";
 
-	var list, generateUserList, userListTemplate, reactor, showList, toggle, username, privateMessage, notification, clearNotification, currentRoom;
+	var users = [], updateUsers, list, generateUserList, userListTemplate, reactor, showList, toggle, username, privateMessage, notification, clearNotification, currentRoom;
 
 	toggle = function(data) {
 		if(!username) username = data;
@@ -27,50 +27,38 @@ var MODuserlist = function(sb){
 			}
 		}
 	};
-	generateUserList = function(name, addClass) {
-		var user;
-
-		user = userListTemplate({
-			name: name,
-			additionalClass: (addClass ? addClass : '')
-		});
-
-		return user;
-	}
-	showList = function(users) {
+	showList = function() {
 		sb.clear(list);
-		//dodac escape html na usernamach.
-
-		for(var i=0, len=users.length; i<len; i++){
-			//easter egg
-			
-			var name = sb.escapeHTML(users[i]);
-
-			
-			addClass = '';
+		sb.append(list, userListTemplate(users));
+	};
+	updateUsers = function(data) {
+		users = [];
+		for(var i=0, len=data.length; i<len; i++){			
+			var name = sb.escapeHTML(data[i]);
+			users.push({name: name, additionalClass: ''});
 		}
-		sb.append(list, userListTemplate(name));
-		//to powinno byc inaczej zrobione trzeba dodac jeszcze obiekt z tymi userami... za kazdym razem gdy odbierana jest wiadomosc z serwera 
 	};
 	reactor = function(data) {
 		if(data.status==104) {
+			updateUsers(data.message);
 			showList(data.message);
 		}
 	};
 	notification = function(user) {
+
 		var item = sb.find('.user_'+user);
 		if(item.length!==0) {
 			item = item[0];
 		}
-		var messagesContainer = sb.find('.user_'+user+' .messages')[0];
-		var messages = sb.find('.user_'+user+' .messages > span')[0];
+		var messagesContainer = sb.find('.user_'+user+' .notification')[0];
+		var messages = sb.find('.user_'+user+' .notification > span')[0];
 		var count = (messages) ? parseInt(messages.innerHTML,10) : 0;
 		count++;
 		sb.clear(messagesContainer);
 		sb.append(messagesContainer, '<span>'+count+'</span>');
 	};
 	clearNotification = function(user) {
-		var messagesContainer = sb.find('.user_'+user+' .messages')[0];
+		var messagesContainer = sb.find('.user_'+user+' .notification')[0];
 		if(messagesContainer) {
 			sb.clear(messagesContainer);
 		}
@@ -78,7 +66,7 @@ var MODuserlist = function(sb){
 	return {
 	    init: function() {
 			list = sb.find(sb.CSSuserList)[0];
-			userListTemplate = sb.templates.compile(sb.find('#user-list-template')[0].innerHTML);
+			userListTemplate = sb.templates.compile(sb.findTemplate('user-list-template'));
 
 			currentRoom = null;
 			sb.on('loggedIn', toggle);

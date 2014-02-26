@@ -3,8 +3,6 @@ var MODboard = function(sb){
     var roomTemplate, messageTemplate, notificationTemplate, container, show, generateAdditionalClass, generateNotification, generateMessage, receivePublicMessage, hide, username, leaveRoom, switchRoom, receiveNotification, newPrivateRoom, currentRoom, receivePrivMessage, newPublicRoom;
 
     show = function(data) {
-        console.log('show');
-
         var mainRoom = roomTemplate({ class: 'room room_main active'});
 
         sb.clear(container);
@@ -73,7 +71,6 @@ var MODboard = function(sb){
         var now = new Date(),
             additionalClass = '',
             message;
-        console.log(messageTemplate)
         if(messageTemplate) {
             message = messageTemplate({
                 additionalClass: generateAdditionalClass(data),
@@ -119,15 +116,15 @@ var MODboard = function(sb){
                 sb.append(roomDOM[0], msg);
                 sb.scrollTop(roomDOM[0], roomDOM[0].scrollHeight);
             }
-            if( (!roomDOM[0].isEqualNode(currentRoom)) && (sender != username)) {
-                sb.emit('PrivateUnreadMessage', sender);
+            if( (!roomDOM[0].isEqualNode(currentRoom)) && (data.sender != username)) {
+                sb.emit('PrivateUnreadMessage', data.sender);
             }
         } else {
             newPrivateRoom(data.room);
             roomDOM = sb.find('.room_private_'+room);
             sb.append(roomDOM, msg);
             sb.scrollTop(roomDOM, roomDOM.scrollHeight);
-            sb.emit('PrivateUnreadMessage', sender);
+            sb.emit('PrivateUnreadMessage', data.sender);
         }
     };
     receivePublicMessage = function(data) {
@@ -143,18 +140,16 @@ var MODboard = function(sb){
                 sb.append(roomDOM[0], msg);
                 sb.scrollTop(roomDOM[0], roomDOM[0].scrollHeight);
             }
-            if( (!roomDOM[0].isEqualNode(currentRoom)) && (sender != username)) {
+            if( (!roomDOM[0].isEqualNode(currentRoom)) && (data.sender != username)) {
                 sb.emit('PublicUnreadMessage', room);
             }
         }
     };
     receiveNotification = function(data){
-        console.log(1);
         var message = data.message,
         room = data.room;
 
         var notification = generateNotification(message, data.title);
-        console.log('not:', notification)
         if(room==="__CURRENT__") {
             if(currentRoom) {
                 room = currentRoom;
@@ -168,7 +163,6 @@ var MODboard = function(sb){
             }
         }
         //if response, or contorl message show only error messages
-        console.log('notify:', notification);
         if( data.status>=500 || data.status==195) {
             sb.append(room, notification);
             sb.scrollTop(room, room.scrollHeight);
