@@ -1,5 +1,7 @@
 # Websockets chat app
 
+Chat written in C and JavaScript. Only for learning purposes. Own and not quite full implementation of websockets protocol in C.  
+
 ## Client
 
 Run client/index.html
@@ -16,12 +18,22 @@ To run a server type following commands:
 3. `make`
 4. `./server [port]`
 
+## I've Used
+
+1. [ScaleApp](https://github.com/flosse/scaleApp) javascript architecture framework
+2. [FlatUI](http://designmodo.github.io/Flat-UI/) 
+3. [Nprogress](http://ricostacruz.com/nprogress/)
+4. [Handlebars](http://handlebarsjs.com/)
+5. [Modernizr](http://modernizr.com/)
+
+
 ## Live demo:
 Try it out: [adamwolski.com/chat](http://adamwolski.com/chat)
 
 Choose demo server.
 
+
 ### To do list:
- * rewrite server to C++
+ * rewrite server to C++ (OO)
  * logging via facebook, google+
  * sending/receiving files
