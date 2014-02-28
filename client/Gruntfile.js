@@ -3,14 +3,26 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    cssmin: {
+      combine: {
+        files: {
+          'css/build/app.min.css': ['css/main.css']
+        }
+      }
+    },
     compass: {
+      dev: {
+        options: {
+          config: 'config.rb'
+        }
+      },
       dist: {
         options: {
           config: 'config.rb'
         }
       }
     },
-    clean: ['js/build', 'css'],
+    clean: ['js/build', 'css/*'],
     uglify: {
       options: {
         mangle: true,
@@ -26,8 +38,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-compass');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
 
-
-
-  grunt.registerTask('default', ['compass', 'uglify']);
+  grunt.registerTask('default', ['compass', 'uglify', 'cssmin']);
+  grunt.registerTask('reboot', ['clean', 'default']);
 };
