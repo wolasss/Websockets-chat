@@ -25,3 +25,4 @@ Thumbs.db
 *.sass-cache*
 server
 serwer
+node_modules
